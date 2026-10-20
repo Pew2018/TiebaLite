@@ -89,13 +89,8 @@ jobs:
           fi
 
       - name: Upload Mapping to App Center
-        # 第三方 action 仓库已下线；符号上传失败不影响构建产物，置为继续执行
+        # 原第三方 action（saurav-aggarwal/appcenter-cli-action）仓库已下线，action 解析失败
+        # 会导致整个 job 在 setup 阶段失败。改为提示步骤，不阻断产物上传；
+        # 需要符号上传时可在 runner 内安装 AppCenter CLI 后重新启用。
         if: ${{ github.event_name != 'pull_request' || github.ref_type == 'tag' }}
-        continue-on-error: true
-        env:
-          version_code: ${{ fromJSON(steps.read_output_metadata.outputs.content).elements[0].versionCode }}
-          version_name: ${{ fromJSON(steps.read_output_metadata.outputs.content).elements[0].versionName }}
-        uses: saurav-aggarwal/appcenter-cli-action@1.0.1
-        with:
-          token: ${{ secrets.APP_CENTER_TOKEN }}
-          command: appcenter crashes upload-mappings -c ${{ env.version_code }} -n ${{ env.version_name }} -m ./app/build/outputs/mapping/release/mapping.txt -a ${{ secrets.APP_CENTER_APP }}
+        run: echo "App Center mapping upload skipped: third-party action unavailable"
