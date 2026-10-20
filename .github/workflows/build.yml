@@ -19,7 +19,7 @@ jobs:
 
       - name: Decode Keystore
         id: decode_keystore
-        if: ${{ (github.event_name != 'pull_request' || github.ref_type == 'tag') && vars.RELEASE_KEYSTORE != '' && secrets.KEYSTORE != '' }}
+        if: ${{ (github.event_name != 'pull_request' || github.ref_type == 'tag') && vars.RELEASE_KEYSTORE != '' }}
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: ${{ vars.RELEASE_KEYSTORE }}
@@ -27,7 +27,7 @@ jobs:
           encodedString: ${{ secrets.KEYSTORE }}
 
       - name: Generate keystore.properties
-        if: ${{ (github.event_name != 'pull_request' || github.ref_type == 'tag') && vars.RELEASE_KEYSTORE != '' && secrets.KEYSTORE != '' }}
+        if: ${{ (github.event_name != 'pull_request' || github.ref_type == 'tag') && vars.RELEASE_KEYSTORE != '' }}
         run: |
           if [ -n "${{ secrets.RELEASEKEYPASSWORD }}" ]; then
             echo keystore.file="${{ vars.RELEASE_KEYSTORE }}" >> keystore.properties
