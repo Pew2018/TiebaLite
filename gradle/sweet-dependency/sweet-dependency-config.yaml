@@ -167,14 +167,14 @@ libraries:
   io.github.raamcosta.compose-destinations:
     animations-core:
       alias: compose-destinations-core
-      version: 1.11.0
+      version: 1.11.9
     ksp:
       alias: compose-destinations-ksp
       version-ref: compose-destinations-core
   androidx.navigation:
     navigation-compose:
       alias: androidx-navigation-compose
-      version: 2.8.5
+      version: 2.8.6
   com.google.dagger:
     hilt-android:
       alias: hilt-android
@@ -242,7 +242,7 @@ libraries:
   com.google.android.material:
     material:
       alias: google-material
-      version: 1.11.0
+      version: 1.11.9
   androidx.constraintlayout:
     constraintlayout-compose:
       alias: androidx-constraintlayout-compose
