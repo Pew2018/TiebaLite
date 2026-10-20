@@ -99,7 +99,15 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
         defaultValue = "0"
     )
 
-    var darkTheme by DataStoreDelegates.string(key = "dark_theme", defaultValue = "grey_dark")
+    var darkTheme by DataStoreDelegates.string(key = "dark_theme", defaultValue = "material_blue_grey_dark")
+
+    /**
+     * 预测返回手势开关。
+     * 默认开启；仅在 Android 14（API 34）及以上系统生效，
+     * 旧系统自动降级为普通返回（见 PredictiveBack.kt）。
+     * 持久化于 DataStore，页面重建与进程重启后保留。
+     */
+    var predictiveBack by DataStoreDelegates.boolean(defaultValue = true, key = "predictive_back")
 
     var doNotUsePhotoPicker by DataStoreDelegates.boolean(defaultValue = false)
 

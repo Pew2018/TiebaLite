@@ -90,6 +90,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.TabClickMenu
 import com.huanchengfly.tieba.post.ui.widgets.compose.TabRow
 import com.huanchengfly.tieba.post.ui.widgets.compose.TopAppBarContainer
 import com.huanchengfly.tieba.post.ui.widgets.compose.picker.ListSinglePicker
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -269,6 +270,10 @@ fun SearchPage(
     ) { paddingValues ->
         Box(modifier = Modifier
             .fillMaxSize()
+            // 预测返回：有关键词先清空搜索状态，无关键词才离开（与 MyBackHandler 一致）
+            .predictiveBack(enabled = !isKeywordEmpty) {
+                viewModel.send(SearchUiIntent.SubmitKeyword(""))
+            }
             .padding(paddingValues)) {
             if (!isKeywordEmpty) {
                 ProvideNavigator(navigator = navigator) {

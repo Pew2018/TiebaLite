@@ -293,9 +293,7 @@
         <item name="android:popupBackground">@drawable/bg_popup_dark</item>
     </style>
 
-    <style name="TiebaLite.Custom" parent="TiebaLite.White">
-        <item name="colorPrimary">@color/theme_color_toolbar_grey_dark</item>
-        <item name="colorAccent">@color/theme_color_toolbar_grey_dark</item>
+    <style name="TiebaLite.Custom" parent="TiebaLite.Light">
         <item name="android:textCursorDrawable">@null</item>
         <item name="rippleColor">#1A000000</item>
     </style>
@@ -423,17 +421,34 @@
     <style name="TiebaLite.Dark.Amoled" parent="AppTheme.Dark">
         <item name="toolbarStyle">@style/Toolbar.Dark.Amoled</item>
         <item name="actionOverflowMenuStyle">@style/OverflowMenu.Dark.Amoled</item>
-        <item name="colorPrimary">@color/tieba</item>
-        <item name="colorToolbar">@color/black</item>
+        <item name="colorPrimary">@color/oxygen_blue_dark</item>
+        <item name="colorNewPrimary">@color/oxygen_blue_dark</item>
+        <item name="colorAccent">@color/oxygen_blue_dark</item>
+        <item name="colorOnAccent">@color/oxygen_blue_dark_on</item>
+        <item name="colorTextOnPrimary">@color/oxygen_blue_dark_on</item>
+        <item name="colorToolbar">#FF000000</item>
         <item name="colorToolbarItem">#FFE6E7EE</item>
+        <item name="colorToolbarItemSecondary">#99E6E7EE</item>
         <item name="colorToolbarItemActive">@color/white</item>
-        <item name="colorToolbarItemSecondary">#CCE6E7EE</item>
-        <item name="colorFloorCard">#FF151515</item>
-        <item name="colorCard">#FF101010</item>
-        <item name="colorBackground">@color/theme_color_background_amoled_dark</item>
-        <item name="colorChip">@color/theme_color_window_background_amoled_dark</item>
-        <item name="colorNavBar">@color/black</item>
-        <item name="colorDivider">#FF101010</item>
+        <item name="colorToolbarSurface">#FF0A0A0A</item>
+        <item name="colorOnToolbarSurface">#FFE6E7EE</item>
+        <item name="colorFloorCard">#FF000000</item>
+        <item name="colorCard">#FF0A0A0A</item>
+        <item name="colorBackground">#FF000000</item>
+        <item name="colorWindowBackground">#FF000000</item>
+        <item name="colorChip">#FF141414</item>
+        <item name="colorOnChip">#FF9E9E9E</item>
+        <item name="colorNavBar">#FF000000</item>
+        <item name="colorNavBarSurface">#FF0A0A0A</item>
+        <item name="colorOnNavBarSurface">#FF9E9E9E</item>
+        <item name="colorDivider">#FF1F1F1F</item>
+        <item name="colorText">#FFE6E6E6</item>
+        <item name="colorTextSecondary">#FF9E9E9E</item>
+        <item name="color_text_disabled">#FF616161</item>
+        <item name="colorUnselected">#FF616161</item>
+        <item name="shadow_color">#00000000</item>
+        <item name="colorIndicator">@color/oxygen_blue_dark</item>
+        <item name="colorPlaceholder">#FF141414</item>
     </style>
 
     <style name="Dialog.FullScreen" parent="Theme.MaterialComponents.DayNight.Dialog">
@@ -453,6 +468,471 @@
 
     <style name="AlertDialog.Dark" parent="AlertDialog.AppCompat">
         <item name="android:layout">@layout/layout_alert_dialog</item>
+    </style>
+
+
+    <!-- ================= OxygenOS 7.1.1 经典主题 ================= -->
+
+    <style name="TiebaLite.Light" parent="AppTheme">
+        <item name="colorPrimary">@color/oxygen_blue</item>
+        <item name="colorNewPrimary">@color/oxygen_blue</item>
+        <item name="colorAccent">@color/oxygen_blue</item>
+        <item name="colorOnAccent">@color/white</item>
+        <item name="colorTextOnPrimary">@color/white</item>
+        <item name="colorToolbar">@color/oxygen_toolbar</item>
+        <item name="colorToolbarItem">@color/white</item>
+        <item name="colorToolbarItemSecondary">#B3FFFFFF</item>
+        <item name="colorToolbarItemActive">@color/white</item>
+        <item name="colorToolbarSurface">@color/white</item>
+        <item name="colorOnToolbarSurface">@color/oxygen_text_primary</item>
+        <item name="colorNavBar">@color/oxygen_nav_bar</item>
+        <item name="colorNavBarSurface">@color/white</item>
+        <item name="colorOnNavBarSurface">@color/oxygen_text_secondary</item>
+        <item name="colorText">@color/oxygen_text_primary</item>
+        <item name="colorTextSecondary">@color/oxygen_text_secondary</item>
+        <item name="color_text_disabled">@color/oxygen_text_disabled</item>
+        <item name="colorBackground">@color/oxygen_background</item>
+        <item name="colorWindowBackground">@color/oxygen_background</item>
+        <item name="colorChip">@color/oxygen_chip</item>
+        <item name="colorOnChip">@color/oxygen_on_chip</item>
+        <item name="colorUnselected">@color/oxygen_unselected</item>
+        <item name="colorFloorCard">@color/oxygen_floor_card</item>
+        <item name="colorCard">@color/oxygen_card</item>
+        <item name="colorDivider">@color/oxygen_divider</item>
+        <item name="shadow_color">@color/oxygen_shadow</item>
+        <item name="colorIndicator">@color/oxygen_blue</item>
+        <item name="colorPlaceholder">@color/oxygen_placeholder</item>
+    </style>
+
+    <style name="TiebaLite.Dark.Oxygen" parent="AppTheme.Dark">
+        <item name="colorPrimary">@color/oxygen_blue_dark</item>
+        <item name="colorNewPrimary">@color/oxygen_blue_dark</item>
+        <item name="colorAccent">@color/oxygen_blue_dark</item>
+        <item name="colorOnAccent">@color/oxygen_blue_dark_on</item>
+        <item name="colorTextOnPrimary">@color/oxygen_blue_dark_on</item>
+        <item name="colorToolbar">@color/oxygen_dark_toolbar</item>
+        <item name="colorToolbarItem">@color/oxygen_dark_text_primary</item>
+        <item name="colorToolbarItemSecondary">#99E6E7EE</item>
+        <item name="colorToolbarItemActive">@color/white</item>
+        <item name="colorToolbarSurface">@color/oxygen_dark_card</item>
+        <item name="colorOnToolbarSurface">@color/oxygen_dark_text_primary</item>
+        <item name="colorNavBar">@color/oxygen_dark_nav_bar</item>
+        <item name="colorNavBarSurface">@color/oxygen_dark_card</item>
+        <item name="colorOnNavBarSurface">@color/oxygen_dark_text_secondary</item>
+        <item name="colorText">@color/oxygen_dark_text_primary</item>
+        <item name="colorTextSecondary">@color/oxygen_dark_text_secondary</item>
+        <item name="color_text_disabled">@color/oxygen_dark_text_disabled</item>
+        <item name="colorBackground">@color/oxygen_dark_background</item>
+        <item name="colorWindowBackground">@color/oxygen_dark_background</item>
+        <item name="colorChip">@color/oxygen_dark_chip</item>
+        <item name="colorOnChip">@color/oxygen_dark_on_chip</item>
+        <item name="colorUnselected">@color/oxygen_dark_unselected</item>
+        <item name="colorFloorCard">@color/oxygen_dark_floor_card</item>
+        <item name="colorCard">@color/oxygen_dark_card</item>
+        <item name="colorDivider">@color/oxygen_dark_divider</item>
+        <item name="shadow_color">#00000000</item>
+        <item name="colorIndicator">@color/oxygen_blue_dark</item>
+        <item name="colorPlaceholder">@color/oxygen_dark_placeholder</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.Blue" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_blue</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_blue</item>
+        <item name="colorAccent">@color/preset_oxygen_blue</item>
+        <item name="colorOnAccent">@color/preset_oxygen_blue_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_blue_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_blue</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.Blue.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_blue_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_blue_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_blue_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_blue_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_blue_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_blue_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.Golden" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_golden</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_golden</item>
+        <item name="colorAccent">@color/preset_oxygen_golden</item>
+        <item name="colorOnAccent">@color/preset_oxygen_golden_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_golden_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_golden</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.Golden.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_golden_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_golden_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_golden_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_golden_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_golden_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_golden_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.LemonYellow" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_lemon_yellow</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_lemon_yellow</item>
+        <item name="colorAccent">@color/preset_oxygen_lemon_yellow</item>
+        <item name="colorOnAccent">@color/preset_oxygen_lemon_yellow_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_lemon_yellow_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_lemon_yellow</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.LemonYellow.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_lemon_yellow_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_lemon_yellow_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_lemon_yellow_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_lemon_yellow_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_lemon_yellow_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_lemon_yellow_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.GrassGreen" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_grass_green</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_grass_green</item>
+        <item name="colorAccent">@color/preset_oxygen_grass_green</item>
+        <item name="colorOnAccent">@color/preset_oxygen_grass_green_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_grass_green_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_grass_green</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.GrassGreen.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_grass_green_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_grass_green_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_grass_green_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_grass_green_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_grass_green_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_grass_green_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.CharmPurple" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_charm_purple</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_charm_purple</item>
+        <item name="colorAccent">@color/preset_oxygen_charm_purple</item>
+        <item name="colorOnAccent">@color/preset_oxygen_charm_purple_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_charm_purple_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_charm_purple</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.CharmPurple.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_charm_purple_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_charm_purple_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_charm_purple_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_charm_purple_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_charm_purple_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_charm_purple_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.SkyBlue" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_sky_blue</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_sky_blue</item>
+        <item name="colorAccent">@color/preset_oxygen_sky_blue</item>
+        <item name="colorOnAccent">@color/preset_oxygen_sky_blue_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_sky_blue_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_sky_blue</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.SkyBlue.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_sky_blue_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_sky_blue_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_sky_blue_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_sky_blue_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_sky_blue_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_sky_blue_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.VigourRed" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_vigour_red</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_vigour_red</item>
+        <item name="colorAccent">@color/preset_oxygen_vigour_red</item>
+        <item name="colorOnAccent">@color/preset_oxygen_vigour_red_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_vigour_red_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_vigour_red</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.VigourRed.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_vigour_red_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_vigour_red_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_vigour_red_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_vigour_red_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_vigour_red_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_vigour_red_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.FashionPink" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_fashion_pink</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_fashion_pink</item>
+        <item name="colorAccent">@color/preset_oxygen_fashion_pink</item>
+        <item name="colorOnAccent">@color/preset_oxygen_fashion_pink_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_fashion_pink_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_fashion_pink</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.FashionPink.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_fashion_pink_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_fashion_pink_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_fashion_pink_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_fashion_pink_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_fashion_pink_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_fashion_pink_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Blue" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_blue</item>
+        <item name="colorNewPrimary">@color/preset_material_blue</item>
+        <item name="colorAccent">@color/preset_material_blue</item>
+        <item name="colorOnAccent">@color/preset_material_blue_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_blue_on</item>
+        <item name="colorIndicator">@color/preset_material_blue</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Blue.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_blue_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_blue_dark</item>
+        <item name="colorAccent">@color/preset_material_blue_dark</item>
+        <item name="colorOnAccent">@color/preset_material_blue_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_blue_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_blue_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Teal" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_teal</item>
+        <item name="colorNewPrimary">@color/preset_material_teal</item>
+        <item name="colorAccent">@color/preset_material_teal</item>
+        <item name="colorOnAccent">@color/preset_material_teal_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_teal_on</item>
+        <item name="colorIndicator">@color/preset_material_teal</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Teal.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_teal_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_teal_dark</item>
+        <item name="colorAccent">@color/preset_material_teal_dark</item>
+        <item name="colorOnAccent">@color/preset_material_teal_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_teal_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_teal_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Green" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_green</item>
+        <item name="colorNewPrimary">@color/preset_material_green</item>
+        <item name="colorAccent">@color/preset_material_green</item>
+        <item name="colorOnAccent">@color/preset_material_green_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_green_on</item>
+        <item name="colorIndicator">@color/preset_material_green</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Green.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_green_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_green_dark</item>
+        <item name="colorAccent">@color/preset_material_green_dark</item>
+        <item name="colorOnAccent">@color/preset_material_green_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_green_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_green_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Red" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_red</item>
+        <item name="colorNewPrimary">@color/preset_material_red</item>
+        <item name="colorAccent">@color/preset_material_red</item>
+        <item name="colorOnAccent">@color/preset_material_red_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_red_on</item>
+        <item name="colorIndicator">@color/preset_material_red</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Red.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_red_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_red_dark</item>
+        <item name="colorAccent">@color/preset_material_red_dark</item>
+        <item name="colorOnAccent">@color/preset_material_red_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_red_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_red_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Orange" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_orange</item>
+        <item name="colorNewPrimary">@color/preset_material_orange</item>
+        <item name="colorAccent">@color/preset_material_orange</item>
+        <item name="colorOnAccent">@color/preset_material_orange_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_orange_on</item>
+        <item name="colorIndicator">@color/preset_material_orange</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Orange.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_orange_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_orange_dark</item>
+        <item name="colorAccent">@color/preset_material_orange_dark</item>
+        <item name="colorOnAccent">@color/preset_material_orange_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_orange_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_orange_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Purple" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_purple</item>
+        <item name="colorNewPrimary">@color/preset_material_purple</item>
+        <item name="colorAccent">@color/preset_material_purple</item>
+        <item name="colorOnAccent">@color/preset_material_purple_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_purple_on</item>
+        <item name="colorIndicator">@color/preset_material_purple</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Purple.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_purple_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_purple_dark</item>
+        <item name="colorAccent">@color/preset_material_purple_dark</item>
+        <item name="colorOnAccent">@color/preset_material_purple_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_purple_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_purple_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Cyan" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_cyan</item>
+        <item name="colorNewPrimary">@color/preset_material_cyan</item>
+        <item name="colorAccent">@color/preset_material_cyan</item>
+        <item name="colorOnAccent">@color/preset_material_cyan_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_cyan_on</item>
+        <item name="colorIndicator">@color/preset_material_cyan</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Cyan.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_cyan_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_cyan_dark</item>
+        <item name="colorAccent">@color/preset_material_cyan_dark</item>
+        <item name="colorOnAccent">@color/preset_material_cyan_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_cyan_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_cyan_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Indigo" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_indigo</item>
+        <item name="colorNewPrimary">@color/preset_material_indigo</item>
+        <item name="colorAccent">@color/preset_material_indigo</item>
+        <item name="colorOnAccent">@color/preset_material_indigo_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_indigo_on</item>
+        <item name="colorIndicator">@color/preset_material_indigo</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Indigo.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_indigo_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_indigo_dark</item>
+        <item name="colorAccent">@color/preset_material_indigo_dark</item>
+        <item name="colorOnAccent">@color/preset_material_indigo_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_indigo_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_indigo_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Pink" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_pink</item>
+        <item name="colorNewPrimary">@color/preset_material_pink</item>
+        <item name="colorAccent">@color/preset_material_pink</item>
+        <item name="colorOnAccent">@color/preset_material_pink_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_pink_on</item>
+        <item name="colorIndicator">@color/preset_material_pink</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.Pink.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_pink_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_pink_dark</item>
+        <item name="colorAccent">@color/preset_material_pink_dark</item>
+        <item name="colorOnAccent">@color/preset_material_pink_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_pink_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_pink_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.BlueGrey" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_blue_grey</item>
+        <item name="colorNewPrimary">@color/preset_material_blue_grey</item>
+        <item name="colorAccent">@color/preset_material_blue_grey</item>
+        <item name="colorOnAccent">@color/preset_material_blue_grey_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_blue_grey_on</item>
+        <item name="colorIndicator">@color/preset_material_blue_grey</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.BlueGrey.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_blue_grey_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_blue_grey_dark</item>
+        <item name="colorAccent">@color/preset_material_blue_grey_dark</item>
+        <item name="colorOnAccent">@color/preset_material_blue_grey_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_blue_grey_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_blue_grey_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.DeepOrange" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_deep_orange</item>
+        <item name="colorNewPrimary">@color/preset_material_deep_orange</item>
+        <item name="colorAccent">@color/preset_material_deep_orange</item>
+        <item name="colorOnAccent">@color/preset_material_deep_orange_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_deep_orange_on</item>
+        <item name="colorIndicator">@color/preset_material_deep_orange</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.DeepOrange.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_deep_orange_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_deep_orange_dark</item>
+        <item name="colorAccent">@color/preset_material_deep_orange_dark</item>
+        <item name="colorOnAccent">@color/preset_material_deep_orange_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_deep_orange_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_deep_orange_dark</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.LightGreen" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_material_light_green</item>
+        <item name="colorNewPrimary">@color/preset_material_light_green</item>
+        <item name="colorAccent">@color/preset_material_light_green</item>
+        <item name="colorOnAccent">@color/preset_material_light_green_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_light_green_on</item>
+        <item name="colorIndicator">@color/preset_material_light_green</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Material.LightGreen.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_material_light_green_dark</item>
+        <item name="colorNewPrimary">@color/preset_material_light_green_dark</item>
+        <item name="colorAccent">@color/preset_material_light_green_dark</item>
+        <item name="colorOnAccent">@color/preset_material_light_green_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_material_light_green_dark_on</item>
+        <item name="colorIndicator">@color/preset_material_light_green_dark</item>
     </style>
 
 </resources>

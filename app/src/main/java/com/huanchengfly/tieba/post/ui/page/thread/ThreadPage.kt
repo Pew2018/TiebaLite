@@ -162,6 +162,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalGrid
 import com.huanchengfly.tieba.post.ui.widgets.compose.buildChipInlineContent
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberMenuState
 import com.huanchengfly.tieba.post.ui.widgets.compose.states.StateScreen
 import com.huanchengfly.tieba.post.utils.DateTimeUtils.getRelativeTimeString
@@ -1104,6 +1105,24 @@ fun ThreadPage(
         ) {
             MyScaffold(
                 scaffoldState = scaffoldState,
+                modifier = Modifier
+                    // 预测返回：先收底部面板；收藏页需确认阅读位置时保留既有确认对话框；
+                    // 最后才离开帖子页（与两处 MyBackHandler 优先级一致）
+                    .predictiveBack {
+                        when {
+                            bottomSheetState.isVisible -> closeBottomSheet()
+                            isCollected -> {
+                                readFloorBeforeBack = lastVisibilityPost?.get { floor } ?: 0
+                                if (readFloorBeforeBack != 0) {
+                                    updateCollectMarkDialogState.show()
+                                } else {
+                                    navigator.navigateUp()
+                                }
+                            }
+
+                            else -> navigator.navigateUp()
+                        }
+                    },
                 topBar = {
                     TopBar(
                         forum = forum,

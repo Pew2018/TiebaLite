@@ -36,6 +36,7 @@ import com.huanchengfly.tieba.post.getString
 import com.huanchengfly.tieba.post.interfaces.BackgroundTintable
 import com.huanchengfly.tieba.post.putBoolean
 import com.huanchengfly.tieba.post.putString
+import com.huanchengfly.tieba.post.ui.common.theme.ThemePresets
 import com.huanchengfly.tieba.post.ui.common.theme.utils.ThemeUtils
 import com.huanchengfly.tieba.post.ui.widgets.theme.TintSwipeRefreshLayout
 import kotlinx.coroutines.launch
@@ -44,9 +45,22 @@ import java.util.Locale
 object ThemeUtil {
     val themeState: MutableState<String> by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
         mutableStateOf(
-            if (App.isInitialized) dataStore.getString(KEY_THEME, THEME_DEFAULT)
+            if (App.isInitialized) migrateLegacyTheme(
+                dataStore.getString(KEY_THEME, THEME_DEFAULT)
+            )
             else THEME_DEFAULT
         )
+    }
+
+    /**
+     * 旧版主题值 -> 新预设的一次性迁移。
+     * 已安装升级用户存储的 tieba/blue/black/pink/red/purple/blue_dark/grey_dark 等值
+     * 会被映射到最近的 OxygenOS 预设并写回，避免升级后主题失效或崩溃。
+     */
+    fun migrateLegacyTheme(theme: String): String {
+        val mapped = LEGACY_THEME_MIGRATION[theme] ?: return theme
+        dataStore.putString(KEY_THEME, mapped)
+        return mapped
     }
 
     const val TAG = "ThemeUtil"
@@ -66,7 +80,7 @@ object ThemeUtil {
     const val THEME_TRANSLUCENT_LIGHT = "translucent_light"
     const val THEME_TRANSLUCENT_DARK = "translucent_dark"
     const val THEME_CUSTOM = "custom"
-    const val THEME_DEFAULT = "tieba"
+    const val THEME_DEFAULT = "material_blue"
     const val THEME_BLACK = "black"
     const val THEME_BLUE = "blue"
     const val THEME_PURPLE = "purple"
@@ -75,6 +89,51 @@ object ThemeUtil {
     const val THEME_BLUE_DARK = "blue_dark"
     const val THEME_GREY_DARK = "grey_dark"
     const val THEME_AMOLED_DARK = "amoled_dark"
+
+    // OxygenOS 7.1.1 经典风格预设（与 ThemePresets.kt 单一数据源对应）
+    const val THEME_OXYGEN_BLUE = "oxygen_blue"
+    const val THEME_OXYGEN_GOLDEN = "oxygen_golden"
+    const val THEME_OXYGEN_LEMON_YELLOW = "oxygen_lemon_yellow"
+    const val THEME_OXYGEN_GRASS_GREEN = "oxygen_grass_green"
+    const val THEME_OXYGEN_CHARM_PURPLE = "oxygen_charm_purple"
+    const val THEME_OXYGEN_SKY_BLUE = "oxygen_sky_blue"
+    const val THEME_OXYGEN_VIGOUR_RED = "oxygen_vigour_red"
+    const val THEME_OXYGEN_FASHION_PINK = "oxygen_fashion_pink"
+    const val THEME_MATERIAL_BLUE = "material_blue"
+    const val THEME_MATERIAL_TEAL = "material_teal"
+    const val THEME_MATERIAL_GREEN = "material_green"
+    const val THEME_MATERIAL_RED = "material_red"
+    const val THEME_MATERIAL_ORANGE = "material_orange"
+    const val THEME_MATERIAL_PURPLE = "material_purple"
+    const val THEME_MATERIAL_CYAN = "material_cyan"
+    const val THEME_MATERIAL_INDIGO = "material_indigo"
+    const val THEME_MATERIAL_PINK = "material_pink"
+    const val THEME_MATERIAL_BLUE_GREY = "material_blue_grey"
+    const val THEME_MATERIAL_DEEP_ORANGE = "material_deep_orange"
+    const val THEME_MATERIAL_LIGHT_GREEN = "material_light_green"
+    const val THEME_OXYGEN_BLUE_DARK = "oxygen_blue_dark"
+    const val THEME_OXYGEN_GOLDEN_DARK = "oxygen_golden_dark"
+    const val THEME_OXYGEN_LEMON_YELLOW_DARK = "oxygen_lemon_yellow_dark"
+    const val THEME_OXYGEN_GRASS_GREEN_DARK = "oxygen_grass_green_dark"
+    const val THEME_OXYGEN_CHARM_PURPLE_DARK = "oxygen_charm_purple_dark"
+    const val THEME_OXYGEN_SKY_BLUE_DARK = "oxygen_sky_blue_dark"
+    const val THEME_OXYGEN_VIGOUR_RED_DARK = "oxygen_vigour_red_dark"
+    const val THEME_OXYGEN_FASHION_PINK_DARK = "oxygen_fashion_pink_dark"
+    const val THEME_MATERIAL_BLUE_DARK = "material_blue_dark"
+    const val THEME_MATERIAL_TEAL_DARK = "material_teal_dark"
+    const val THEME_MATERIAL_GREEN_DARK = "material_green_dark"
+    const val THEME_MATERIAL_RED_DARK = "material_red_dark"
+    const val THEME_MATERIAL_ORANGE_DARK = "material_orange_dark"
+    const val THEME_MATERIAL_PURPLE_DARK = "material_purple_dark"
+    const val THEME_MATERIAL_CYAN_DARK = "material_cyan_dark"
+    const val THEME_MATERIAL_INDIGO_DARK = "material_indigo_dark"
+    const val THEME_MATERIAL_PINK_DARK = "material_pink_dark"
+    const val THEME_MATERIAL_BLUE_GREY_DARK = "material_blue_grey_dark"
+    const val THEME_MATERIAL_DEEP_ORANGE_DARK = "material_deep_orange_dark"
+    const val THEME_MATERIAL_LIGHT_GREEN_DARK = "material_light_green_dark"
+
+    /** 旧版主题值迁移映射（读取时一次性迁移，见 [migrateLegacyTheme]） */
+    val LEGACY_THEME_MIGRATION: Map<String, String> = ThemePresets.legacyMigration
 
     const val TRANSLUCENT_THEME_LIGHT = 0
     const val TRANSLUCENT_THEME_DARK = 1
@@ -108,7 +167,9 @@ object ThemeUtil {
 
     private fun getOldTheme(): String {
         val oldTheme =
-            dataStore.getString(KEY_OLD_THEME, THEME_DEFAULT).takeUnless { isNightMode(it) }
+            migrateLegacyTheme(
+                dataStore.getString(KEY_OLD_THEME, THEME_DEFAULT)
+            ).takeUnless { isNightMode(it) }
 
         return oldTheme ?: THEME_DEFAULT
     }
@@ -141,12 +202,20 @@ object ThemeUtil {
         if (isNightMode()) {
             switchTheme(getOldTheme(), recordOldTheme = false)
         } else {
-            switchTheme(dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK))
+            switchTheme(
+                migrateLegacyTheme(
+                    dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK)
+                )
+            )
         }
     }
 
     fun switchToNightMode(context: Activity, recreate: Boolean) {
-        switchTheme(dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK))
+        switchTheme(
+            migrateLegacyTheme(
+                dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK)
+            )
+        )
         if (recreate) {
             refreshUI(context)
         }
@@ -226,6 +295,10 @@ object ThemeUtil {
     fun isStatusBarFontDark(): Boolean {
         val theme = getRawTheme()
         val isToolbarPrimaryColor: Boolean = INSTANCE.appPreferences.toolbarPrimaryColor
+        if (ThemePresets.isPreset(theme)) {
+            // OxygenOS 预设使用深色平直工具栏（#212121），状态栏文字为浅色
+            return false
+        }
         return if (theme == THEME_CUSTOM) {
             INSTANCE.appPreferences.customStatusBarFontDark
         } else if (isTranslucentTheme(theme)) {
@@ -380,6 +453,46 @@ object ThemeUtil {
     @StyleRes
     private fun getThemeByName(themeName: String): Int {
         return when (themeName.lowercase(Locale.getDefault())) {
+            THEME_OXYGEN_BLUE, -> R.style.TiebaLite_Preset_Oxygen_Blue
+            THEME_OXYGEN_GOLDEN, -> R.style.TiebaLite_Preset_Oxygen_Golden
+            THEME_OXYGEN_LEMON_YELLOW, -> R.style.TiebaLite_Preset_Oxygen_Lemon_Yellow
+            THEME_OXYGEN_GRASS_GREEN, -> R.style.TiebaLite_Preset_Oxygen_Grass_Green
+            THEME_OXYGEN_CHARM_PURPLE, -> R.style.TiebaLite_Preset_Oxygen_Charm_Purple
+            THEME_OXYGEN_SKY_BLUE, -> R.style.TiebaLite_Preset_Oxygen_Sky_Blue
+            THEME_OXYGEN_VIGOUR_RED, -> R.style.TiebaLite_Preset_Oxygen_Vigour_Red
+            THEME_OXYGEN_FASHION_PINK, -> R.style.TiebaLite_Preset_Oxygen_Fashion_Pink
+            THEME_OXYGEN_BLUE_DARK, -> R.style.TiebaLite_Preset_Oxygen_Blue_Dark
+            THEME_OXYGEN_GOLDEN_DARK, -> R.style.TiebaLite_Preset_Oxygen_Golden_Dark
+            THEME_OXYGEN_LEMON_YELLOW_DARK, -> R.style.TiebaLite_Preset_Oxygen_Lemon_Yellow_Dark
+            THEME_OXYGEN_GRASS_GREEN_DARK, -> R.style.TiebaLite_Preset_Oxygen_Grass_Green_Dark
+            THEME_OXYGEN_CHARM_PURPLE_DARK, -> R.style.TiebaLite_Preset_Oxygen_Charm_Purple_Dark
+            THEME_OXYGEN_SKY_BLUE_DARK, -> R.style.TiebaLite_Preset_Oxygen_Sky_Blue_Dark
+            THEME_OXYGEN_VIGOUR_RED_DARK, -> R.style.TiebaLite_Preset_Oxygen_Vigour_Red_Dark
+            THEME_OXYGEN_FASHION_PINK_DARK, -> R.style.TiebaLite_Preset_Oxygen_Fashion_Pink_Dark
+            THEME_MATERIAL_BLUE, -> R.style.TiebaLite_Preset_Material_Blue
+            THEME_MATERIAL_TEAL, -> R.style.TiebaLite_Preset_Material_Teal
+            THEME_MATERIAL_GREEN, -> R.style.TiebaLite_Preset_Material_Green
+            THEME_MATERIAL_RED, -> R.style.TiebaLite_Preset_Material_Red
+            THEME_MATERIAL_ORANGE, -> R.style.TiebaLite_Preset_Material_Orange
+            THEME_MATERIAL_PURPLE, -> R.style.TiebaLite_Preset_Material_Purple
+            THEME_MATERIAL_CYAN, -> R.style.TiebaLite_Preset_Material_Cyan
+            THEME_MATERIAL_INDIGO, -> R.style.TiebaLite_Preset_Material_Indigo
+            THEME_MATERIAL_PINK, -> R.style.TiebaLite_Preset_Material_Pink
+            THEME_MATERIAL_BLUE_GREY, -> R.style.TiebaLite_Preset_Material_Blue_Grey
+            THEME_MATERIAL_DEEP_ORANGE, -> R.style.TiebaLite_Preset_Material_Deep_Orange
+            THEME_MATERIAL_LIGHT_GREEN, -> R.style.TiebaLite_Preset_Material_Light_Green
+            THEME_MATERIAL_BLUE_DARK, -> R.style.TiebaLite_Preset_Material_Blue_Dark
+            THEME_MATERIAL_TEAL_DARK, -> R.style.TiebaLite_Preset_Material_Teal_Dark
+            THEME_MATERIAL_GREEN_DARK, -> R.style.TiebaLite_Preset_Material_Green_Dark
+            THEME_MATERIAL_RED_DARK, -> R.style.TiebaLite_Preset_Material_Red_Dark
+            THEME_MATERIAL_ORANGE_DARK, -> R.style.TiebaLite_Preset_Material_Orange_Dark
+            THEME_MATERIAL_PURPLE_DARK, -> R.style.TiebaLite_Preset_Material_Purple_Dark
+            THEME_MATERIAL_CYAN_DARK, -> R.style.TiebaLite_Preset_Material_Cyan_Dark
+            THEME_MATERIAL_INDIGO_DARK, -> R.style.TiebaLite_Preset_Material_Indigo_Dark
+            THEME_MATERIAL_PINK_DARK, -> R.style.TiebaLite_Preset_Material_Pink_Dark
+            THEME_MATERIAL_BLUE_GREY_DARK, -> R.style.TiebaLite_Preset_Material_Blue_Grey_Dark
+            THEME_MATERIAL_DEEP_ORANGE_DARK, -> R.style.TiebaLite_Preset_Material_Deep_Orange_Dark
+            THEME_MATERIAL_LIGHT_GREEN_DARK, -> R.style.TiebaLite_Preset_Material_Light_Green_Dark
             THEME_TRANSLUCENT, THEME_TRANSLUCENT_LIGHT -> R.style.TiebaLite_Translucent_Light
             THEME_TRANSLUCENT_DARK -> R.style.TiebaLite_Translucent_Dark
             THEME_DEFAULT -> R.style.TiebaLite_Tieba
@@ -403,17 +516,11 @@ object ThemeUtil {
             THEME_TRANSLUCENT_LIGHT,
             THEME_TRANSLUCENT_DARK,
             THEME_CUSTOM,
-            THEME_DEFAULT,
-            THEME_BLACK,
-            THEME_PURPLE,
-            THEME_PINK,
-            THEME_RED,
-            THEME_BLUE_DARK,
-            THEME_GREY_DARK,
             THEME_AMOLED_DARK,
             -> theme.lowercase(Locale.getDefault())
 
-            else -> THEME_DEFAULT
+            else -> if (ThemePresets.isPreset(theme)) theme.lowercase(Locale.getDefault())
+            else THEME_DEFAULT
         }
     }
 }

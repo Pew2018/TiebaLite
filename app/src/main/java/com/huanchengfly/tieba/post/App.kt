@@ -29,6 +29,7 @@ import com.github.panpf.sketch.request.PauseLoadWhenScrollingDrawableDecodeInter
 import com.huanchengfly.tieba.post.activities.BaseActivity
 import com.huanchengfly.tieba.post.components.ClipBoardLinkDetector
 import com.huanchengfly.tieba.post.components.OAIDGetter
+import com.huanchengfly.tieba.post.ui.common.theme.ThemePresets
 import com.huanchengfly.tieba.post.ui.common.theme.compose.dynamicTonalPalette
 import com.huanchengfly.tieba.post.ui.common.theme.interfaces.ThemeSwitcher
 import com.huanchengfly.tieba.post.ui.common.theme.utils.ThemeUtils
@@ -306,6 +307,21 @@ class App : Application(), SketchFactory {
         fun getColorByAttr(context: Context, attrId: Int, theme: String): Int {
             if (!isInitialized) return context.getColorCompat(getDefaultColorResId(attrId))
             val resources = context.resources
+            // OxygenOS 预设：优先解析 theme_color_<attr>_<theme> 命名资源，保证 20 个预设
+            // 在 Compose 与 View 两条链路上取到同一套语义色
+            if (ThemePresets.isPreset(theme)) {
+                val attrName = ThemePresets.attrName(attrId)
+                if (attrName != null) {
+                    val resId = resources.getIdentifier(
+                        "theme_color_" + attrName + "_" + theme,
+                        "color",
+                        packageName
+                    )
+                    if (resId != 0) {
+                        return context.getColorCompat(resId)
+                    }
+                }
+            }
             when (attrId) {
                 R.attr.colorPrimary -> {
                     if (ThemeUtil.isDynamicTheme(theme) && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -344,7 +360,17 @@ class App : Application(), SketchFactory {
                             dynamicTonalPalette.primary40.toArgb()
                         }
                     } else if (ThemeUtil.isNightMode(theme)) {
-                        context.getColorCompat(R.color.theme_color_new_primary_night)
+                        // 深色预设优先使用提亮后的种子色，回退到夜间固定值
+                        val resId = resources.getIdentifier(
+                            "theme_color_new_primary_$theme",
+                            "color",
+                            packageName
+                        )
+                        if (resId != 0) {
+                            context.getColorCompat(resId)
+                        } else {
+                            context.getColorCompat(R.color.theme_color_new_primary_night)
+                        }
                     } else if (theme == ThemeUtil.THEME_DEFAULT) {
                         context.getColorCompat(
                             R.color.theme_color_new_primary_light
@@ -399,7 +425,7 @@ class App : Application(), SketchFactory {
                         if (isPrimaryColor) {
                             getColorByAttr(context, R.attr.colorPrimary, theme)
                         } else {
-                            context.getColorCompat(R.color.white)
+                            context.getColorCompat(R.color.theme_color_toolbar_light)
                         }
                     }
                 }

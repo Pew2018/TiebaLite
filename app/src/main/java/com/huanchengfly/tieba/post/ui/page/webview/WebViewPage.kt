@@ -71,6 +71,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.WebView
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberMenuState
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberSaveableWebViewState
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberWebViewNavigator
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.DialogUtil
 import com.huanchengfly.tieba.post.utils.PermissionUtils
@@ -164,6 +165,10 @@ fun WebViewPage(
     val animatedProgress by animateFloatAsState(targetValue = progress, label = "progress")
 
     MyScaffold(
+        modifier = Modifier
+            // 预测返回：保持既有产品语义——返回即离开 WebView 页
+            // （工具栏返回按钮、系统返回、边缘手势行为一致）
+            .predictiveBack { navigator.navigateUp() },
         topBar = {
             Toolbar(
                 title = {

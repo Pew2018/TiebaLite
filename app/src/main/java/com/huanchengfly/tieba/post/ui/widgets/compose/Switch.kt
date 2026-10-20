@@ -27,6 +27,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -191,11 +192,11 @@ object SwitchDefaults {
      */
     @Composable
     fun colors(
-        checkedThumbColor: Color = MaterialTheme.colors.onSecondary,
-        checkedTrackColor: Color = MaterialTheme.colors.secondary,
+        checkedThumbColor: Color = Color.White,
+        checkedTrackColor: Color = ExtendedTheme.colors.switchOn,
         checkedTrackAlpha: Float = 1f,
-        uncheckedThumbColor: Color = MaterialTheme.colors.onBackground,
-        uncheckedTrackColor: Color = MaterialTheme.colors.onBackground,
+        uncheckedThumbColor: Color = Color.White,
+        uncheckedTrackColor: Color = ExtendedTheme.colors.switchOff,
         uncheckedTrackAlpha: Float = 1f,
         disabledCheckedThumbColor: Color = checkedThumbColor
             .copy(alpha = ContentAlpha.disabled)

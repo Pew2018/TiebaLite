@@ -21,6 +21,7 @@ import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -88,6 +89,7 @@ import com.huanchengfly.tieba.post.ui.utils.isSeparating
 import com.huanchengfly.tieba.post.ui.widgets.compose.AlertDialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.Avatar
 import com.huanchengfly.tieba.post.ui.widgets.compose.AvatarIcon
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.Dialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.DialogNegativeButton
 import com.huanchengfly.tieba.post.ui.widgets.compose.DialogPositiveButton
@@ -492,11 +494,30 @@ class MainActivityV2 : BaseComposeActivity() {
                         sheetBackgroundColor = ExtendedTheme.colors.windowBackground,
                         scrimColor = Color.Black.copy(alpha = 0.32f),
                     ) {
-                        DestinationsNavHost(
-                            navController = navController,
-                            navGraph = NavGraphs.root,
-                            engine = engine,
-                        )
+                        val canPop by remember {
+                            derivedStateOf {
+                                navController.backQueue.size > 1
+                            }
+                        }
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .predictiveBack(
+                                    enabled = canPop,
+                                    onBack = {
+                                        if (!navController.popBackStack()) {
+                                            // 根页面不吞掉返回事件，交由系统处理
+                                            onBackPressed()
+                                        }
+                                    },
+                                )
+                        ) {
+                            DestinationsNavHost(
+                                navController = navController,
+                                navGraph = NavGraphs.root,
+                                engine = engine,
+                            )
+                        }
                     }
                 }
 

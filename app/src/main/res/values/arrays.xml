@@ -2,39 +2,97 @@
 <resources>
 
     <string-array name="theme_values">
-        <item>tieba</item>
-        <item>blue</item>
-        <item>black</item>
-        <item>pink</item>
-        <item>red</item>
-        <item>purple</item>
-        <item>blue_dark</item>
-        <item>grey_dark</item>
-        <item>amoled_dark</item>
+        <item>oxygen_blue</item>
+        <item>oxygen_golden</item>
+        <item>oxygen_lemon_yellow</item>
+        <item>oxygen_grass_green</item>
+        <item>oxygen_charm_purple</item>
+        <item>oxygen_sky_blue</item>
+        <item>oxygen_vigour_red</item>
+        <item>oxygen_fashion_pink</item>
+        <item>material_blue</item>
+        <item>material_teal</item>
+        <item>material_green</item>
+        <item>material_red</item>
+        <item>material_orange</item>
+        <item>material_purple</item>
+        <item>material_cyan</item>
+        <item>material_indigo</item>
+        <item>material_pink</item>
+        <item>material_blue_grey</item>
+        <item>material_deep_orange</item>
+        <item>material_light_green</item>
     </string-array>
 
     <string-array name="themeNames">
-        <item>深海蓝</item>
-        <item>清新蓝</item>
-        <item>高级黑</item>
-        <item>少女粉</item>
-        <item>新年红</item>
-        <item>星空紫</item>
-        <item>静谧蓝</item>
-        <item>深邃灰</item>
-        <item>纯黑</item>
-    </string-array>
-
-    <string-array name="dark_theme_names">
-        <item>静谧蓝</item>
-        <item>深邃灰</item>
-        <item>纯黑</item>
+        <item>氧气蓝</item>
+        <item>流金橙</item>
+        <item>柠檬黄</item>
+        <item>青草绿</item>
+        <item>魅力紫</item>
+        <item>天空蓝</item>
+        <item>活力红</item>
+        <item>时尚粉</item>
+        <item>M 蓝</item>
+        <item>M 青绿</item>
+        <item>M 绿</item>
+        <item>M 红</item>
+        <item>M 橙</item>
+        <item>M 紫</item>
+        <item>M 青</item>
+        <item>M 靛蓝</item>
+        <item>M 粉</item>
+        <item>M 蓝灰</item>
+        <item>M 深橙</item>
+        <item>M 浅绿</item>
     </string-array>
 
     <string-array name="dark_theme_values">
-        <item>blue_dark</item>
-        <item>grey_dark</item>
+        <item>oxygen_blue_dark</item>
+        <item>oxygen_golden_dark</item>
+        <item>oxygen_lemon_yellow_dark</item>
+        <item>oxygen_grass_green_dark</item>
+        <item>oxygen_charm_purple_dark</item>
+        <item>oxygen_sky_blue_dark</item>
+        <item>oxygen_vigour_red_dark</item>
+        <item>oxygen_fashion_pink_dark</item>
+        <item>material_blue_dark</item>
+        <item>material_teal_dark</item>
+        <item>material_green_dark</item>
+        <item>material_red_dark</item>
+        <item>material_orange_dark</item>
+        <item>material_purple_dark</item>
+        <item>material_cyan_dark</item>
+        <item>material_indigo_dark</item>
+        <item>material_pink_dark</item>
+        <item>material_blue_grey_dark</item>
+        <item>material_deep_orange_dark</item>
+        <item>material_light_green_dark</item>
         <item>amoled_dark</item>
+    </string-array>
+
+    <string-array name="dark_theme_names">
+        <item>氧气蓝</item>
+        <item>流金橙</item>
+        <item>柠檬黄</item>
+        <item>青草绿</item>
+        <item>魅力紫</item>
+        <item>天空蓝</item>
+        <item>活力红</item>
+        <item>时尚粉</item>
+        <item>M 蓝</item>
+        <item>M 青绿</item>
+        <item>M 绿</item>
+        <item>M 红</item>
+        <item>M 橙</item>
+        <item>M 紫</item>
+        <item>M 青</item>
+        <item>M 靛蓝</item>
+        <item>M 粉</item>
+        <item>M 蓝灰</item>
+        <item>M 深橙</item>
+        <item>M 浅绿</item>
+        <item>纯黑</item>
     </string-array>
 
 </resources>

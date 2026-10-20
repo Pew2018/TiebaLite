@@ -107,6 +107,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.DialogState
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyBackHandler
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.edittext.widget.UndoableEditText
 import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.Emoticon
@@ -432,7 +433,11 @@ internal fun ReplyPageContent(
     }
 
     Column(
-        modifier = parentModifier,
+        modifier = parentModifier
+            // 预测返回：先收起表情/图片面板或键盘，取消手势不丢输入与选择状态
+            .predictiveBack(enabled = curKeyboardType != NONE) {
+                switchToPanel(NONE)
+            },
         verticalArrangement = Arrangement.Bottom
     ) {
         Row(

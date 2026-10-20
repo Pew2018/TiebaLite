@@ -37,6 +37,7 @@ import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowHeightSizeClass
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowWidthSizeClass
 import com.huanchengfly.tieba.post.ui.page.ProvideNavigator
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.page.main.explore.ExplorePage
 import com.huanchengfly.tieba.post.ui.page.main.home.HomePage
 import com.huanchengfly.tieba.post.ui.page.main.notifications.NotificationsPage
@@ -254,7 +255,14 @@ fun MainPage(
         ) {
             MyScaffold(
                 backgroundColor = Color.Transparent,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    // 预测返回：非首页页签先回首页页签（与下方 BackHandler 同一动作）
+                    .predictiveBack(enabled = pagerState.currentPage != 0) {
+                        coroutineScope.launch {
+                            pagerState.scrollToPage(0)
+                        }
+                    },
                 bottomBar = {
                     AnimatedVisibility(visible = navigationType == MainNavigationType.BOTTOM_NAVIGATION) {
                         BottomNavigation(

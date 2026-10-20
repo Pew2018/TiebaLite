@@ -87,6 +87,27 @@ fun CustomSettingsPage(
                 .fillMaxSize(),
         ) {
             prefsItem {
+                val predictiveBackSupported =
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+                SwitchPref(
+                    key = "predictive_back",
+                    title = stringResource(id = R.string.title_settings_predictive_back),
+                    defaultChecked = true,
+                    enabled = predictiveBackSupported,
+                    summaryOn = stringResource(id = if (predictiveBackSupported) R.string.summary_settings_predictive_back_on else R.string.summary_settings_predictive_back_unsupported),
+                    summaryOff = stringResource(id = if (predictiveBackSupported) R.string.summary_settings_predictive_back_off else R.string.summary_settings_predictive_back_unsupported),
+                    leadingIcon = {
+                        LeadingIcon {
+                            AvatarIcon(
+                                icon = ImageVector.vectorResource(id = R.drawable.ic_round_arrow_back),
+                                size = Sizes.Small,
+                                contentDescription = null,
+                            )
+                        }
+                    },
+                )
+            }
+            prefsItem {
                 TextPref(
                     title = stringResource(id = R.string.title_custom_font_size),
                     leadingIcon = {

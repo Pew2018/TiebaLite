@@ -55,6 +55,11 @@ data class ExtendedColors(
     val indicator: Color = Color.Unspecified,
     val windowBackground: Color = Color.Unspecified,
     val placeholder: Color = Color.Unspecified,
+    val statusBar: Color = Color.Unspecified,
+    val switchOn: Color = Color.Unspecified,
+    val switchOff: Color = Color.Unspecified,
+    val fab: Color = Color.Unspecified,
+    val selected: Color = Color.Unspecified,
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
@@ -238,6 +243,11 @@ private fun getLightDynamicColor(tonalPalette: TonalPalette): ExtendedColors {
         indicator = tonalPalette.neutralVariant95,
         windowBackground = tonalPalette.neutralVariant99,
         placeholder = tonalPalette.neutralVariant100,
+        statusBar = tonalPalette.neutralVariant95,
+        switchOn = tonalPalette.secondary40,
+        switchOff = if (false) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
+        fab = tonalPalette.secondary40,
+        selected = tonalPalette.secondary40,
     )
 }
 
@@ -273,6 +283,11 @@ private fun getDarkDynamicColor(tonalPalette: TonalPalette): ExtendedColors {
         indicator = tonalPalette.neutralVariant10,
         windowBackground = tonalPalette.neutralVariant10,
         placeholder = tonalPalette.neutralVariant50,
+        statusBar = tonalPalette.neutralVariant0,
+        switchOn = tonalPalette.secondary80,
+        switchOff = if (true) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
+        fab = tonalPalette.secondary80,
+        selected = tonalPalette.secondary80,
     )
 }
 
@@ -308,6 +323,11 @@ private fun getBlackDarkDynamicColor(tonalPalette: TonalPalette): ExtendedColors
         indicator = tonalPalette.neutralVariant10,
         windowBackground = tonalPalette.neutralVariant0,
         placeholder = tonalPalette.neutralVariant50,
+        statusBar = tonalPalette.neutralVariant0,
+        switchOn = tonalPalette.secondary80,
+        switchOff = if (true) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
+        fab = tonalPalette.secondary80,
+        selected = tonalPalette.secondary80,
     )
 }
 
@@ -442,6 +462,36 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
             App.ThemeDelegate.getColorByAttr(
                 context,
                 R.attr.colorPlaceholder,
+                nowTheme
+            )
+        ),
+        // OxygenOS 派生语义角色：状态栏比工具栏略深，控件色由强调色派生
+        statusBar = Color(
+            App.ThemeDelegate.getColorByAttr(
+                context,
+                R.attr.colorToolbar,
+                nowTheme
+            )
+        ).darken(0.08f),
+        switchOn = Color(
+            App.ThemeDelegate.getColorByAttr(
+                context,
+                R.attr.colorAccent,
+                nowTheme
+            )
+        ),
+        switchOff = if (ThemeUtil.isNightMode(nowTheme)) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
+        fab = Color(
+            App.ThemeDelegate.getColorByAttr(
+                context,
+                R.attr.colorAccent,
+                nowTheme
+            )
+        ),
+        selected = Color(
+            App.ThemeDelegate.getColorByAttr(
+                context,
+                R.attr.colorIndicator,
                 nowTheme
             )
         ),
