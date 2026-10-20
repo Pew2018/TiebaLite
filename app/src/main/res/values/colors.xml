@@ -1568,4 +1568,8 @@
     <color name="theme_color_shadow_material_light_green_dark">#00000000</color>
     <color name="theme_color_indicator_material_light_green_dark">@color/preset_material_light_green_dark</color>
     <color name="theme_color_placeholder_material_light_green_dark">@color/oxygen_dark_placeholder</color>
+    <color name="oxygen_blue">#FF42A5F5</color>
+    <!-- 深色基座默认强调色（#42A5F5 提亮 34%） -->
+    <color name="oxygen_blue_dark">#FF82C4F8</color>
+    <color name="oxygen_blue_dark_on">#FF212121</color>
 </resources>
