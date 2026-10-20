@@ -493,9 +493,14 @@ class MainActivityV2 : BaseComposeActivity() {
                         sheetBackgroundColor = ExtendedTheme.colors.windowBackground,
                         scrimColor = Color.Black.copy(alpha = 0.32f),
                     ) {
-                        // 返回/预测返回由 Navigation 组件统一处理：
-                        // NavHost 自身消费返回栈弹出（含 Android 14+ 的系统预测返回预览），
-                        // 需要先消费局部状态的页面在各自页面内注册 handler。
+                        // 返回由 Navigation 的 NavHost 消费返回栈弹出（普通返回）；
+                        // Android 14+ 的应用内预测返回由两类 handler 承担：
+                        // 1) 页面级 PredictiveBackHandler（MainPage/SearchPage/ThreadPage/
+                        //    ReplyPage/SubPostsPage/WebViewPage）——先消费局部状态，
+                        //    MainPage 的手势以真实首页为连续目标；
+                        // 2) 其余导航路径（吧页/用户页/设置子页等）使用普通返回，
+                        //    由系统提供返回桌面动画；应用内无自定义预览
+                        //    （依赖升级受阻原因见 sweet-dependency-config.yaml 注释）。
                         // 根页面没有应用内返回动作时，系统正常接管（不再吞事件）。
                         DestinationsNavHost(
                             navController = navController,

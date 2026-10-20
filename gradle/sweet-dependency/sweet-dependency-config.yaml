@@ -164,17 +164,27 @@ libraries:
     media3-ui:
       alias: androidx-media3-ui
       version-ref: androidx-media3-exoplayer
+  # 预测返回依赖升级验证结论（2026-10-21，审计 P1-4）：
+  # - Compose Destinations ≥1.11 的产物使用 Kotlin 2.1 元数据编译
+  #   （animations-core-1.11.9 的 kotlin_module 二进制版本 2.1.0），
+  #   本项目 Kotlin 1.9.22 + KSP 1.9.22-1.0.17 无法读取，直接失败：
+  #   "Module was compiled with an incompatible version of Kotlin.
+  #    The binary version of its metadata is 2.1.0, expected version is 1.9.0."
+  # - 采用该版本需要先整体迁移 Kotlin 2.1 + KSP 2.1 + Compose Compiler Gradle 插件，
+  #   属于工具链迁移而非单点升级，风险超出本轮 UI 修复范围，故维持 1.10.x/2.7.x。
+  # - 预测返回改用替代实现：页面级 PredictiveBackHandler（局部状态优先）+
+  #   MainPage 连续滚动预览（真实首页为目标），详见 docs/oxygenos-ui/return-matrix.md。
   io.github.raamcosta.compose-destinations:
     animations-core:
       alias: compose-destinations-core
-      version: 1.11.9
+      version: 1.10.2
     ksp:
       alias: compose-destinations-ksp
       version-ref: compose-destinations-core
   androidx.navigation:
     navigation-compose:
       alias: androidx-navigation-compose
-      version: 2.8.6
+      version: 2.7.6
   com.google.dagger:
     hilt-android:
       alias: hilt-android

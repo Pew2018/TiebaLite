@@ -55,8 +55,11 @@ fun isPredictiveBackEnabled(): Boolean {
  * - 手势取消后在不受取消影响的作用域中可靠复位，零业务副作用；
  * - 手势完成后执行 [onBack]（与普通返回完全相同的动作）。
  *
- * 导航栈级别的返回预览由 Navigation 组件负责（依赖版本见 sweet-dependency 配置）；
- * 本 Modifier 只用于需要先消费局部状态的页面（页签、搜索词、底部面板等）。
+ * 覆盖范围说明：本 Modifier 只用于需要先消费局部状态的页面
+ * （页签、搜索词、底部面板、网页历史）。其余导航路径的返回由 NavHost 普通返回处理；
+ * 导航级（返回栈）预测预览需要 Navigation 2.8 + Destinations 1.11（Kotlin 2.1 元数据），
+ * 与本项目 Kotlin 1.9.22 工具链不兼容，已验证并记录于
+ * gradle/sweet-dependency/sweet-dependency-config.yaml 注释。
  */
 @Composable
 fun Modifier.predictiveBack(
