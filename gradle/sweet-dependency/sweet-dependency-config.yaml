@@ -242,7 +242,7 @@ libraries:
   com.google.android.material:
     material:
       alias: google-material
-      version: 1.11.9
+      version: 1.11.0
   androidx.constraintlayout:
     constraintlayout-compose:
       alias: androidx-constraintlayout-compose
