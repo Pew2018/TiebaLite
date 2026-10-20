@@ -64,9 +64,9 @@ def lighten(rgb, amount):
 def style_name(preset_id):
     parts = preset_id.split("_", 1)
     if parts[0] == "oxygen":
-        rest = "".join(p.capitalize() for p in parts[1].split("_"))
+        rest = ".".join(w.capitalize() for w in parts[1].split("_"))
         return "TiebaLite.Preset.Oxygen." + rest
-    rest = "".join(p.capitalize() for p in parts[1].split("_"))
+    rest = ".".join(w.capitalize() for w in parts[1].split("_"))
     return "TiebaLite.Preset.Material." + rest
 
 

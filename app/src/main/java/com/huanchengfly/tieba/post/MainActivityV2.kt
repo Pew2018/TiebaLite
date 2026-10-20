@@ -496,7 +496,8 @@ class MainActivityV2 : BaseComposeActivity() {
                     ) {
                         val canPop by remember {
                             derivedStateOf {
-                                navController.backQueue.size > 1
+                                navController.currentBackStackEntry != null &&
+                                        navController.previousBackStackEntry != null
                             }
                         }
                         Box(

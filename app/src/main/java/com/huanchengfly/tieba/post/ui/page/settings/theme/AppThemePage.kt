@@ -470,9 +470,7 @@ fun AppThemePage(
                 }
                 // 20 个预设：氧气风格 / Material 风格两列分组，数据源为 ThemePresets
                 ThemeGroup.entries.forEach { group ->
-                    val groupPresets = remember(group) {
-                        ThemePresets.presets.filter { it.group == group }
-                    }
+                    val groupPresets = ThemePresets.presets.filter { it.group == group }
                     item(key = "header_${group.name}") {
                         Text(
                             text = stringResource(id = group.titleRes),
