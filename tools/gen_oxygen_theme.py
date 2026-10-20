@@ -122,10 +122,10 @@ for pid, name, seed in PRESETS:
     dark_tint = lighten(seed_rgb, 0.34)
     on_dark = rgb_to_hex(DARK_TEXT) if contrast(dark_tint, DARK_TEXT) >= contrast(dark_tint, WHITE) else rgb_to_hex(WHITE)
     preset_meta.append((pid, name, seed, on_light, dark_tint, on_dark))
-    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid), "FF" + seed.lstrip("#").upper()))
-    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid, "_on"), "FF" + on_light.lstrip("#").upper()))
-    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid, "_dark"), "FF" + rgb_to_hex(dark_tint).lstrip("#").upper()))
-    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid, "_dark_on"), "FF" + on_dark.lstrip("#").upper()))
+    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid), "#FF" + seed.lstrip("#").upper()))
+    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid, "_on"), "#FF" + on_light.lstrip("#").upper()))
+    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid, "_dark"), "#FF" + rgb_to_hex(dark_tint).lstrip("#").upper()))
+    color_lines.append('    <color name="%s">%s</color>' % (color_res(pid, "_dark_on"), "#FF" + on_dark.lstrip("#").upper()))
 
 # ---------- styles.xml ----------
 style_lines = []
