@@ -93,4 +93,4 @@ jobs:
         # 会导致整个 job 在 setup 阶段失败。改为提示步骤，不阻断产物上传；
         # 需要符号上传时可在 runner 内安装 AppCenter CLI 后重新启用。
         if: ${{ github.event_name != 'pull_request' || github.ref_type == 'tag' }}
-        run: echo "App Center mapping upload skipped: third-party action unavailable"
+        run: echo "App Center mapping upload skipped - third-party action unavailable"
