@@ -77,9 +77,17 @@ lines = ["\n    <!-- ===== OxygenOS 预设：theme_color_*_<preset> 命名资源
 for pid in IDS:
     lines.append("\n    <!-- %s -->" % pid)
     for attr, ref in LIGHT_ATTRS:
-        lines.append('    <color name="theme_color_%s_%s">@color/%s</color>' % (attr, pid, ref.format(id=pid)))
+        value = ref.format(id=pid)
+        if value.startswith("#"):
+            lines.append('    <color name="theme_color_%s_%s">%s</color>' % (attr, pid, value))
+        else:
+            lines.append('    <color name="theme_color_%s_%s">@color/%s</color>' % (attr, pid, value))
     for attr, ref in DARK_ATTRS:
-        lines.append('    <color name="theme_color_%s_%s_dark">@color/%s</color>' % (attr, pid, ref.format(id=pid)))
+        value = ref.format(id=pid)
+        if value.startswith("#"):
+            lines.append('    <color name="theme_color_%s_%s_dark">%s</color>' % (attr, pid, value))
+        else:
+            lines.append('    <color name="theme_color_%s_%s_dark">@color/%s</color>' % (attr, pid, value))
 
 with open("tools/gen_theme_colors_block.xml", "w", encoding="utf-8") as f:
     f.write("\n".join(lines) + "\n")

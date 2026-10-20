@@ -418,7 +418,7 @@
     <color name="theme_color_toolbar_oxygen_blue">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_blue">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_blue">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_blue">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_blue">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_blue">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_blue">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_blue">@color/oxygen_nav_bar</color>
@@ -446,7 +446,7 @@
     <color name="theme_color_toolbar_oxygen_blue_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_blue_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_blue_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_blue_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_blue_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_blue_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_blue_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_blue_dark">@color/oxygen_dark_nav_bar</color>
@@ -463,7 +463,7 @@
     <color name="theme_color_floor_card_oxygen_blue_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_blue_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_blue_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_blue_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_blue_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_blue_dark">@color/preset_oxygen_blue_dark</color>
     <color name="theme_color_placeholder_oxygen_blue_dark">@color/oxygen_dark_placeholder</color>
 
@@ -476,7 +476,7 @@
     <color name="theme_color_toolbar_oxygen_golden">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_golden">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_golden">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_golden">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_golden">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_golden">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_golden">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_golden">@color/oxygen_nav_bar</color>
@@ -504,7 +504,7 @@
     <color name="theme_color_toolbar_oxygen_golden_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_golden_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_golden_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_golden_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_golden_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_golden_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_golden_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_golden_dark">@color/oxygen_dark_nav_bar</color>
@@ -521,7 +521,7 @@
     <color name="theme_color_floor_card_oxygen_golden_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_golden_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_golden_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_golden_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_golden_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_golden_dark">@color/preset_oxygen_golden_dark</color>
     <color name="theme_color_placeholder_oxygen_golden_dark">@color/oxygen_dark_placeholder</color>
 
@@ -534,7 +534,7 @@
     <color name="theme_color_toolbar_oxygen_lemon_yellow">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_lemon_yellow">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_lemon_yellow">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_lemon_yellow">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_lemon_yellow">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_lemon_yellow">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_lemon_yellow">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_lemon_yellow">@color/oxygen_nav_bar</color>
@@ -562,7 +562,7 @@
     <color name="theme_color_toolbar_oxygen_lemon_yellow_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_lemon_yellow_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_lemon_yellow_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_lemon_yellow_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_lemon_yellow_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_lemon_yellow_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_lemon_yellow_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_lemon_yellow_dark">@color/oxygen_dark_nav_bar</color>
@@ -579,7 +579,7 @@
     <color name="theme_color_floor_card_oxygen_lemon_yellow_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_lemon_yellow_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_lemon_yellow_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_lemon_yellow_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_lemon_yellow_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_lemon_yellow_dark">@color/preset_oxygen_lemon_yellow_dark</color>
     <color name="theme_color_placeholder_oxygen_lemon_yellow_dark">@color/oxygen_dark_placeholder</color>
 
@@ -592,7 +592,7 @@
     <color name="theme_color_toolbar_oxygen_grass_green">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_grass_green">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_grass_green">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_grass_green">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_grass_green">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_grass_green">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_grass_green">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_grass_green">@color/oxygen_nav_bar</color>
@@ -620,7 +620,7 @@
     <color name="theme_color_toolbar_oxygen_grass_green_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_grass_green_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_grass_green_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_grass_green_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_grass_green_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_grass_green_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_grass_green_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_grass_green_dark">@color/oxygen_dark_nav_bar</color>
@@ -637,7 +637,7 @@
     <color name="theme_color_floor_card_oxygen_grass_green_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_grass_green_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_grass_green_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_grass_green_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_grass_green_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_grass_green_dark">@color/preset_oxygen_grass_green_dark</color>
     <color name="theme_color_placeholder_oxygen_grass_green_dark">@color/oxygen_dark_placeholder</color>
 
@@ -650,7 +650,7 @@
     <color name="theme_color_toolbar_oxygen_charm_purple">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_charm_purple">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_charm_purple">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_charm_purple">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_charm_purple">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_charm_purple">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_charm_purple">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_charm_purple">@color/oxygen_nav_bar</color>
@@ -678,7 +678,7 @@
     <color name="theme_color_toolbar_oxygen_charm_purple_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_charm_purple_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_charm_purple_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_charm_purple_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_charm_purple_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_charm_purple_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_charm_purple_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_charm_purple_dark">@color/oxygen_dark_nav_bar</color>
@@ -695,7 +695,7 @@
     <color name="theme_color_floor_card_oxygen_charm_purple_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_charm_purple_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_charm_purple_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_charm_purple_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_charm_purple_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_charm_purple_dark">@color/preset_oxygen_charm_purple_dark</color>
     <color name="theme_color_placeholder_oxygen_charm_purple_dark">@color/oxygen_dark_placeholder</color>
 
@@ -708,7 +708,7 @@
     <color name="theme_color_toolbar_oxygen_sky_blue">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_sky_blue">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_sky_blue">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_sky_blue">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_sky_blue">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_sky_blue">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_sky_blue">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_sky_blue">@color/oxygen_nav_bar</color>
@@ -736,7 +736,7 @@
     <color name="theme_color_toolbar_oxygen_sky_blue_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_sky_blue_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_sky_blue_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_sky_blue_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_sky_blue_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_sky_blue_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_sky_blue_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_sky_blue_dark">@color/oxygen_dark_nav_bar</color>
@@ -753,7 +753,7 @@
     <color name="theme_color_floor_card_oxygen_sky_blue_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_sky_blue_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_sky_blue_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_sky_blue_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_sky_blue_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_sky_blue_dark">@color/preset_oxygen_sky_blue_dark</color>
     <color name="theme_color_placeholder_oxygen_sky_blue_dark">@color/oxygen_dark_placeholder</color>
 
@@ -766,7 +766,7 @@
     <color name="theme_color_toolbar_oxygen_vigour_red">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_vigour_red">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_vigour_red">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_vigour_red">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_vigour_red">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_vigour_red">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_vigour_red">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_vigour_red">@color/oxygen_nav_bar</color>
@@ -794,7 +794,7 @@
     <color name="theme_color_toolbar_oxygen_vigour_red_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_vigour_red_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_vigour_red_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_vigour_red_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_vigour_red_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_vigour_red_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_vigour_red_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_vigour_red_dark">@color/oxygen_dark_nav_bar</color>
@@ -811,7 +811,7 @@
     <color name="theme_color_floor_card_oxygen_vigour_red_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_vigour_red_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_vigour_red_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_vigour_red_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_vigour_red_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_vigour_red_dark">@color/preset_oxygen_vigour_red_dark</color>
     <color name="theme_color_placeholder_oxygen_vigour_red_dark">@color/oxygen_dark_placeholder</color>
 
@@ -824,7 +824,7 @@
     <color name="theme_color_toolbar_oxygen_fashion_pink">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_fashion_pink">@color/white</color>
     <color name="theme_color_toolbar_item_active_oxygen_fashion_pink">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_fashion_pink">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_fashion_pink">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_oxygen_fashion_pink">@color/white</color>
     <color name="theme_color_on_toolbar_surface_oxygen_fashion_pink">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_oxygen_fashion_pink">@color/oxygen_nav_bar</color>
@@ -852,7 +852,7 @@
     <color name="theme_color_toolbar_oxygen_fashion_pink_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_oxygen_fashion_pink_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_oxygen_fashion_pink_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_oxygen_fashion_pink_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_fashion_pink_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_oxygen_fashion_pink_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_oxygen_fashion_pink_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_oxygen_fashion_pink_dark">@color/oxygen_dark_nav_bar</color>
@@ -869,7 +869,7 @@
     <color name="theme_color_floor_card_oxygen_fashion_pink_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_oxygen_fashion_pink_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_oxygen_fashion_pink_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_oxygen_fashion_pink_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_oxygen_fashion_pink_dark">#00000000</color>
     <color name="theme_color_indicator_oxygen_fashion_pink_dark">@color/preset_oxygen_fashion_pink_dark</color>
     <color name="theme_color_placeholder_oxygen_fashion_pink_dark">@color/oxygen_dark_placeholder</color>
 
@@ -882,7 +882,7 @@
     <color name="theme_color_toolbar_material_blue">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_blue">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_blue">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_blue">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_blue">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_blue">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_blue">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_blue">@color/oxygen_nav_bar</color>
@@ -910,7 +910,7 @@
     <color name="theme_color_toolbar_material_blue_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_blue_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_blue_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_blue_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_blue_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_blue_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_blue_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_blue_dark">@color/oxygen_dark_nav_bar</color>
@@ -927,7 +927,7 @@
     <color name="theme_color_floor_card_material_blue_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_blue_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_blue_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_blue_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_blue_dark">#00000000</color>
     <color name="theme_color_indicator_material_blue_dark">@color/preset_material_blue_dark</color>
     <color name="theme_color_placeholder_material_blue_dark">@color/oxygen_dark_placeholder</color>
 
@@ -940,7 +940,7 @@
     <color name="theme_color_toolbar_material_teal">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_teal">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_teal">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_teal">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_teal">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_teal">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_teal">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_teal">@color/oxygen_nav_bar</color>
@@ -968,7 +968,7 @@
     <color name="theme_color_toolbar_material_teal_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_teal_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_teal_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_teal_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_teal_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_teal_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_teal_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_teal_dark">@color/oxygen_dark_nav_bar</color>
@@ -985,7 +985,7 @@
     <color name="theme_color_floor_card_material_teal_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_teal_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_teal_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_teal_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_teal_dark">#00000000</color>
     <color name="theme_color_indicator_material_teal_dark">@color/preset_material_teal_dark</color>
     <color name="theme_color_placeholder_material_teal_dark">@color/oxygen_dark_placeholder</color>
 
@@ -998,7 +998,7 @@
     <color name="theme_color_toolbar_material_green">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_green">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_green">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_green">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_green">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_green">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_green">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_green">@color/oxygen_nav_bar</color>
@@ -1026,7 +1026,7 @@
     <color name="theme_color_toolbar_material_green_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_green_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_green_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_green_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_green_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_green_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_green_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_green_dark">@color/oxygen_dark_nav_bar</color>
@@ -1043,7 +1043,7 @@
     <color name="theme_color_floor_card_material_green_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_green_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_green_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_green_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_green_dark">#00000000</color>
     <color name="theme_color_indicator_material_green_dark">@color/preset_material_green_dark</color>
     <color name="theme_color_placeholder_material_green_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1056,7 +1056,7 @@
     <color name="theme_color_toolbar_material_red">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_red">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_red">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_red">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_red">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_red">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_red">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_red">@color/oxygen_nav_bar</color>
@@ -1084,7 +1084,7 @@
     <color name="theme_color_toolbar_material_red_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_red_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_red_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_red_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_red_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_red_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_red_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_red_dark">@color/oxygen_dark_nav_bar</color>
@@ -1101,7 +1101,7 @@
     <color name="theme_color_floor_card_material_red_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_red_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_red_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_red_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_red_dark">#00000000</color>
     <color name="theme_color_indicator_material_red_dark">@color/preset_material_red_dark</color>
     <color name="theme_color_placeholder_material_red_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1114,7 +1114,7 @@
     <color name="theme_color_toolbar_material_orange">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_orange">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_orange">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_orange">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_orange">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_orange">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_orange">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_orange">@color/oxygen_nav_bar</color>
@@ -1142,7 +1142,7 @@
     <color name="theme_color_toolbar_material_orange_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_orange_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_orange_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_orange_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_orange_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_orange_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_orange_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_orange_dark">@color/oxygen_dark_nav_bar</color>
@@ -1159,7 +1159,7 @@
     <color name="theme_color_floor_card_material_orange_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_orange_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_orange_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_orange_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_orange_dark">#00000000</color>
     <color name="theme_color_indicator_material_orange_dark">@color/preset_material_orange_dark</color>
     <color name="theme_color_placeholder_material_orange_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1172,7 +1172,7 @@
     <color name="theme_color_toolbar_material_purple">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_purple">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_purple">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_purple">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_purple">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_purple">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_purple">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_purple">@color/oxygen_nav_bar</color>
@@ -1200,7 +1200,7 @@
     <color name="theme_color_toolbar_material_purple_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_purple_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_purple_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_purple_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_purple_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_purple_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_purple_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_purple_dark">@color/oxygen_dark_nav_bar</color>
@@ -1217,7 +1217,7 @@
     <color name="theme_color_floor_card_material_purple_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_purple_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_purple_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_purple_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_purple_dark">#00000000</color>
     <color name="theme_color_indicator_material_purple_dark">@color/preset_material_purple_dark</color>
     <color name="theme_color_placeholder_material_purple_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1230,7 +1230,7 @@
     <color name="theme_color_toolbar_material_cyan">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_cyan">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_cyan">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_cyan">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_cyan">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_cyan">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_cyan">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_cyan">@color/oxygen_nav_bar</color>
@@ -1258,7 +1258,7 @@
     <color name="theme_color_toolbar_material_cyan_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_cyan_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_cyan_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_cyan_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_cyan_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_cyan_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_cyan_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_cyan_dark">@color/oxygen_dark_nav_bar</color>
@@ -1275,7 +1275,7 @@
     <color name="theme_color_floor_card_material_cyan_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_cyan_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_cyan_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_cyan_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_cyan_dark">#00000000</color>
     <color name="theme_color_indicator_material_cyan_dark">@color/preset_material_cyan_dark</color>
     <color name="theme_color_placeholder_material_cyan_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1288,7 +1288,7 @@
     <color name="theme_color_toolbar_material_indigo">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_indigo">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_indigo">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_indigo">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_indigo">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_indigo">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_indigo">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_indigo">@color/oxygen_nav_bar</color>
@@ -1316,7 +1316,7 @@
     <color name="theme_color_toolbar_material_indigo_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_indigo_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_indigo_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_indigo_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_indigo_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_indigo_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_indigo_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_indigo_dark">@color/oxygen_dark_nav_bar</color>
@@ -1333,7 +1333,7 @@
     <color name="theme_color_floor_card_material_indigo_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_indigo_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_indigo_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_indigo_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_indigo_dark">#00000000</color>
     <color name="theme_color_indicator_material_indigo_dark">@color/preset_material_indigo_dark</color>
     <color name="theme_color_placeholder_material_indigo_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1346,7 +1346,7 @@
     <color name="theme_color_toolbar_material_pink">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_pink">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_pink">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_pink">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_pink">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_pink">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_pink">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_pink">@color/oxygen_nav_bar</color>
@@ -1374,7 +1374,7 @@
     <color name="theme_color_toolbar_material_pink_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_pink_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_pink_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_pink_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_pink_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_pink_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_pink_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_pink_dark">@color/oxygen_dark_nav_bar</color>
@@ -1391,7 +1391,7 @@
     <color name="theme_color_floor_card_material_pink_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_pink_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_pink_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_pink_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_pink_dark">#00000000</color>
     <color name="theme_color_indicator_material_pink_dark">@color/preset_material_pink_dark</color>
     <color name="theme_color_placeholder_material_pink_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1404,7 +1404,7 @@
     <color name="theme_color_toolbar_material_blue_grey">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_blue_grey">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_blue_grey">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_blue_grey">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_blue_grey">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_blue_grey">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_blue_grey">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_blue_grey">@color/oxygen_nav_bar</color>
@@ -1432,7 +1432,7 @@
     <color name="theme_color_toolbar_material_blue_grey_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_blue_grey_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_blue_grey_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_blue_grey_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_blue_grey_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_blue_grey_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_blue_grey_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_blue_grey_dark">@color/oxygen_dark_nav_bar</color>
@@ -1449,7 +1449,7 @@
     <color name="theme_color_floor_card_material_blue_grey_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_blue_grey_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_blue_grey_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_blue_grey_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_blue_grey_dark">#00000000</color>
     <color name="theme_color_indicator_material_blue_grey_dark">@color/preset_material_blue_grey_dark</color>
     <color name="theme_color_placeholder_material_blue_grey_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1462,7 +1462,7 @@
     <color name="theme_color_toolbar_material_deep_orange">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_deep_orange">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_deep_orange">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_deep_orange">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_deep_orange">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_deep_orange">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_deep_orange">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_deep_orange">@color/oxygen_nav_bar</color>
@@ -1490,7 +1490,7 @@
     <color name="theme_color_toolbar_material_deep_orange_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_deep_orange_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_deep_orange_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_deep_orange_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_deep_orange_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_deep_orange_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_deep_orange_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_deep_orange_dark">@color/oxygen_dark_nav_bar</color>
@@ -1507,7 +1507,7 @@
     <color name="theme_color_floor_card_material_deep_orange_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_deep_orange_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_deep_orange_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_deep_orange_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_deep_orange_dark">#00000000</color>
     <color name="theme_color_indicator_material_deep_orange_dark">@color/preset_material_deep_orange_dark</color>
     <color name="theme_color_placeholder_material_deep_orange_dark">@color/oxygen_dark_placeholder</color>
 
@@ -1520,7 +1520,7 @@
     <color name="theme_color_toolbar_material_light_green">@color/oxygen_toolbar</color>
     <color name="theme_color_toolbar_item_material_light_green">@color/white</color>
     <color name="theme_color_toolbar_item_active_material_light_green">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_light_green">@color/#B3FFFFFF</color>
+    <color name="theme_color_toolbar_item_secondary_material_light_green">#B3FFFFFF</color>
     <color name="theme_color_toolbar_surface_material_light_green">@color/white</color>
     <color name="theme_color_on_toolbar_surface_material_light_green">@color/oxygen_text_primary</color>
     <color name="theme_color_nav_material_light_green">@color/oxygen_nav_bar</color>
@@ -1548,7 +1548,7 @@
     <color name="theme_color_toolbar_material_light_green_dark">@color/oxygen_dark_toolbar</color>
     <color name="theme_color_toolbar_item_material_light_green_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_toolbar_item_active_material_light_green_dark">@color/white</color>
-    <color name="theme_color_toolbar_item_secondary_material_light_green_dark">@color/#99E6E7EE</color>
+    <color name="theme_color_toolbar_item_secondary_material_light_green_dark">#99E6E7EE</color>
     <color name="theme_color_toolbar_surface_material_light_green_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_on_toolbar_surface_material_light_green_dark">@color/oxygen_dark_text_primary</color>
     <color name="theme_color_nav_material_light_green_dark">@color/oxygen_dark_nav_bar</color>
@@ -1565,7 +1565,7 @@
     <color name="theme_color_floor_card_material_light_green_dark">@color/oxygen_dark_floor_card</color>
     <color name="theme_color_card_material_light_green_dark">@color/oxygen_dark_card</color>
     <color name="theme_color_divider_material_light_green_dark">@color/oxygen_dark_divider</color>
-    <color name="theme_color_shadow_material_light_green_dark">@color/#00000000</color>
+    <color name="theme_color_shadow_material_light_green_dark">#00000000</color>
     <color name="theme_color_indicator_material_light_green_dark">@color/preset_material_light_green_dark</color>
     <color name="theme_color_placeholder_material_light_green_dark">@color/oxygen_dark_placeholder</color>
 </resources>
