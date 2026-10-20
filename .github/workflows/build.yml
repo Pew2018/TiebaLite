@@ -19,7 +19,7 @@ jobs:
 
       - name: Decode Keystore
         id: decode_keystore
-        if: ${{ github.event_name != 'pull_request' || github.ref_type == 'tag' }}
+        if: ${{ (github.event_name != 'pull_request' || github.ref_type == 'tag') && vars.RELEASE_KEYSTORE != '' && secrets.KEYSTORE != '' }}
         uses: timheuer/base64-to-file@v1.2
         with:
           fileName: ${{ vars.RELEASE_KEYSTORE }}
@@ -27,7 +27,7 @@ jobs:
           encodedString: ${{ secrets.KEYSTORE }}
 
       - name: Generate keystore.properties
-        if: ${{ github.event_name != 'pull_request' || github.ref_type == 'tag' }}
+        if: ${{ (github.event_name != 'pull_request' || github.ref_type == 'tag') && vars.RELEASE_KEYSTORE != '' && secrets.KEYSTORE != '' }}
         run: |
           if [ -n "${{ secrets.RELEASEKEYPASSWORD }}" ]; then
             echo keystore.file="${{ vars.RELEASE_KEYSTORE }}" >> keystore.properties
@@ -89,7 +89,9 @@ jobs:
           fi
 
       - name: Upload Mapping to App Center
+        # 第三方 action 仓库已下线；符号上传失败不影响构建产物，置为继续执行
         if: ${{ github.event_name != 'pull_request' || github.ref_type == 'tag' }}
+        continue-on-error: true
         env:
           version_code: ${{ fromJSON(steps.read_output_metadata.outputs.content).elements[0].versionCode }}
           version_name: ${{ fromJSON(steps.read_output_metadata.outputs.content).elements[0].versionName }}
