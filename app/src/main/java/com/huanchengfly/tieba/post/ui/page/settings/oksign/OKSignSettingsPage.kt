@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.OfflinePin
 import androidx.compose.material.icons.outlined.Speed
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -35,6 +36,8 @@ import com.huanchengfly.tieba.post.ui.common.prefs.widgets.SwitchPref
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.TextPref
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.TimePickerPerf
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.LocalPageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.PageRole
 import com.huanchengfly.tieba.post.ui.page.settings.LeadingIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.AvatarIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.BackNavigationIcon
@@ -55,6 +58,9 @@ import kotlinx.coroutines.launch
 fun OKSignSettingsPage(
     navigator: DestinationsNavigator,
 ) {
+    // 设置类页面角色：顶栏/状态栏使用 OxygenOS 深灰
+    CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
+
     val coroutineScope = rememberCoroutineScope()
     MyScaffold(
         backgroundColor = Color.Transparent,
@@ -203,5 +209,7 @@ fun OKSignSettingsPage(
                 )
             }
         }
+    }
+
     }
 }

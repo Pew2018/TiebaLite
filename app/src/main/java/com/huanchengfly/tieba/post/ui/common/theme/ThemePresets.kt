@@ -36,7 +36,7 @@ object ThemePresets {
 
     val presets: List<ThemePreset> = listOf(
         // 氧气风格列
-        ThemePreset("oxygen_blue", "氧气蓝", ThemeGroup.OXYGEN, Color.parseColor("#FF42A5F5"), Color.parseColor("#FF212121")),
+        ThemePreset("oxygen_blue", "晴空蓝", ThemeGroup.OXYGEN, Color.parseColor("#FF42A5F5"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_golden", "流金橙", ThemeGroup.OXYGEN, Color.parseColor("#FFCC6F4E"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_lemon_yellow", "柠檬黄", ThemeGroup.OXYGEN, Color.parseColor("#FFE6A545"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_grass_green", "青草绿", ThemeGroup.OXYGEN, Color.parseColor("#FF7DC22F"), Color.parseColor("#FF212121")),
@@ -45,18 +45,18 @@ object ThemePresets {
         ThemePreset("oxygen_vigour_red", "活力红", ThemeGroup.OXYGEN, Color.parseColor("#FFF06292"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_fashion_pink", "时尚粉", ThemeGroup.OXYGEN, Color.parseColor("#FFBA68C8"), Color.parseColor("#FF212121")),
         // Material 风格列（与氧气列的两个 Blue 为不同色值，均为独立选项）
-        ThemePreset("material_blue", "M 蓝", ThemeGroup.MATERIAL, Color.parseColor("#FF2196F3"), Color.parseColor("#FF212121")),
-        ThemePreset("material_teal", "M 青绿", ThemeGroup.MATERIAL, Color.parseColor("#FF009688"), Color.parseColor("#FF212121")),
-        ThemePreset("material_green", "M 绿", ThemeGroup.MATERIAL, Color.parseColor("#FF4CAF50"), Color.parseColor("#FF212121")),
-        ThemePreset("material_red", "M 红", ThemeGroup.MATERIAL, Color.parseColor("#FFF44336"), Color.parseColor("#FFFFFFFF")),
-        ThemePreset("material_orange", "M 橙", ThemeGroup.MATERIAL, Color.parseColor("#FFFF9800"), Color.parseColor("#FF212121")),
-        ThemePreset("material_purple", "M 紫", ThemeGroup.MATERIAL, Color.parseColor("#FF9C27B0"), Color.parseColor("#FFFFFFFF")),
-        ThemePreset("material_cyan", "M 青", ThemeGroup.MATERIAL, Color.parseColor("#FF00BCD4"), Color.parseColor("#FF212121")),
-        ThemePreset("material_indigo", "M 靛蓝", ThemeGroup.MATERIAL, Color.parseColor("#FF3F51B5"), Color.parseColor("#FFFFFFFF")),
-        ThemePreset("material_pink", "M 粉", ThemeGroup.MATERIAL, Color.parseColor("#FFE91E63"), Color.parseColor("#FFFFFFFF")),
-        ThemePreset("material_blue_grey", "M 蓝灰", ThemeGroup.MATERIAL, Color.parseColor("#FF607D8B"), Color.parseColor("#FFFFFFFF")),
-        ThemePreset("material_deep_orange", "M 深橙", ThemeGroup.MATERIAL, Color.parseColor("#FFFF5722"), Color.parseColor("#FF212121")),
-        ThemePreset("material_light_green", "M 浅绿", ThemeGroup.MATERIAL, Color.parseColor("#FF8BC34A"), Color.parseColor("#FF212121")),
+        ThemePreset("material_blue", "蓝", ThemeGroup.MATERIAL, Color.parseColor("#FF2196F3"), Color.parseColor("#FF212121")),
+        ThemePreset("material_teal", "青绿", ThemeGroup.MATERIAL, Color.parseColor("#FF009688"), Color.parseColor("#FF212121")),
+        ThemePreset("material_green", "绿", ThemeGroup.MATERIAL, Color.parseColor("#FF4CAF50"), Color.parseColor("#FF212121")),
+        ThemePreset("material_red", "红", ThemeGroup.MATERIAL, Color.parseColor("#FFF44336"), Color.parseColor("#FFFFFFFF")),
+        ThemePreset("material_orange", "橙", ThemeGroup.MATERIAL, Color.parseColor("#FFFF9800"), Color.parseColor("#FF212121")),
+        ThemePreset("material_purple", "紫", ThemeGroup.MATERIAL, Color.parseColor("#FF9C27B0"), Color.parseColor("#FFFFFFFF")),
+        ThemePreset("material_cyan", "青", ThemeGroup.MATERIAL, Color.parseColor("#FF00BCD4"), Color.parseColor("#FF212121")),
+        ThemePreset("material_indigo", "靛蓝", ThemeGroup.MATERIAL, Color.parseColor("#FF3F51B5"), Color.parseColor("#FFFFFFFF")),
+        ThemePreset("material_pink", "粉", ThemeGroup.MATERIAL, Color.parseColor("#FFE91E63"), Color.parseColor("#FFFFFFFF")),
+        ThemePreset("material_blue_grey", "蓝灰", ThemeGroup.MATERIAL, Color.parseColor("#FF607D8B"), Color.parseColor("#FFFFFFFF")),
+        ThemePreset("material_deep_orange", "深橙", ThemeGroup.MATERIAL, Color.parseColor("#FFFF5722"), Color.parseColor("#FF212121")),
+        ThemePreset("material_light_green", "浅绿", ThemeGroup.MATERIAL, Color.parseColor("#FF8BC34A"), Color.parseColor("#FF212121")),
     )
 
     val byId: Map<String, ThemePreset> = presets.associateBy { it.id }
@@ -67,9 +67,22 @@ object ThemePresets {
     /** 全部深色主题值 */
     val darkIds: List<String> = presets.map { it.darkId }
 
-    fun isPreset(theme: String?): Boolean = theme != null && byId.containsKey(theme)
+    /** 全部合法预设 ID（20 浅色 + 20 深色） */
+    val allIds: List<String> = lightIds + darkIds
 
-    fun isPresetDark(theme: String?): Boolean = theme != null && theme.endsWith("_dark") && byId.containsKey(theme.removeSuffix("_dark"))
+    /**
+     * 是否为合法预设 ID（浅色或深色）。
+     * 主题 ID 解析的唯一入口：Compose、View、系统栏与偏好层都必须得到同一结果。
+     */
+    fun isPreset(theme: String?): Boolean =
+        theme != null && (byId.containsKey(theme) || isPresetDark(theme))
+
+    /** 是否为浅色预设 ID */
+    fun isPresetLight(theme: String?): Boolean = theme != null && byId.containsKey(theme)
+
+    /** 是否为深色预设 ID */
+    fun isPresetDark(theme: String?): Boolean =
+        theme != null && theme.endsWith("_dark") && byId.containsKey(theme.removeSuffix("_dark"))
 
     fun presetOf(theme: String?): ThemePreset? = theme?.let { byId[it.removeSuffix("_dark")] }
 

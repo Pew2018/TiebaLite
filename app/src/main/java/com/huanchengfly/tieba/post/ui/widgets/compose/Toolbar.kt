@@ -54,13 +54,46 @@ import com.huanchengfly.tieba.post.arch.BaseComposeActivity.Companion.LocalWindo
 import com.huanchengfly.tieba.post.arch.GlobalEvent
 import com.huanchengfly.tieba.post.arch.emitGlobalEvent
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.LocalPageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.PageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ReportStatusBarSurface
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowWidthSizeClass.Companion.Compact
 import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.LoginPageDestination
 import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
 import com.huanchengfly.tieba.post.utils.StringUtil
-import com.huanchengfly.tieba.post.utils.compose.calcStatusBarColor
+
+/**
+ * 当前页面角色的顶栏配色：设置类页面固定 OxygenOS 深灰，
+ * 主功能页面使用主功能顶栏风格（默认经典一加应用蓝）。
+ */
+@Composable
+fun rememberRoleColors(): RoleColors {
+    val colors = ExtendedTheme.colors
+    return if (LocalPageRole.current == PageRole.SETTINGS) {
+        RoleColors(
+            topBar = colors.settingsTopBar,
+            statusBar = colors.settingsStatusBar,
+            onTopBar = colors.onSettingsTopBar,
+            onTopBarSecondary = colors.onSettingsTopBarSecondary,
+        )
+    } else {
+        RoleColors(
+            topBar = colors.topBar,
+            statusBar = colors.statusBar,
+            onTopBar = colors.onTopBar,
+            onTopBarSecondary = colors.onTopBarSecondary,
+        )
+    }
+}
+
+data class RoleColors(
+    val topBar: Color,
+    val statusBar: Color,
+    val onTopBar: Color,
+    val onTopBarSecondary: Color,
+)
 
 @Composable
 fun accountNavIconIfCompact(): (@Composable () -> Unit)? =
@@ -232,11 +265,12 @@ fun TitleCentredToolbar(
     actions: @Composable RowScope.() -> Unit = {},
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
+    val roleColors = rememberRoleColors()
     TopAppBarContainer(
         topBar = {
             TopAppBar(
-                backgroundColor = ExtendedTheme.colors.topBar,
-                contentColor = ExtendedTheme.colors.onTopBar,
+                backgroundColor = roleColors.topBar,
+                contentColor = roleColors.onTopBar,
                 elevation = 0.dp
             ) {
                 Box(modifier = Modifier.fillMaxSize()) {
@@ -245,7 +279,7 @@ fun TitleCentredToolbar(
                         verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier.fillMaxHeight()
                     ) {
-                        ProvideContentColor(color = ExtendedTheme.colors.onTopBar) {
+                        ProvideContentColor(color = roleColors.onTopBar) {
                             navigationIcon?.invoke()
 
                             Spacer(modifier = Modifier.weight(1f))
@@ -262,7 +296,7 @@ fun TitleCentredToolbar(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)) {
-                            ProvideContentColor(color = ExtendedTheme.colors.onTopBar) {
+                            ProvideContentColor(color = roleColors.onTopBar) {
                                 title()
                             }
                         }
@@ -302,26 +336,29 @@ fun Toolbar(
     contentColor: Color = ExtendedTheme.colors.onTopBar,
     content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
+    val roleColors = rememberRoleColors()
+    val resolvedBackground = backgroundColor.takeIf { it != ExtendedTheme.colors.topBar } ?: roleColors.topBar
+    val resolvedContent = contentColor.takeIf { it != ExtendedTheme.colors.onTopBar } ?: roleColors.onTopBar
     TopAppBarContainer(
         topBar = {
             TopAppBar(
                 title = {
                     ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)) {
-                        ProvideContentColor(color = contentColor, content = title)
+                        ProvideContentColor(color = resolvedContent, content = title)
                     }
                 },
                 actions = {
-                    ProvideContentColor(color = contentColor) {
+                    ProvideContentColor(color = resolvedContent) {
                         actions()
                     }
                 },
                 navigationIcon = (@Composable {
-                    ProvideContentColor(color = contentColor) {
+                    ProvideContentColor(color = resolvedContent) {
                         navigationIcon?.invoke()
                     }
                 }).takeIf { navigationIcon != null },
-                backgroundColor = backgroundColor,
-                contentColor = contentColor,
+                backgroundColor = resolvedBackground,
+                contentColor = resolvedContent,
                 elevation = 0.dp
             )
         },
@@ -344,11 +381,14 @@ fun TopAppBarContainer(
         Modifier
     }
     val coroutineScope = rememberCoroutineScope()
+    val roleColors = rememberRoleColors()
+    // 系统栏图标明暗由实际绘制在状态栏后方的表面决定
+    ReportStatusBarSurface(surface = roleColors.statusBar)
     Column(modifier) {
         Spacer(
             modifier = statusBarModifier
                 .fillMaxWidth()
-                .background(color = ExtendedTheme.colors.topBar.calcStatusBarColor())
+                .background(color = roleColors.statusBar)
         )
         Column(
             modifier = Modifier
@@ -368,7 +408,7 @@ fun TopAppBarContainer(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = ExtendedTheme.colors.topBar),
+                    .background(color = roleColors.topBar),
             ) {
                 content()
             }

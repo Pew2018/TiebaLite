@@ -36,6 +36,7 @@ import androidx.compose.material.Tab
 import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import androidx.compose.material.contentColorFor
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowDropDown
@@ -144,9 +145,7 @@ fun TabRow(
     contentColor: Color = contentColorFor(backgroundColor),
     indicator: @Composable @UiComposable
         (tabPositions: List<TabPosition>) -> Unit = @Composable { tabPositions ->
-        TabRowDefaults.Indicator(
-            Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
-        )
+        ClassicTabIndicator(Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]))
     },
     divider: @Composable @UiComposable () -> Unit =
         @Composable {
@@ -399,34 +398,48 @@ fun PagerTabIndicator(
     tabPositions: List<TabPosition>,
 ) {
     if (tabPositions.isNotEmpty()) {
-        val tabWidth = 16.dp
         val currentPage = minOf(tabPositions.lastIndex, pagerState.currentPage)
         val currentTab = tabPositions[currentPage]
         val prevTab = tabPositions.getOrNull(currentPage - 1)
         val nextTab = tabPositions.getOrNull(currentPage + 1)
         val fraction = pagerState.currentPageOffsetFraction
-        val currentTabLeft = currentTab.left + (currentTab.width / 2 - tabWidth / 2)
-        val indicatorOffset = if (fraction > 0 && nextTab != null) {
-            val nextTabLeft = nextTab.left + (nextTab.width / 2 - tabWidth / 2)
-            lerp(currentTabLeft, nextTabLeft, fraction)
-        } else if (fraction < 0 && prevTab != null) {
-            val prevTabLeft = prevTab.left + (prevTab.width / 2 - tabWidth / 2)
-            lerp(currentTabLeft, prevTabLeft, -fraction)
-        } else {
-            currentTabLeft
+        // 经典 2dp 细线：位置与宽度跟随 pager 滑动连续插值
+        val indicatorOffset = when {
+            fraction > 0 && nextTab != null -> lerp(currentTab.left, nextTab.left, fraction)
+            fraction < 0 && prevTab != null -> lerp(currentTab.left, prevTab.left, -fraction)
+            else -> currentTab.left
+        }
+        val indicatorWidth = when {
+            fraction > 0 && nextTab != null -> lerp(currentTab.width, nextTab.width, fraction)
+            fraction < 0 && prevTab != null -> lerp(currentTab.width, prevTab.width, -fraction)
+            else -> currentTab.width
         }
         val animatedIndicatorOffset by animateDpAsState(targetValue = indicatorOffset)
+        val animatedIndicatorWidth by animateDpAsState(targetValue = indicatorWidth)
         Box(
             Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.BottomStart)
-                .offset(x = animatedIndicatorOffset, y = (-8).dp)
-                .width(16.dp)
-                .height(3.dp)
-                .clip(RoundedCornerShape(100))
-                .background(color = LocalContentColor.current)
+                .offset(x = animatedIndicatorOffset)
+                .width(animatedIndicatorWidth)
+                .height(2.dp)
+                .background(color = ExtendedTheme.colors.progressColor)
         )
     }
+}
+
+/**
+ * 经典 Tab 选中指示线：约 2dp 细线、贯通整个 tab 格子、使用主题进度色。
+ * 对应 OxygenOS 7.1.1 / Material Design 1 的 Tabs 样式。
+ */
+@Composable
+private fun ClassicTabIndicator(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(2.dp)
+            .background(color = ExtendedTheme.colors.progressColor)
+    )
 }
 
 @Composable

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.DpSize
@@ -18,6 +19,9 @@ import androidx.core.view.WindowCompat
 import com.google.accompanist.systemuicontroller.SystemUiController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.huanchengfly.tieba.post.activities.BaseActivity
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ApplySystemBars
+import com.huanchengfly.tieba.post.ui.common.theme.compose.LocalSystemBarController
+import com.huanchengfly.tieba.post.ui.common.theme.compose.SystemBarController
 import com.huanchengfly.tieba.post.ui.common.theme.compose.TiebaLiteTheme
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowSizeClass
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.calculateWindowSizeClass
@@ -65,19 +69,23 @@ abstract class BaseComposeActivity : BaseActivity() {
         setContent {
             TiebaLiteTheme {
                 val systemUiController = rememberSystemUiController()
+                val systemBarController = remember { SystemBarController() }
+                // 默认：主功能顶栏为彩色/深色 → 浅色状态栏图标；导航栏跟随明暗主题
+                val isNight = ThemeUtil.isNightMode()
                 SideEffect {
-                    systemUiController.apply {
-                        setStatusBarColor(
-                            Color.Transparent,
-                            darkIcons = ThemeUtil.isStatusBarFontDark()
-                        )
-                        setNavigationBarColor(
-                            Color.Transparent,
-                            darkIcons = ThemeUtil.isNavigationBarFontDark(),
-                            navigationBarContrastEnforced = false
-                        )
-                    }
+                    systemBarController.setStatusBar(
+                        Color.Transparent,
+                        darkIcons = false
+                    )
+                    systemBarController.setNavigationBar(
+                        Color.Transparent,
+                        darkIcons = !isNight
+                    )
                 }
+                ApplySystemBars(
+                    controller = systemBarController,
+                    systemUiController = systemUiController
+                )
 
                 LaunchedEffect(key1 = "onCreateContent") {
                     onCreateContent(systemUiController)
@@ -85,7 +93,8 @@ abstract class BaseComposeActivity : BaseActivity() {
 
                 LocalAccountProvider {
                     CompositionLocalProvider(
-                        LocalWindowSizeClass provides calculateWindowSizeClass(activity = this)
+                        LocalWindowSizeClass provides calculateWindowSizeClass(activity = this),
+                        LocalSystemBarController provides systemBarController,
                     ) {
                         Content()
                     }

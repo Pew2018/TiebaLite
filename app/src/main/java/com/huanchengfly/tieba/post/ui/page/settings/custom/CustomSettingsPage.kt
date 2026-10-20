@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.FormatColorFill
 import androidx.compose.material.icons.outlined.Upcoming
 import androidx.compose.material.icons.outlined.ViewAgenda
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,6 +40,8 @@ import com.huanchengfly.tieba.post.activities.AppFontSizeActivity
 import com.huanchengfly.tieba.post.dataStore
 import com.huanchengfly.tieba.post.goToActivity
 import com.huanchengfly.tieba.post.rememberPreferenceAsState
+import com.huanchengfly.tieba.post.ui.common.theme.LocalPageRole
+import com.huanchengfly.tieba.post.ui.common.theme.PageRole
 import com.huanchengfly.tieba.post.ui.common.prefs.PrefsScreen
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.ListPref
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.SwitchPref
@@ -62,6 +65,9 @@ import kotlinx.collections.immutable.persistentListOf
 fun CustomSettingsPage(
     navigator: DestinationsNavigator
 ) {
+    // 设置类页面角色：顶栏/状态栏使用 OxygenOS 深灰
+    CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
+
     val context = LocalContext.current
     MyScaffold(
         backgroundColor = Color.Transparent,
@@ -340,5 +346,7 @@ fun CustomSettingsPage(
                 )
             }
         }
+    }
+
     }
 }

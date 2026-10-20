@@ -1,6 +1,7 @@
 package com.huanchengfly.tieba.post.ui.page.main
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
@@ -37,7 +38,7 @@ import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowHeightSizeClass
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowWidthSizeClass
 import com.huanchengfly.tieba.post.ui.page.ProvideNavigator
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
+import com.huanchengfly.tieba.post.ui.widgets.compose.isPredictiveBackEnabled
 import com.huanchengfly.tieba.post.ui.page.main.explore.ExplorePage
 import com.huanchengfly.tieba.post.ui.page.main.home.HomePage
 import com.huanchengfly.tieba.post.ui.page.main.notifications.NotificationsPage
@@ -53,7 +54,9 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 private fun NavigationWrapper(
@@ -255,14 +258,7 @@ fun MainPage(
         ) {
             MyScaffold(
                 backgroundColor = Color.Transparent,
-                modifier = Modifier
-                    .fillMaxSize()
-                    // 预测返回：非首页页签先回首页页签（与下方 BackHandler 同一动作）
-                    .predictiveBack(enabled = pagerState.currentPage != 0) {
-                        coroutineScope.launch {
-                            pagerState.scrollToPage(0)
-                        }
-                    },
+                modifier = Modifier.fillMaxSize(),
                 bottomBar = {
                     AnimatedVisibility(visible = navigationType == MainNavigationType.BOTTOM_NAVIGATION) {
                         BottomNavigation(
@@ -293,6 +289,39 @@ fun MainPage(
     BackHandler(enabled = pagerState.currentPage != 0) {
         coroutineScope.launch {
             pagerState.scrollToPage(0)
+        }
+    }
+    // 预测返回（Android 14+）：非首页页签返回时，首页即手势中的连续目标。
+    // 手势进度直接驱动 pager 向首页滚动（真实首页内容，非占位），
+    // 取消后原页签完整恢复（滚动位置与加载状态不变），完成后仅提交一次。
+    PredictiveBackHandler(
+        enabled = isPredictiveBackEnabled() && pagerState.currentPage != 0
+    ) { flow ->
+        val startPage = pagerState.currentPage
+        var applied = 0f
+        var pageWidth = 0
+        var committed = false
+        try {
+            flow.collect { event ->
+                if (pageWidth <= 0) {
+                    pageWidth = pagerState.layoutInfo.visibleItemsInfo.firstOrNull()?.size
+                        ?: pagerState.layoutInfo.viewportSize
+                }
+                if (pageWidth > 0 && startPage > 0) {
+                    val target = -event.progress * startPage * pageWidth
+                    val delta = target - applied
+                    if (delta != 0f) {
+                        pagerState.scrollBy(delta)
+                        applied += delta
+                    }
+                }
+            }
+            committed = true
+            pagerState.scrollToPage(0)
+        } finally {
+            withContext(NonCancellable) {
+                pagerState.scrollToPage(if (committed) 0 else startPage)
+            }
         }
     }
 }

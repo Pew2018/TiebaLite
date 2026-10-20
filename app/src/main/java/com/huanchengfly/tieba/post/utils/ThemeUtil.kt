@@ -46,20 +46,32 @@ object ThemeUtil {
     val themeState: MutableState<String> by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
         mutableStateOf(
             if (App.isInitialized) migrateLegacyTheme(
-                dataStore.getString(KEY_THEME, THEME_DEFAULT)
+                dataStore.getString(KEY_THEME, THEME_DEFAULT),
+                KEY_THEME
             )
             else THEME_DEFAULT
         )
     }
 
     /**
+     * 旧版主题值 -> 新预设的纯映射（无任何写入副作用）。
+     * 未知 ID 原样返回，由调用方决定稳定回退。
+     */
+    fun mapLegacyTheme(theme: String): String = LEGACY_THEME_MIGRATION[theme] ?: theme
+
+    /**
      * 旧版主题值 -> 新预设的一次性迁移。
      * 已安装升级用户存储的 tieba/blue/black/pink/red/purple/blue_dark/grey_dark 等值
      * 会被映射到最近的 OxygenOS 预设并写回，避免升级后主题失效或崩溃。
+     *
+     * 重要：迁移结果只写回来源 key（[key]），不得在读取 dark_theme/old_theme 时
+     * 改写活动主题（KEY_THEME）。
      */
-    fun migrateLegacyTheme(theme: String): String {
-        val mapped = LEGACY_THEME_MIGRATION[theme] ?: return theme
-        dataStore.putString(KEY_THEME, mapped)
+    fun migrateLegacyTheme(theme: String, key: String = KEY_THEME): String {
+        val mapped = mapLegacyTheme(theme)
+        if (mapped != theme) {
+            dataStore.putString(key, mapped)
+        }
         return mapped
     }
 
@@ -75,6 +87,73 @@ object ThemeUtil {
     const val KEY_CUSTOM_TOOLBAR_PRIMARY_COLOR = "custom_toolbar_primary_color"
     const val KEY_TRANSLUCENT_THEME_BACKGROUND_PATH = "translucent_theme_background_path"
     const val KEY_USE_DYNAMIC_COLOR_THEME = "useDynamicColorTheme"
+    const val KEY_MAIN_TOOLBAR_STYLE = "main_toolbar_style"
+
+    /** 主功能页面顶栏风格（设置类页面固定 OxygenOS 深灰，不随此偏好变化） */
+    const val MAIN_TOOLBAR_APP_BLUE = "app_blue"
+    const val MAIN_TOOLBAR_TEAL = "teal"
+    const val MAIN_TOOLBAR_PURPLE = "purple"
+    const val MAIN_TOOLBAR_NEUTRAL_DARK = "neutral_dark"
+    const val MAIN_TOOLBAR_FOLLOW_SEED = "follow_seed"
+
+    val MAIN_TOOLBAR_STYLES = listOf(
+        MAIN_TOOLBAR_APP_BLUE,
+        MAIN_TOOLBAR_TEAL,
+        MAIN_TOOLBAR_PURPLE,
+        MAIN_TOOLBAR_NEUTRAL_DARK,
+        MAIN_TOOLBAR_FOLLOW_SEED,
+    )
+
+    /** 当前主功能顶栏风格（持久化，默认经典一加应用蓝） */
+    fun mainToolbarStyle(): String = dataStore.getString(KEY_MAIN_TOOLBAR_STYLE, MAIN_TOOLBAR_APP_BLUE)
+
+    fun setMainToolbarStyle(style: String) {
+        dataStore.putString(KEY_MAIN_TOOLBAR_STYLE, style)
+    }
+
+    /**
+     * 主功能页面顶栏色。默认经典一加应用蓝 #0071CD（状态栏由其压暗得到 #0067BC 一档），
+     * 另提供青绿/紫/中性深灰/跟随种子派生，均经过前景对比度核查。
+     */
+    @ColorInt
+    fun mainToolbarColor(theme: String): Int {
+        if (isTranslucentTheme(theme)) return android.graphics.Color.TRANSPARENT
+        val night = isNightMode(theme)
+        return when (mainToolbarStyle()) {
+            MAIN_TOOLBAR_TEAL -> if (night) 0xFF016B61.toInt() else 0xFF01998C.toInt()
+            MAIN_TOOLBAR_PURPLE -> if (night) 0xFF37368F.toInt() else 0xFF3F3DA2.toInt()
+            MAIN_TOOLBAR_NEUTRAL_DARK -> if (night) 0xFF1E1E1E.toInt() else 0xFF212121.toInt()
+            MAIN_TOOLBAR_FOLLOW_SEED -> {
+                val seed = App.ThemeDelegate.getColorByAttr(INSTANCE, R.attr.colorPrimary, theme)
+                if (night) com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                    .darkenInt(seed, 0.25f) else seed
+            }
+
+            else -> if (night) 0xFF005FA3.toInt() else 0xFF0071CD.toInt()
+        }
+    }
+
+    /** 主功能页面状态栏色（比顶栏略深一档，还原 2017 年 OxygenOS 的上下层次） */
+    @ColorInt
+    fun mainStatusBarColor(theme: String): Int =
+        com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+            .darkenInt(mainToolbarColor(theme), 0.08f)
+
+    /** 设置类页面顶栏色：OxygenOS 深灰 */
+    @ColorInt
+    fun settingsToolbarColor(theme: String): Int =
+        if (isNightMode(theme)) 0xFF1E1E1E.toInt() else 0xFF212121.toInt()
+
+    @ColorInt
+    fun settingsStatusBarColor(theme: String): Int =
+        com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+            .darkenInt(settingsToolbarColor(theme), 0.08f)
+
+    /** 顶栏前景（标题/图标）：按对比度自动选择白字或深字 */
+    @ColorInt
+    fun onToolbarColor(@ColorInt toolbarColor: Int): Int =
+        com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+            .readableOnInt(toolbarColor)
 
     const val THEME_TRANSLUCENT = "translucent"
     const val THEME_TRANSLUCENT_LIGHT = "translucent_light"
@@ -168,7 +247,8 @@ object ThemeUtil {
     private fun getOldTheme(): String {
         val oldTheme =
             migrateLegacyTheme(
-                dataStore.getString(KEY_OLD_THEME, THEME_DEFAULT)
+                dataStore.getString(KEY_OLD_THEME, THEME_DEFAULT),
+                KEY_OLD_THEME
             ).takeUnless { isNightMode(it) }
 
         return oldTheme ?: THEME_DEFAULT
@@ -204,7 +284,8 @@ object ThemeUtil {
         } else {
             switchTheme(
                 migrateLegacyTheme(
-                    dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK)
+                    dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK),
+                    KEY_DARK_THEME
                 )
             )
         }
@@ -213,7 +294,8 @@ object ThemeUtil {
     fun switchToNightMode(context: Activity, recreate: Boolean) {
         switchTheme(
             migrateLegacyTheme(
-                dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK)
+                dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK),
+                KEY_DARK_THEME
             )
         )
         if (recreate) {
@@ -296,8 +378,9 @@ object ThemeUtil {
         val theme = getRawTheme()
         val isToolbarPrimaryColor: Boolean = INSTANCE.appPreferences.toolbarPrimaryColor
         if (ThemePresets.isPreset(theme)) {
-            // OxygenOS 预设使用深色平直工具栏（#212121），状态栏文字为浅色
-            return false
+            // 预设：状态栏文字明暗由主功能顶栏实际颜色的对比度决定
+            // （深色/彩色顶栏 → 浅色文字；浅色顶栏 → 深色文字）
+            return onToolbarColor(mainToolbarColor(theme)) != 0xFFFFFFFF.toInt()
         }
         return if (theme == THEME_CUSTOM) {
             INSTANCE.appPreferences.customStatusBarFontDark

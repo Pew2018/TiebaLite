@@ -311,7 +311,14 @@ class App : Application(), SketchFactory {
             // 在 Compose 与 View 两条链路上取到同一套语义色
             if (ThemePresets.isPreset(theme)) {
                 val attrName = ThemePresets.attrName(attrId)
-                if (attrName != null) {
+                // 顶栏家族由页面角色与主功能顶栏风格偏好统一解析，不走预设专用资源
+                val toolbarFamily = attrId == R.attr.colorToolbar ||
+                        attrId == R.attr.colorToolbarItem ||
+                        attrId == R.attr.colorToolbarItemActive ||
+                        attrId == R.attr.colorToolbarItemSecondary ||
+                        attrId == R.attr.colorToolbarSurface ||
+                        attrId == R.attr.colorOnToolbarSurface
+                if (attrName != null && !toolbarFamily) {
                     val resId = resources.getIdentifier(
                         "theme_color_" + attrName + "_" + theme,
                         "color",
@@ -412,22 +419,17 @@ class App : Application(), SketchFactory {
                     } else context.getColorCompat(R.color.theme_color_on_accent_light)
                 }
                 R.attr.colorToolbar -> {
-                    return if (ThemeUtil.isNightMode(theme) || ThemeUtil.isTranslucentTheme(theme)) {
-                        context.getColorCompat(
+                    if (ThemeUtil.isTranslucentTheme(theme)) {
+                        return context.getColorCompat(
                             resources.getIdentifier(
                                 "theme_color_toolbar_$theme",
                                 "color",
                                 packageName
                             )
                         )
-                    } else {
-                        val isPrimaryColor = context.appPreferences.toolbarPrimaryColor
-                        if (isPrimaryColor) {
-                            getColorByAttr(context, R.attr.colorPrimary, theme)
-                        } else {
-                            context.getColorCompat(R.color.theme_color_toolbar_light)
-                        }
                     }
+                    // 主功能顶栏：由顶栏风格偏好 + 当前种子/明暗解析（Compose 与 View 同一来源）
+                    return ThemeUtil.mainToolbarColor(theme)
                 }
                 R.attr.colorText -> {
                     return if (ThemeUtil.isTranslucentTheme(theme)) {
@@ -599,9 +601,8 @@ class App : Application(), SketchFactory {
                             )
                         )
                     }
-                    return if (ThemeUtil.isNightMode(theme)) {
-                        context.getColorCompat(R.color.theme_color_toolbar_item_night)
-                    } else context.getColorCompat(if (ThemeUtil.isStatusBarFontDark()) R.color.theme_color_toolbar_item_light else R.color.theme_color_toolbar_item_dark)
+                    // 顶栏前景按顶栏实际背景的对比度自动选择，保证可读
+                    return ThemeUtil.onToolbarColor(ThemeUtil.mainToolbarColor(theme))
                 }
                 R.attr.colorToolbarItemActive -> {
                     if (ThemeUtil.isTranslucentTheme(theme)) {
@@ -612,10 +613,15 @@ class App : Application(), SketchFactory {
                                 packageName
                             )
                         )
-                    } else if (ThemeUtil.isNightMode(theme)) {
-                        return getColorByAttr(context, R.attr.colorAccent, theme)
                     }
-                    return context.getColorCompat(if (ThemeUtil.isStatusBarFontDark()) R.color.theme_color_toolbar_item_light else R.color.theme_color_toolbar_item_dark)
+                    // 选中态：顶栏为深色时用纯白；顶栏为浅色时用主题强调文字色
+                    val toolbarColor = ThemeUtil.mainToolbarColor(theme)
+                    val onToolbar = ThemeUtil.onToolbarColor(toolbarColor)
+                    return if (onToolbar == 0xFFFFFFFF.toInt()) {
+                        0xFFFFFFFF.toInt()
+                    } else {
+                        getColorByAttr(context, R.attr.colorAccent, theme)
+                    }
                 }
 
                 R.attr.colorToolbarItemSecondary -> {

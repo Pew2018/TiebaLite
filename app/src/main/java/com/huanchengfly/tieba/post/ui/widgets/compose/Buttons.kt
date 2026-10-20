@@ -40,8 +40,8 @@ fun Button(
     shape: Shape = RoundedCornerShape(100),
     border: BorderStroke? = null,
     colors: ButtonColors = ButtonDefaults.buttonColors(
-        backgroundColor = ExtendedTheme.colors.primary,
-        contentColor = ExtendedTheme.colors.onAccent
+        backgroundColor = ExtendedTheme.colors.accentFill,
+        contentColor = ExtendedTheme.colors.onAccentFill
     ),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     content: @Composable RowScope.() -> Unit
@@ -86,7 +86,7 @@ fun TextButton(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     shape: Shape = RoundedCornerShape(100),
     border: BorderStroke? = null,
-    color: Color = ExtendedTheme.colors.text,
+    color: Color = ExtendedTheme.colors.accentText,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
     content: @Composable RowScope.() -> Unit
 ) {
@@ -98,9 +98,9 @@ fun TextButton(
         shape = shape,
         border = border,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = color.copy(alpha = 0.1f),
+            backgroundColor = Color.Transparent,
             contentColor = color,
-            disabledBackgroundColor = color.copy(alpha = ContentAlpha.disabled * 0.1f),
+            disabledBackgroundColor = Color.Transparent,
             disabledContentColor = color.copy(alpha = ContentAlpha.disabled)
         ),
         contentPadding = contentPadding,

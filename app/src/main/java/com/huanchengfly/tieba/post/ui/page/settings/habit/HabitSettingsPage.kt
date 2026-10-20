@@ -19,6 +19,7 @@ import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material.icons.outlined.Verified
 import androidx.compose.material.icons.outlined.WatchLater
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -30,6 +31,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.dataStore
+import com.huanchengfly.tieba.post.ui.common.theme.LocalPageRole
+import com.huanchengfly.tieba.post.ui.common.theme.PageRole
 import com.huanchengfly.tieba.post.ui.common.prefs.PrefsScreen
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.ListPref
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.SwitchPref
@@ -49,6 +52,9 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun HabitSettingsPage(
     navigator: DestinationsNavigator
 ) {
+    // 设置类页面角色：顶栏/状态栏使用 OxygenOS 深灰
+    CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
+
     val context = LocalContext.current
     MyScaffold(
         backgroundColor = Color.Transparent,
@@ -334,5 +340,7 @@ fun HabitSettingsPage(
                 )
             }
         }
+    }
+
     }
 }

@@ -771,6 +771,28 @@ fun ThreadPage(
         }
     }
 
+    /**
+     * 统一的返回决策（工具栏返回、系统返回、预测返回共用）：
+     * 1. 底部面板可见 → 先收面板；
+     * 2. 收藏帖且需要确认阅读位置 → 先显示确认对话框，不提前提交导航；
+     * 3. 否则离开帖子页。
+     */
+    val onThreadBack: () -> Unit = {
+        when {
+            bottomSheetState.isVisible -> closeBottomSheet()
+            isCollected -> {
+                readFloorBeforeBack = lastVisibilityPost?.get { floor } ?: 0
+                if (readFloorBeforeBack != 0) {
+                    updateCollectMarkDialogState.show()
+                } else {
+                    navigator.navigateUp()
+                }
+            }
+
+            else -> navigator.navigateUp()
+        }
+    }
+
     val confirmDeleteDialogState = rememberDialogState()
     var deletePost by remember { mutableStateOf<ImmutableHolder<Post>?>(null) }
     ConfirmDialog(
@@ -1106,27 +1128,12 @@ fun ThreadPage(
             MyScaffold(
                 scaffoldState = scaffoldState,
                 modifier = Modifier
-                    // 预测返回：先收底部面板；收藏页需确认阅读位置时保留既有确认对话框；
-                    // 最后才离开帖子页（与两处 MyBackHandler 优先级一致）
-                    .predictiveBack {
-                        when {
-                            bottomSheetState.isVisible -> closeBottomSheet()
-                            isCollected -> {
-                                readFloorBeforeBack = lastVisibilityPost?.get { floor } ?: 0
-                                if (readFloorBeforeBack != 0) {
-                                    updateCollectMarkDialogState.show()
-                                } else {
-                                    navigator.navigateUp()
-                                }
-                            }
-
-                            else -> navigator.navigateUp()
-                        }
-                    },
+                    // 预测返回：与工具栏/系统返回共用同一返回决策
+                    .predictiveBack { onThreadBack() },
                 topBar = {
                     TopBar(
                         forum = forum,
-                        onBack = { navigator.navigateUp() },
+                        onBack = onThreadBack,
                         onForumClick = {
                             val forumName = forum?.get { name }
                             if (forumName != null) navigator.navigate(

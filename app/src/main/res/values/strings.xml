@@ -531,4 +531,28 @@
     <string name="summary_settings_predictive_back_on">开启后，在支持的系统上返回时会显示页面预览动画</string>
     <string name="summary_settings_predictive_back_off">使用普通系统返回，不显示应用内预览动画</string>
     <string name="summary_settings_predictive_back_unsupported">当前系统版本不支持预测返回，将自动使用普通返回</string>
+
+    <!-- 主题页（第二轮） -->
+    <string name="title_theme_current">当前主题</string>
+    <string name="title_theme_mode_light">浅色</string>
+    <string name="title_theme_mode_dark">深色</string>
+    <string name="summary_theme_roles">主功能页面使用上方顶栏配色，设置类页面固定 OxygenOS 深灰</string>
+    <string name="title_theme_special">特殊主题</string>
+    <string name="summary_dynamic_theme">跟随系统壁纸取色（Android 12 及以上）</string>
+    <string name="summary_dynamic_theme_unsupported">当前系统不支持动态取色</string>
+    <string name="summary_custom_theme">自选主色，可指定顶栏是否使用主题色</string>
+    <string name="summary_translucent_theme">使用自定义背景图的半透明主题</string>
+    <string name="title_main_toolbar_style">主功能顶栏配色</string>
+    <string name="summary_main_toolbar_style">仅影响首页、贴吧、帖子、消息、搜索等主功能页面；设置类页面固定深灰</string>
+    <string name="main_toolbar_app_blue">经典应用蓝</string>
+    <string name="main_toolbar_teal">青绿</string>
+    <string name="main_toolbar_purple">紫</string>
+    <string name="main_toolbar_neutral_dark">中性深灰</string>
+    <string name="main_toolbar_follow_seed">跟随主题色</string>
+    <string name="schematic_main_toolbar">主功能顶栏</string>
+    <string name="schematic_settings_toolbar">设置顶栏</string>
+    <string name="schematic_status_bar">状态栏（比顶栏略深）</string>
+    <string name="schematic_text">主要文字</string>
+    <string name="schematic_accent_fill">实心强调（按钮/FAB/进度）</string>
+    <string name="schematic_accent_muted">弱强调（选中背景/标签）</string>
 </resources>

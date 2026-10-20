@@ -12,11 +12,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 
 @Composable
 fun GroupHeader(
     title: String,
-    color: Color = MaterialTheme.colors.primary
+    color: Color = ExtendedTheme.colors.accentText
 ) {
     Box(
         Modifier
@@ -29,12 +31,11 @@ fun GroupHeader(
         Text(
             title,
             color = color,
-            fontSize = LocalTextStyle.current.fontSize.times(FontSizeMultiplier),
-            fontWeight = FontWeight.SemiBold
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium
         )
     }
 }
 
 
 private val StartPadding = 16.dp
-private const val FontSizeMultiplier = 0.85f

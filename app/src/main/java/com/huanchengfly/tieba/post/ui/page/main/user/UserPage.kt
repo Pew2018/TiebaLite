@@ -49,6 +49,8 @@ import com.huanchengfly.tieba.post.arch.collectPartialAsState
 import com.huanchengfly.tieba.post.arch.pageViewModel
 import com.huanchengfly.tieba.post.models.database.Account
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ReportNavigationBarSurface
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ReportStatusBarSurface
 import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.AboutPageDestination
@@ -237,6 +239,9 @@ fun UserPage(
         )
     )
 ) {
+    // 个人中心无彩色顶栏：状态栏/导航栏后方是浅色内容面，使用深色系统栏图标
+    ReportStatusBarSurface(surface = ExtendedTheme.colors.background)
+    ReportNavigationBarSurface(surface = ExtendedTheme.colors.background)
     val context = LocalContext.current
     val navigator = LocalNavigator.current
     val isLoading by viewModel.uiState.collectPartialAsState(
@@ -294,13 +299,16 @@ fun UserPage(
                         userIntro = account!!.intro ?: stringResource(id = R.string.tip_no_intro),
                         avatar = StringUtil.getAvatarUrl(account!!.portrait),
                     )
+                    // 经典平面统计区：无大圆角卡片底色，数字 20sp Medium、说明 12sp 灰色，
+                    // 细竖线分隔，下方 1dp 分割线与功能列表分开
                     StatCard(
                         account = account!!,
                         modifier = Modifier
-                            .padding(16.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(color = ExtendedTheme.colors.chip)
-                            .padding(vertical = 18.dp)
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = ExtendedTheme.colors.divider
                     )
                 } else if (isLoading) {
                     InfoCard(
@@ -311,10 +319,11 @@ fun UserPage(
                     )
                     StatCardPlaceholder(
                         modifier = Modifier
-                            .padding(16.dp)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(color = ExtendedTheme.colors.chip)
-                            .padding(vertical = 18.dp)
+                            .padding(horizontal = 16.dp, vertical = 12.dp)
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        color = ExtendedTheme.colors.divider
                     )
                 } else {
                     LoginTipCard(

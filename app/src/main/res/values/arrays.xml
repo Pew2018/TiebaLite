@@ -25,7 +25,7 @@
     </string-array>
 
     <string-array name="themeNames">
-        <item>氧气蓝</item>
+        <item>晴空蓝</item>
         <item>流金橙</item>
         <item>柠檬黄</item>
         <item>青草绿</item>
@@ -33,18 +33,18 @@
         <item>天空蓝</item>
         <item>活力红</item>
         <item>时尚粉</item>
-        <item>M 蓝</item>
-        <item>M 青绿</item>
-        <item>M 绿</item>
-        <item>M 红</item>
-        <item>M 橙</item>
-        <item>M 紫</item>
-        <item>M 青</item>
-        <item>M 靛蓝</item>
-        <item>M 粉</item>
-        <item>M 蓝灰</item>
-        <item>M 深橙</item>
-        <item>M 浅绿</item>
+        <item>蓝</item>
+        <item>青绿</item>
+        <item>绿</item>
+        <item>红</item>
+        <item>橙</item>
+        <item>紫</item>
+        <item>青</item>
+        <item>靛蓝</item>
+        <item>粉</item>
+        <item>蓝灰</item>
+        <item>深橙</item>
+        <item>浅绿</item>
     </string-array>
 
     <string-array name="dark_theme_values">
@@ -72,7 +72,7 @@
     </string-array>
 
     <string-array name="dark_theme_names">
-        <item>氧气蓝</item>
+        <item>晴空蓝</item>
         <item>流金橙</item>
         <item>柠檬黄</item>
         <item>青草绿</item>
@@ -80,18 +80,18 @@
         <item>天空蓝</item>
         <item>活力红</item>
         <item>时尚粉</item>
-        <item>M 蓝</item>
-        <item>M 青绿</item>
-        <item>M 绿</item>
-        <item>M 红</item>
-        <item>M 橙</item>
-        <item>M 紫</item>
-        <item>M 青</item>
-        <item>M 靛蓝</item>
-        <item>M 粉</item>
-        <item>M 蓝灰</item>
-        <item>M 深橙</item>
-        <item>M 浅绿</item>
+        <item>蓝</item>
+        <item>青绿</item>
+        <item>绿</item>
+        <item>红</item>
+        <item>橙</item>
+        <item>紫</item>
+        <item>青</item>
+        <item>靛蓝</item>
+        <item>粉</item>
+        <item>蓝灰</item>
+        <item>深橙</item>
+        <item>浅绿</item>
         <item>纯黑</item>
     </string-array>
 

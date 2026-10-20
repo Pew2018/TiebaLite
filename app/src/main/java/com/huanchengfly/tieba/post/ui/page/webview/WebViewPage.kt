@@ -166,9 +166,15 @@ fun WebViewPage(
 
     MyScaffold(
         modifier = Modifier
-            // 预测返回：保持既有产品语义——返回即离开 WebView 页
-            // （工具栏返回按钮、系统返回、边缘手势行为一致）
-            .predictiveBack { navigator.navigateUp() },
+            // 预测返回：与 WebView 既有返回语义一致——有网页历史先网页后退，
+            // 无历史才离开页面（工具栏关闭按钮、系统返回、边缘手势行为一致）
+            .predictiveBack {
+                if (webViewNavigator.canGoBack) {
+                    webViewNavigator.goBack()
+                } else {
+                    navigator.navigateUp()
+                }
+            },
         topBar = {
             Toolbar(
                 title = {

@@ -22,6 +22,8 @@ import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.rememberPreferenceAsState
 import com.huanchengfly.tieba.post.utils.ThemeUtil
 import com.huanchengfly.tieba.post.utils.appPreferences
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+import com.huanchengfly.tieba.post.ui.common.theme.compose.toArgbInt
 import com.huanchengfly.tieba.post.utils.compose.darken
 
 @Stable
@@ -60,6 +62,20 @@ data class ExtendedColors(
     val switchOff: Color = Color.Unspecified,
     val fab: Color = Color.Unspecified,
     val selected: Color = Color.Unspecified,
+    // 页面角色：设置类顶栏（OxygenOS 深灰，固定）
+    val settingsTopBar: Color = Color.Unspecified,
+    val settingsStatusBar: Color = Color.Unspecified,
+    val onSettingsTopBar: Color = Color.Unspecified,
+    val onSettingsTopBarSecondary: Color = Color.Unspecified,
+    // 用途色：从种子派生的不同强调用途
+    val accentFill: Color = Color.Unspecified,
+    val onAccentFill: Color = Color.Unspecified,
+    val accentText: Color = Color.Unspecified,
+    val accentMuted: Color = Color.Unspecified,
+    val onAccentMuted: Color = Color.Unspecified,
+    val progressColor: Color = Color.Unspecified,
+    val selectedBg: Color = Color.Unspecified,
+    val onSelectedBg: Color = Color.Unspecified,
 )
 
 val LocalExtendedColors = staticCompositionLocalOf {
@@ -75,29 +91,33 @@ fun getColorPalette(
     darkTheme: Boolean,
     extendedColors: ExtendedColors
 ): Colors {
-    val primaryColor = extendedColors.accent
-    val secondaryColor = extendedColors.primary
+    val primaryColor = extendedColors.accentFill
+    val secondaryColor = extendedColors.accentText
     return if (darkTheme) {
         darkColors(
             primary = primaryColor,
+            onPrimary = extendedColors.onAccentFill,
             primaryVariant = primaryColor.darken(),
             secondary = secondaryColor,
-            secondaryVariant = Color(0xFF3F310A),
-            onSecondary = Color(0xFFFFFFFF),
+            onSecondary = extendedColors.onSelectedBg,
+            secondaryVariant = extendedColors.accentMuted,
             background = extendedColors.background,
             onBackground = extendedColors.text,
             surface = extendedColors.card,
+            onSurface = extendedColors.text,
         )
     } else {
         lightColors(
             primary = primaryColor,
+            onPrimary = extendedColors.onAccentFill,
             primaryVariant = primaryColor.darken(),
             secondary = secondaryColor,
-            secondaryVariant = Color(0xFF000000),
-            onSecondary = Color(0xFFFFFFFF),
+            onSecondary = extendedColors.onSelectedBg,
+            secondaryVariant = extendedColors.accentMuted,
             background = extendedColors.background,
             onBackground = extendedColors.text,
             surface = extendedColors.card,
+            onSurface = extendedColors.text,
         )
     }
 }
@@ -244,6 +264,18 @@ private fun getLightDynamicColor(tonalPalette: TonalPalette): ExtendedColors {
         windowBackground = tonalPalette.neutralVariant99,
         placeholder = tonalPalette.neutralVariant100,
         statusBar = tonalPalette.neutralVariant95,
+        settingsTopBar = tonalPalette.neutralVariant95,
+        settingsStatusBar = tonalPalette.neutralVariant90,
+        onSettingsTopBar = tonalPalette.neutralVariant10,
+        onSettingsTopBarSecondary = tonalPalette.neutralVariant30,
+        accentFill = tonalPalette.secondary40,
+        onAccentFill = tonalPalette.secondary100,
+        accentText = tonalPalette.secondary40,
+        accentMuted = tonalPalette.secondary90,
+        onAccentMuted = tonalPalette.secondary30,
+        progressColor = tonalPalette.secondary40,
+        selectedBg = tonalPalette.secondary90,
+        onSelectedBg = tonalPalette.secondary30,
         switchOn = tonalPalette.secondary40,
         switchOff = if (false) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
         fab = tonalPalette.secondary40,
@@ -284,6 +316,18 @@ private fun getDarkDynamicColor(tonalPalette: TonalPalette): ExtendedColors {
         windowBackground = tonalPalette.neutralVariant10,
         placeholder = tonalPalette.neutralVariant50,
         statusBar = tonalPalette.neutralVariant0,
+        settingsTopBar = tonalPalette.neutralVariant0,
+        settingsStatusBar = tonalPalette.neutralVariant0,
+        onSettingsTopBar = tonalPalette.neutralVariant90,
+        onSettingsTopBarSecondary = tonalPalette.neutralVariant70,
+        accentFill = tonalPalette.secondary80,
+        onAccentFill = tonalPalette.secondary20,
+        accentText = tonalPalette.secondary80,
+        accentMuted = tonalPalette.secondary30,
+        onAccentMuted = tonalPalette.secondary90,
+        progressColor = tonalPalette.secondary80,
+        selectedBg = tonalPalette.secondary30,
+        onSelectedBg = tonalPalette.secondary90,
         switchOn = tonalPalette.secondary80,
         switchOff = if (true) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
         fab = tonalPalette.secondary80,
@@ -324,6 +368,18 @@ private fun getBlackDarkDynamicColor(tonalPalette: TonalPalette): ExtendedColors
         windowBackground = tonalPalette.neutralVariant0,
         placeholder = tonalPalette.neutralVariant50,
         statusBar = tonalPalette.neutralVariant0,
+        settingsTopBar = tonalPalette.neutralVariant0,
+        settingsStatusBar = tonalPalette.neutralVariant0,
+        onSettingsTopBar = tonalPalette.neutralVariant90,
+        onSettingsTopBarSecondary = tonalPalette.neutralVariant70,
+        accentFill = tonalPalette.secondary80,
+        onAccentFill = tonalPalette.secondary20,
+        accentText = tonalPalette.secondary80,
+        accentMuted = tonalPalette.secondary30,
+        onAccentMuted = tonalPalette.secondary90,
+        progressColor = tonalPalette.secondary80,
+        selectedBg = tonalPalette.secondary30,
+        onSelectedBg = tonalPalette.secondary90,
         switchOn = tonalPalette.secondary80,
         switchOff = if (true) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
         fab = tonalPalette.secondary80,
@@ -466,13 +522,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
             )
         ),
         // OxygenOS 派生语义角色：状态栏比工具栏略深，控件色由强调色派生
-        statusBar = Color(
-            App.ThemeDelegate.getColorByAttr(
-                context,
-                R.attr.colorToolbar,
-                nowTheme
-            )
-        ).darken(0.08f),
+        statusBar = Color(ThemeUtil.mainStatusBarColor(nowTheme)),
         switchOn = Color(
             App.ThemeDelegate.getColorByAttr(
                 context,
@@ -493,6 +543,76 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
                 context,
                 R.attr.colorIndicator,
                 nowTheme
+            )
+        ),
+        // 页面角色：设置类顶栏固定 OxygenOS 深灰
+        settingsTopBar = Color(ThemeUtil.settingsToolbarColor(nowTheme)),
+        settingsStatusBar = Color(ThemeUtil.settingsStatusBarColor(nowTheme)),
+        onSettingsTopBar = Color(ThemeUtil.onToolbarColor(ThemeUtil.settingsToolbarColor(nowTheme))),
+        onSettingsTopBarSecondary = Color(ThemeUtil.onToolbarColor(ThemeUtil.settingsToolbarColor(nowTheme)))
+            .copy(alpha = 0.7f),
+        // 用途色：从种子派生，全部经过对比度核查
+        accentFill = fab,
+        onAccentFill = Color(ThemeColorMath.readableOnInt(fab.toArgbInt())),
+        accentText = Color(
+            ThemeColorMath.readableAccentTextInt(
+                fab.toArgbInt(),
+                Color(
+                    App.ThemeDelegate.getColorByAttr(
+                        context,
+                        R.attr.colorBackground,
+                        nowTheme
+                    )
+                ).toArgbInt()
+            )
+        ),
+        accentMuted = Color(
+            ThemeColorMath.mutedAccentBgInt(
+                fab.toArgbInt(),
+                Color(
+                    App.ThemeDelegate.getColorByAttr(
+                        context,
+                        R.attr.colorBackground,
+                        nowTheme
+                    )
+                ).toArgbInt()
+            )
+        ),
+        onAccentMuted = Color(
+            ThemeColorMath.onMutedAccentBgInt(
+                fab.toArgbInt(),
+                Color(
+                    App.ThemeDelegate.getColorByAttr(
+                        context,
+                        R.attr.colorBackground,
+                        nowTheme
+                    )
+                ).toArgbInt()
+            )
+        ),
+        progressColor = fab,
+        selectedBg = Color(
+            ThemeColorMath.mutedAccentBgInt(
+                fab.toArgbInt(),
+                Color(
+                    App.ThemeDelegate.getColorByAttr(
+                        context,
+                        R.attr.colorBackground,
+                        nowTheme
+                    )
+                ).toArgbInt()
+            )
+        ),
+        onSelectedBg = Color(
+            ThemeColorMath.onMutedAccentBgInt(
+                fab.toArgbInt(),
+                Color(
+                    App.ThemeDelegate.getColorByAttr(
+                        context,
+                        R.attr.colorBackground,
+                        nowTheme
+                    )
+                ).toArgbInt()
             )
         ),
     )

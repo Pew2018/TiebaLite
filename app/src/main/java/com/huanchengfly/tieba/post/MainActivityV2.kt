@@ -89,7 +89,6 @@ import com.huanchengfly.tieba.post.ui.utils.isSeparating
 import com.huanchengfly.tieba.post.ui.widgets.compose.AlertDialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.Avatar
 import com.huanchengfly.tieba.post.ui.widgets.compose.AvatarIcon
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.Dialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.DialogNegativeButton
 import com.huanchengfly.tieba.post.ui.widgets.compose.DialogPositiveButton
@@ -494,31 +493,15 @@ class MainActivityV2 : BaseComposeActivity() {
                         sheetBackgroundColor = ExtendedTheme.colors.windowBackground,
                         scrimColor = Color.Black.copy(alpha = 0.32f),
                     ) {
-                        val canPop by remember {
-                            derivedStateOf {
-                                navController.currentBackStackEntry != null &&
-                                        navController.previousBackStackEntry != null
-                            }
-                        }
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .predictiveBack(
-                                    enabled = canPop,
-                                    onBack = {
-                                        if (!navController.popBackStack()) {
-                                            // 根页面不吞掉返回事件，交由系统处理
-                                            onBackPressed()
-                                        }
-                                    },
-                                )
-                        ) {
-                            DestinationsNavHost(
-                                navController = navController,
-                                navGraph = NavGraphs.root,
-                                engine = engine,
-                            )
-                        }
+                        // 返回/预测返回由 Navigation 组件统一处理：
+                        // NavHost 自身消费返回栈弹出（含 Android 14+ 的系统预测返回预览），
+                        // 需要先消费局部状态的页面在各自页面内注册 handler。
+                        // 根页面没有应用内返回动作时，系统正常接管（不再吞事件）。
+                        DestinationsNavHost(
+                            navController = navController,
+                            navGraph = NavGraphs.root,
+                            engine = engine,
+                        )
                     }
                 }
 

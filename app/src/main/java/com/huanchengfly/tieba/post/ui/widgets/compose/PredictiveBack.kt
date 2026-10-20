@@ -5,17 +5,22 @@ import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.huanchengfly.tieba.post.utils.appPreferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import com.huanchengfly.tieba.post.rememberPreferenceAsState
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 
 /**
- * OxygenOS / Android 7.1 时代的轻快风格动效令牌。
- * 集中定义时长与缩放，避免各页面魔法值；减少动画设置开启时调用方可直接降级为 0。
+ * OxygenOS / Android 7 时代的轻快动效令牌。
+ * 集中定义时长与缩放，避免各页面魔法值；系统“减少动画”时调用方可降级。
  */
 object AnimTokens {
     const val DURATION_SHORT = 120
@@ -28,50 +33,58 @@ object AnimTokens {
 /**
  * 预测返回是否启用。
  *
- * - 用户开关（持久化，默认开启）关闭时不显示应用内预览，普通返回仍正常执行；
- * - Android 14（API 34）以下的旧系统没有系统预测返回 API，自动降级为普通返回，
+ * - 用户开关（持久化，默认开启）以 Compose State 订阅，关闭后当前页面立即生效；
+ * - Android 14（API 34）以下旧系统没有系统预测返回 API，自动降级为普通返回，
  *   设置页会给出明确说明，不会让用户误以为旧系统有系统级手势动画。
  */
 @Composable
 fun isPredictiveBackEnabled(): Boolean {
-    val context = LocalContext.current
-    return context.appPreferences.predictiveBack &&
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
+    val prefEnabled by rememberPreferenceAsState(
+        key = booleanPreferencesKey("predictive_back"),
+        defaultValue = true
+    )
+    return prefEnabled && Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
 }
 
 /**
- * 应用内预测返回预览。
+ * 应用内预测返回预览（页面级局部状态专用）。
  *
- * 手势进行期间页面按进度缩小、轻微位移并降低不透明度；手势取消后回弹到原状，
- * 手势完成后执行 [onBack]。预览目标与真正到达的页面一致（onBack 即该页面的返回动作）。
+ * 行为约定：
+ * - handler 稳定注册，用 `enabled` 控制，不随条件增删；
+ * - 手势进行期间页面按进度缩放、位移并降低不透明度；
+ * - 手势取消后在不受取消影响的作用域中可靠复位，零业务副作用；
+ * - 手势完成后执行 [onBack]（与普通返回完全相同的动作）。
  *
- * 兼容性说明：Navigation Compose 2.7.6 + Compose Destinations 1.10.0 暂不升级到
- * Navigation 2.8（官方预测返回 NavHost 转场门槛），因此采用页面级应用内预览方案，
- * 旧系统与非支持场景一律走普通返回，行为不回退。
+ * 导航栈级别的返回预览由 Navigation 组件负责（依赖版本见 sweet-dependency 配置）；
+ * 本 Modifier 只用于需要先消费局部状态的页面（页签、搜索词、底部面板等）。
  */
 @Composable
 fun Modifier.predictiveBack(
     enabled: Boolean = true,
     onBack: () -> Unit,
 ): Modifier {
-    // 用户开关 + 系统版本双重门控：任一不满足都走普通返回
-    if (!enabled || !isPredictiveBackEnabled()) return this
     val density = LocalDensity.current
     val maxShiftPx = with(density) { AnimTokens.PREDICTIVE_BACK_SHIFT_DP.dp.toPx() }
     val progress = remember { Animatable(0f) }
-    PredictiveBackHandler { flow ->
+    val active = enabled && isPredictiveBackEnabled()
+
+    PredictiveBackHandler(enabled = active) { flow ->
         try {
             flow.collect { event ->
                 progress.snapTo(event.progress)
             }
             onBack()
         } finally {
-            progress.animateTo(
-                targetValue = 0f,
-                animationSpec = tween(durationMillis = AnimTokens.DURATION_SHORT)
-            )
+            // 手势取消：在不受取消影响的作用域中完成复位动画
+            withContext(NonCancellable) {
+                progress.animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(durationMillis = AnimTokens.DURATION_SHORT)
+                )
+            }
         }
     }
+
     return this.graphicsLayer {
         val p = progress.value.coerceIn(0f, 1f)
         val scale = 1f - (1f - AnimTokens.PREDICTIVE_BACK_SCALE) * p

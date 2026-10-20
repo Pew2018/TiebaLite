@@ -32,6 +32,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -64,18 +65,16 @@ fun DialogScope.DialogPositiveButton(
             onClick()
             dismiss()
         },
-        modifier = Modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(100),
+        shape = RoundedCornerShape(2.dp),
         colors = ButtonDefaults.textButtonColors(
-            backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSecondary
+            backgroundColor = Color.Transparent,
+            contentColor = ExtendedTheme.colors.accentText
         ),
     ) {
         Text(
             text = text,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(vertical = 4.dp),
+            style = MaterialTheme.typography.button,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
         )
     }
 }
@@ -90,19 +89,16 @@ fun DialogScope.DialogNegativeButton(
             dismiss()
             onClick?.invoke()
         },
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(100),
+        shape = RoundedCornerShape(2.dp),
         colors = ButtonDefaults.textButtonColors(
-            backgroundColor = ExtendedTheme.colors.text.copy(
-                alpha = 0.1f
-            ),
+            backgroundColor = Color.Transparent,
             contentColor = ExtendedTheme.colors.text
         ),
     ) {
         Text(
             text = text,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(vertical = 4.dp),
+            style = MaterialTheme.typography.button,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
         )
     }
 }
