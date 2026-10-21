@@ -10,7 +10,7 @@ import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.clickable
 import androidx.compose.material.Icon
-import androidx.compose.material.Icons
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets

@@ -273,20 +273,22 @@ fun TitleCentredToolbar(
                 contentColor = roleColors.onTopBar,
                 elevation = 0.dp
             ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxHeight()
-                ) {
-                    ProvideContentColor(color = roleColors.onTopBar) {
+                ProvideContentColor(color = roleColors.onTopBar) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxHeight()
+                    ) {
                         navigationIcon?.invoke()
-                        ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)) {
-                            ProvideContentColor(color = roleColors.onTopBar) {
-                                Box(
-                                    modifier = Modifier
-                                        .fillMaxHeight()
-                                        .weight(1f),
-                                    contentAlignment = Alignment.CenterStart
-                                ) {
+                        // weight/actions 必须作为 Row 的直接子项（RowScope 由 Row 提供），
+                        // 不能包在 Provide* 的普通 () -> Unit lambda 内，否则拿不到 RowScope。
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .weight(1f),
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)) {
+                                ProvideContentColor(color = roleColors.onTopBar) {
                                     title()
                                 }
                             }
