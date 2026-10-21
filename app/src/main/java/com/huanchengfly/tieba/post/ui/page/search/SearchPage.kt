@@ -506,10 +506,12 @@ private fun SearchHistoryList(
                             onLongClick = { onDelete(searchHistory) }
                         )
                         .background(ExtendedTheme.colors.chip)
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .padding(horizontal = 14.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = searchHistory.content
+                        text = searchHistory.content,
+                        style = MaterialTheme.typography.caption,
+                        color = ExtendedTheme.colors.textSecondary
                     )
                 }
             }

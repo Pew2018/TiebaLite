@@ -347,8 +347,8 @@ private fun ToggleButton(
     icon: @Composable (() -> Unit)? = null,
     backgroundColor: Color = ExtendedTheme.colors.chip,
     contentColor: Color = ExtendedTheme.colors.text,
-    selectedBackgroundColor: Color = ExtendedTheme.colors.invertChipBackground,
-    selectedContentColor: Color = ExtendedTheme.colors.invertChipContent,
+    selectedBackgroundColor: Color = ExtendedTheme.colors.selectedBg,
+    selectedContentColor: Color = ExtendedTheme.colors.onSelectedBg,
 ) {
     val animatedColor by animateColorAsState(
         if (checked) selectedContentColor else contentColor,

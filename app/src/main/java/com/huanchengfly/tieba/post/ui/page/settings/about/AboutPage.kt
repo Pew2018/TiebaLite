@@ -88,7 +88,7 @@ fun AboutPage(
                             )
                         ),
                         contentDescription = null,
-                        modifier = Modifier.size(100.dp)
+                        modifier = Modifier.size(96.dp)
                     )
                 }
             }
