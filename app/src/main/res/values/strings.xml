@@ -549,6 +549,10 @@
     <string name="schematic_accent_fill">实心强调（按钮/FAB/进度）</string>
     <string name="schematic_accent_muted">弱强调（选中背景/标签）</string>
     <string name="title_dark_surface_mode">深色样式</string>
+    <string name="title_display_mode">显示模式</string>
+    <string name="display_mode_system">跟随系统</string>
+    <string name="display_mode_light">浅色</string>
+    <string name="display_mode_dark">深色</string>
     <string name="dark_surface_normal">经典深色</string>
     <string name="dark_surface_normal_summary">使用中性深灰页面、顶栏和系统栏</string>
     <string name="dark_surface_amoled">纯黑 AMOLED</string>
@@ -557,7 +561,13 @@
     <string name="title_top_bar_follow_theme">顶栏跟随主题色</string>
     <string name="summary_top_bar_follow_theme">影响首页、贴吧、帖子、消息、搜索和设置等标准页面</string>
     <string name="title_custom_top_bar_color">自定义顶栏颜色</string>
-    <string name="summary_custom_top_bar_color">独立设置标准页面顶栏；标题和图标颜色会自动适配</string>
+    <string name="summary_custom_top_bar_color">独立设置标准页面顶栏背景；前景色可自动适配或手动指定</string>
+    <string name="title_top_bar_content_section">顶栏文字与图标</string>
+    <string name="title_top_bar_content_auto">自动高对比度</string>
+    <string name="summary_top_bar_content_auto">自动选择易读颜色；关闭后可手动指定标题和图标颜色</string>
+    <string name="title_custom_top_bar_content_color">自定义顶栏文字和图标颜色</string>
+    <string name="summary_custom_top_bar_content_color">当前颜色：%1$s</string>
+    <string name="warning_low_toolbar_contrast">对比度为 %1$s:1，普通文字可能不易辨认。可改用更高对比度颜色或恢复自动模式。</string>
     <string name="title_custom_accent_color">自定义强调色…</string>
     <string name="label_hex_color">Hex（#RRGGBB）</string>
     <string name="error_hex_color">请输入 #RRGGBB 格式的颜色</string>

@@ -54,4 +54,21 @@ class ClassicRefreshCycleTest {
             )
         }
     }
+
+    @Test fun automaticToolbarForegroundMeetsTextContrastOnCommonThemeSurfaces() {
+        val surfaces = listOf(
+            0xFF212121.toInt(), // classic toolbar
+            0xFF0071CD.toInt(), // Oxygen blue
+            0xFFFFFFFF.toInt(), // light custom toolbar
+            0xFF000000.toInt(), // AMOLED
+            0xFFFFFF00.toInt(), // high-luminance custom colour
+        )
+        surfaces.forEach { surface ->
+            val foreground = ThemeColorMath.readableOnInt(surface)
+            assertTrue(
+                "contrast ${ThemeColorMath.contrastInt(surface, foreground)} for #${surface.toUInt().toString(16)}",
+                ThemeColorMath.contrastInt(surface, foreground) >= 4.5,
+            )
+        }
+    }
 }

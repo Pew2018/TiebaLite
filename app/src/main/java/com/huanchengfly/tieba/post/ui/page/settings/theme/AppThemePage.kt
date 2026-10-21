@@ -90,6 +90,7 @@ private fun AppThemeContent(
     val listState = rememberLazyListState()
     val customPrimaryColorDialogState = rememberDialogState()
     val customTopBarDialogState = rememberDialogState()
+    val customTopBarTextDialogState = rememberDialogState()
     var customPrimaryColor by remember {
         mutableStateOf(
             Color(
@@ -111,16 +112,36 @@ private fun AppThemeContent(
     var selectedDarkTheme by remember {
         mutableStateOf(context.appPreferences.darkTheme ?: ThemeUtil.THEME_AMOLED_DARK)
     }
+    var followsSystemNight by remember {
+        mutableStateOf(context.appPreferences.followSystemNight)
+    }
     var customTopBarHex by remember {
         mutableStateOf(context.appPreferences.customTopBarColor ?: "#212121")
     }
+    var customTopBarTextAuto by remember {
+        mutableStateOf(context.appPreferences.customTopBarContentAuto)
+    }
+    var customTopBarTextHex by remember {
+        mutableStateOf(context.appPreferences.customTopBarContentColor ?: "#FFFFFF")
+    }
     val customTopBarHexValid = normalizedHexRgb(customTopBarHex) != null
+    val customTopBarTextHexValid = normalizedHexRgb(customTopBarTextHex) != null
     LaunchedEffect(customPrimaryColorDialogState.show) {
         if (customPrimaryColorDialogState.show) customPrimaryHex = customPrimaryColor.toHex()
     }
     LaunchedEffect(customTopBarDialogState.show) {
         if (customTopBarDialogState.show) {
             customTopBarHex = context.appPreferences.customTopBarColor ?: "#212121"
+        }
+    }
+    LaunchedEffect(customTopBarTextDialogState.show) {
+        if (customTopBarTextDialogState.show) {
+            customTopBarTextHex = context.appPreferences.customTopBarContentColor
+                ?: String.format(
+                    "#%06X",
+                    0xFFFFFF and com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                        .readableOnInt(ThemeUtil.mainToolbarColor(currentTheme))
+                )
         }
     }
 
@@ -171,6 +192,8 @@ private fun AppThemeContent(
                 onClick = {
                     customTopBarHex = "#212121"
                     context.appPreferences.customTopBarColor = customTopBarHex
+                    context.appPreferences.customTopBarContentAuto = true
+                    customTopBarTextAuto = true
                     context.appPreferences.customTopBarContentColor = "#FFFFFF"
                     ThemeUtil.notifyThemeSettingsChanged()
                 }
@@ -182,11 +205,13 @@ private fun AppThemeContent(
                     val normalized = normalizedHexRgb(customTopBarHex) ?: return@DialogPositiveButton
                     val color = android.graphics.Color.parseColor(normalized)
                     context.appPreferences.customTopBarColor = normalized
-                    context.appPreferences.customTopBarContentColor = String.format(
-                        "#%06X",
-                        0xFFFFFF and com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-                            .readableOnInt(color)
-                    )
+                    if (context.appPreferences.customTopBarContentAuto) {
+                        context.appPreferences.customTopBarContentColor = String.format(
+                            "#%06X",
+                            0xFFFFFF and com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                                .readableOnInt(color)
+                        )
+                    }
                     customTopBarHex = normalized
                     ThemeUtil.notifyThemeSettingsChanged()
                 }
@@ -229,6 +254,79 @@ private fun AppThemeContent(
         }
     }
 
+    Dialog(
+        dialogState = customTopBarTextDialogState,
+        onDismiss = {
+            if (context.appPreferences.customTopBarContentAuto) {
+                customTopBarTextAuto = true
+            }
+            customTopBarTextHex = context.appPreferences.customTopBarContentColor ?: "#FFFFFF"
+        },
+        title = { Text(text = stringResource(id = R.string.title_custom_top_bar_content_color)) },
+        buttons = {
+            DialogNegativeButton(text = stringResource(id = R.string.button_cancel))
+            DialogPositiveButton(
+                text = stringResource(id = R.string.button_save),
+                enabled = customTopBarTextHexValid,
+                onClick = {
+                    val normalized = normalizedHexRgb(customTopBarTextHex) ?: return@DialogPositiveButton
+                    context.appPreferences.customTopBarContentColor = normalized
+                    context.appPreferences.customTopBarContentAuto = false
+                    customTopBarTextAuto = false
+                    ThemeUtil.notifyThemeSettingsChanged()
+                }
+            )
+        }
+    ) {
+        val foreground = normalizedHexRgb(customTopBarTextHex)?.let(android.graphics.Color::parseColor)
+        val previewBackground = if (!topBarFollowsTheme) {
+            normalizedHexRgb(context.appPreferences.customTopBarColor ?: "#212121")
+                ?.let(android.graphics.Color::parseColor) ?: ThemeUtil.mainToolbarColor(currentTheme)
+        } else {
+            ThemeUtil.mainToolbarColor(currentTheme)
+        }
+        val contrast = foreground?.let {
+            com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath.contrastInt(previewBackground, it)
+        }
+        Column(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(foreground?.let { Color(it) } ?: ExtendedTheme.colors.text)
+                )
+                OutlinedTextField(
+                    value = customTopBarTextHex,
+                    onValueChange = { customTopBarTextHex = it },
+                    label = { Text(stringResource(id = R.string.label_hex_color)) },
+                    isError = !customTopBarTextHexValid,
+                    singleLine = true,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            if (!customTopBarTextHexValid) {
+                Text(
+                    text = stringResource(id = R.string.error_hex_color),
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption
+                )
+            } else if (contrast != null && contrast < 4.5) {
+                Text(
+                    text = stringResource(id = R.string.warning_low_toolbar_contrast, String.format("%.1f", contrast)),
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption
+                )
+            }
+        }
+    }
+
     MyScaffold(
         backgroundColor = Color.Transparent,
         topBar = {
@@ -251,23 +349,44 @@ private fun AppThemeContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // 预设采用普通 56dp 单选行；选中态由稳定主题 ID 唯一决定。
-            ThemeGroup.entries.forEach { group ->
-                item(key = "header_preset_${group.name}") {
-                    SectionHeader(text = stringResource(id = group.titleRes))
-                }
-                itemsIndexed(
-                    items = ThemePresets.presets.filter { it.group == group },
-                    key = { _, preset -> preset.id }
-                ) { _, preset ->
-                    ThemePresetRow(
-                        preset = preset,
-                        selected = ThemePresets.presetOf(selectedPalette)?.id == preset.id,
-                        onClick = { ThemeUtil.selectPalette(preset.id) }
-                    )
-                }
+            item(key = "header_display_mode") {
+                SectionHeader(text = stringResource(id = R.string.title_display_mode))
             }
-
+            item(key = "display_mode_system") {
+                ThemeEntryRow(
+                    title = stringResource(id = R.string.display_mode_system),
+                    selected = followsSystemNight,
+                    onClick = {
+                        followsSystemNight = true
+                        context.appPreferences.followSystemNight = true
+                        if (App.isSystemNight != ThemeUtil.isNightMode(currentTheme)) {
+                            ThemeUtil.switchNightMode()
+                        }
+                    }
+                )
+            }
+            item(key = "display_mode_light") {
+                ThemeEntryRow(
+                    title = stringResource(id = R.string.display_mode_light),
+                    selected = !followsSystemNight && !ThemeUtil.isNightMode(currentTheme),
+                    onClick = {
+                        followsSystemNight = false
+                        context.appPreferences.followSystemNight = false
+                        if (ThemeUtil.isNightMode(currentTheme)) ThemeUtil.switchNightMode()
+                    }
+                )
+            }
+            item(key = "display_mode_dark") {
+                ThemeEntryRow(
+                    title = stringResource(id = R.string.display_mode_dark),
+                    selected = !followsSystemNight && ThemeUtil.isNightMode(currentTheme),
+                    onClick = {
+                        followsSystemNight = false
+                        context.appPreferences.followSystemNight = false
+                        if (!ThemeUtil.isNightMode(currentTheme)) ThemeUtil.switchNightMode()
+                    }
+                )
+            }
             item(key = "header_dark_surface") {
                 SectionHeader(text = stringResource(id = R.string.title_dark_surface_mode))
             }
@@ -294,6 +413,24 @@ private fun AppThemeContent(
                         ThemeUtil.setDarkSurface(amoled = true)
                     }
                 )
+            }
+
+
+            // 预设采用普通 56dp 单选行；选中态由稳定主题 ID 唯一决定。
+            ThemeGroup.entries.forEach { group ->
+                item(key = "header_preset_${group.name}") {
+                    SectionHeader(text = stringResource(id = group.titleRes))
+                }
+                itemsIndexed(
+                    items = ThemePresets.presets.filter { it.group == group },
+                    key = { _, preset -> preset.id }
+                ) { _, preset ->
+                    ThemePresetRow(
+                        preset = preset,
+                        selected = ThemePresets.presetOf(selectedPalette)?.id == preset.id,
+                        onClick = { ThemeUtil.selectPalette(preset.id) }
+                    )
+                }
             }
 
             item(key = "header_custom") {
@@ -330,6 +467,39 @@ private fun AppThemeContent(
                             )
                         },
                         onClick = { customTopBarDialogState.show() }
+                    )
+                }
+            }
+            item(key = "header_top_bar_content") {
+                SectionHeader(text = stringResource(id = R.string.title_top_bar_content_section))
+            }
+            item(key = "top_bar_text_auto") {
+                ToggleSettingRow(
+                    title = stringResource(id = R.string.title_top_bar_content_auto),
+                    summary = stringResource(id = R.string.summary_top_bar_content_auto),
+                    checked = customTopBarTextAuto,
+                    onCheckedChange = { checked ->
+                        if (checked) {
+                            customTopBarTextAuto = true
+                            context.appPreferences.customTopBarContentAuto = true
+                            ThemeUtil.notifyThemeSettingsChanged()
+                        } else {
+                            customTopBarTextDialogState.show()
+                        }
+                    }
+                )
+            }
+            if (!customTopBarTextAuto) {
+                item(key = "custom_top_bar_content") {
+                    ThemeEntryRow(
+                        title = stringResource(id = R.string.title_custom_top_bar_content_color),
+                    summary = stringResource(
+                        id = R.string.summary_custom_top_bar_content_color,
+                        context.appPreferences.customTopBarContentColor ?: "#FFFFFF"
+                    ),
+                        selected = false,
+                        showRadio = false,
+                        onClick = { customTopBarTextDialogState.show() }
                     )
                 }
             }

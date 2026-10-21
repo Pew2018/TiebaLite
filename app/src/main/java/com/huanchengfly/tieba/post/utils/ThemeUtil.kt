@@ -259,7 +259,11 @@ object ThemeUtil {
     /** Keep the original deep-sea blue/white treatment; pale colours use readable dark ink. */
     @ColorInt
     fun onToolbarColor(theme: String, @ColorInt toolbarColor: Int = mainToolbarColor(theme)): Int =
-        if (theme == THEME_OXYGEN_DEEP_SEA_BLUE &&
+        if (!INSTANCE.appPreferences.customTopBarContentAuto) {
+            INSTANCE.appPreferences.customTopBarContentColor
+                ?.let { runCatching { Color.parseColor(it) }.getOrNull() }
+                ?: onToolbarColor(toolbarColor)
+        } else if (theme == THEME_OXYGEN_DEEP_SEA_BLUE &&
             INSTANCE.appPreferences.toolbarPrimaryColor &&
             toolbarColor == 0xFF0071CD.toInt()) Color.WHITE
         else onToolbarColor(toolbarColor)

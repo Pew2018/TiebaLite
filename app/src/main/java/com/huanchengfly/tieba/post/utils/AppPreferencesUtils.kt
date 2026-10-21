@@ -87,6 +87,10 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
     // Explicit custom-theme roles.  Empty values intentionally fall back to the legacy seed.
     var customTopBarColor by DataStoreDelegates.string(key = "custom_top_bar_color")
     var customTopBarContentColor by DataStoreDelegates.string(key = "custom_top_bar_content_color")
+    var customTopBarContentAuto by DataStoreDelegates.boolean(
+        defaultValue = true,
+        key = "custom_top_bar_content_auto"
+    )
     var customAccentColor by DataStoreDelegates.string(key = "custom_accent_color")
 
     /** Writes the four custom roles in one DataStore transaction, so readers never see a mix. */
