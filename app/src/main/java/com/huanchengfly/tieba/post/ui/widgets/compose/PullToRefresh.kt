@@ -4,7 +4,7 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.animateFloatAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
@@ -55,7 +55,7 @@ import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
-import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshDefaults.LoadPreUpPostDownNestedScrollConnection
+import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshDefaults.loadPreUpPostDownNestedScrollConnection
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
@@ -219,7 +219,7 @@ fun ClassicPullRefreshIndicator(
                         style = Stroke(width = stroke, cap = StrokeCap.Round),
                     )
                     if (arcProgress > 0.3f) {
-                        val center = size.center
+                        val center = Offset(size.width / 2f, size.height / 2f)
                         val arrowLength = size.width * 0.24f
                         val end = Offset(center.x, size.height * 0.91f)
                         drawLine(contentColor, Offset(end.x, end.y - arrowLength),
@@ -310,7 +310,7 @@ fun PullToRefreshLayout(
     Box {
         Box(
             modifier = Modifier
-                .nestedScroll(swipeableState.LoadPreUpPostDownNestedScrollConnection)
+                .nestedScroll(swipeableState.loadPreUpPostDownNestedScrollConnection(-refreshDistancePx))
                 .swipeable(
                     state = swipeableState,
                     anchors = mapOf(
@@ -349,8 +349,9 @@ object PullToRefreshDefaults {
 
     val RefreshDistance = 72.dp
 
-    internal val <T> SwipeableState<T>.LoadPreUpPostDownNestedScrollConnection: NestedScrollConnection
-        get() = object : NestedScrollConnection {
+    @OptIn(ExperimentalMaterialApi::class)
+    internal fun <T> SwipeableState<T>.loadPreUpPostDownNestedScrollConnection(minOffset: Float): NestedScrollConnection =
+        object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 val delta = available.toFloat()
                 return if (delta < 0 && source == NestedScrollSource.Drag) {
@@ -374,7 +375,7 @@ object PullToRefreshDefaults {
 
             override suspend fun onPreFling(available: Velocity): Velocity {
                 val toFling = Offset(available.x, available.y).toFloat()
-                return if (toFling < 0 && offset.value > minBound) {
+                return if (toFling < 0 && offset.value > minOffset) {
                     performFling(velocity = toFling)
                     // since we go to the anchor with tween settling, consume all for the best UX
                     available

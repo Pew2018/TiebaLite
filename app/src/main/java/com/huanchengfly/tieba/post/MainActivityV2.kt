@@ -364,11 +364,14 @@ class MainActivityV2 : BaseComposeActivity() {
                 Text(text = stringResource(id = R.string.title_dialog_clip_board_tieba_url))
             },
             buttons = {
-                DialogPositiveButton(text = stringResource(id = R.string.button_open)) {
-                    previewInfo?.let {
-                        openClipBoardLink(it.clipBoardLink)
+                DialogPositiveButton(
+                    text = stringResource(id = R.string.button_open),
+                    onClick = {
+                        previewInfo?.let {
+                            openClipBoardLink(it.clipBoardLink)
+                        }
                     }
-                }
+                )
                 DialogNegativeButton(text = stringResource(id = R.string.btn_close))
             },
         ) {
