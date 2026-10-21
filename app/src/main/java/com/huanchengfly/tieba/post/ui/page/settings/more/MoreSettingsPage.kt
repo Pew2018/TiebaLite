@@ -57,7 +57,7 @@ fun MoreSettingsPage(
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_settings_more),
-                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6
+                        fontWeight = FontWeight.Medium, style = MaterialTheme.typography.h6
                     )
                 },
                 navigationIcon = {
@@ -76,7 +76,7 @@ fun MoreSettingsPage(
         }
         PrefsScreen(
             dataStore = LocalContext.current.dataStore,
-            dividerThickness = 0.dp,
+            dividerThickness = 1.dp,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),

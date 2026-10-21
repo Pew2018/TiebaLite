@@ -125,7 +125,7 @@ fun BlockListPage(
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_block_list),
-                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6
+                        fontWeight = FontWeight.Medium, style = MaterialTheme.typography.h6
                     )
                 },
                 navigationIcon = {
@@ -143,9 +143,7 @@ fun BlockListPage(
                         divider = {},
                         backgroundColor = Color.Transparent,
                         contentColor = ExtendedTheme.colors.onTopBar,
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .width(84.dp * 2),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Tab(
                             selected = pagerState.currentPage == 0,

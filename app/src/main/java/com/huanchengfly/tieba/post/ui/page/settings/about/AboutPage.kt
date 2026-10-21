@@ -63,7 +63,7 @@ fun AboutPage(
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_about),
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.Medium,
                         style = MaterialTheme.typography.h6
                     )
                 },

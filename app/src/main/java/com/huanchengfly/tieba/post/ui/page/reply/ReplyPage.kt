@@ -449,7 +449,7 @@ internal fun ReplyPageContent(
             Text(
                 text = stringResource(id = R.string.title_reply),
                 modifier = Modifier.weight(1f),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Medium
             )
             Text(
                 text = "$textLength",
@@ -527,12 +527,13 @@ internal fun ReplyPageContent(
 //            )
         }
         Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
                 onClick = { switchToPanel(EMOJI) },
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     imageVector = Icons.Outlined.EmojiEmotions,
@@ -543,7 +544,7 @@ internal fun ReplyPageContent(
             if (postId == null || postId == 0L) {
                 IconButton(
                     onClick = { switchToPanel(IMAGE) },
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     BadgedBox(
                         badge = {
@@ -618,7 +619,7 @@ internal fun ReplyPageContent(
                         }
                     },
                     enabled = canSend,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(48.dp)
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Rounded.Send,

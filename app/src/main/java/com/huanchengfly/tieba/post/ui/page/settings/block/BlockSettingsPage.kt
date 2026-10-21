@@ -51,7 +51,7 @@ fun BlockSettingsPage(
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_block_settings),
-                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6
+                        fontWeight = FontWeight.Medium, style = MaterialTheme.typography.h6
                     )
                 },
                 navigationIcon = {
@@ -62,7 +62,7 @@ fun BlockSettingsPage(
     ) { paddingValues ->
         PrefsScreen(
             dataStore = context.dataStore,
-            dividerThickness = 0.dp,
+            dividerThickness = 1.dp,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),

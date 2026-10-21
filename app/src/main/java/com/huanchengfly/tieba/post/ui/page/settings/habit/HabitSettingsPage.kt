@@ -63,7 +63,7 @@ fun HabitSettingsPage(
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_settings_read_habit),
-                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6
+                        fontWeight = FontWeight.Medium, style = MaterialTheme.typography.h6
                     )
                 },
                 navigationIcon = {
@@ -74,7 +74,7 @@ fun HabitSettingsPage(
     ) { paddingValues ->
         PrefsScreen(
             dataStore = LocalContext.current.dataStore,
-            dividerThickness = 0.dp,
+            dividerThickness = 1.dp,
             modifier = Modifier
                 .padding(paddingValues)
                 .fillMaxSize(),
