@@ -118,9 +118,10 @@ object ThemeUtil {
     val customThemeRevision: MutableState<Int> = mutableStateOf(0)
 
     fun notifyCustomThemeChanged() {
+        // A saved custom colour invalidates Compose roles, but never changes the selected
+        // light/dark appearance. The caller explicitly selects the custom palette, if desired.
+        // This notification may arrive after an asynchronous DataStore write.
         customThemeRevision.value += 1
-        // Native Views resolve attributes on demand; Compose needs an observable invalidation.
-        themeState.value = THEME_CUSTOM
     }
 
     /** Re-resolve shared theme roles after a toolbar or dark-surface preference changes. */

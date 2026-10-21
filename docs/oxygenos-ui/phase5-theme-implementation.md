@@ -33,6 +33,7 @@ toolbar follow/custom ─── controls MAIN toolbar, not the palette
 - 修复 `App.ThemeDelegate` 中 `colorWindowBackground` 使用无参全局夜间状态的问题；Toolbar 次要图标与选中图标改由同一顶栏前景派生，避免落后于主题状态。
 - AMOLED Window/导航/页面背景使用真正 #000000，保留弹窗/卡片的轻度深灰层级；种子强调色由所选主题的深色变体或自定义色派生。
 - 自定义主色编辑不再覆写独立顶栏色；合法 Hex 保存与第一阶段验证路径保持不变。深色样式选项通过一次持久化事务更新，随后切换有效主题。
+- 回归补修：`notifyCustomThemeChanged()` 现在只使 Compose 用途色重新解析，不再将活动主题强制改成 `custom` 浅色；异步保存返回时保留 AMOLED/经典深色及当前手动/跟随系统外观。对应仪器测试 `customColourNotificationDoesNotForceLightTheme` 已新增，需设备运行。
 - 不增加夸张主题切换动画、Activity 全局 recreate、网络重新加载或额外大型主题状态框架。
 
 ## 消费者审查（代码静态级别）

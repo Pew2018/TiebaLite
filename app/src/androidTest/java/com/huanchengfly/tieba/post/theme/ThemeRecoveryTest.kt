@@ -70,6 +70,16 @@ class ThemeRecoveryTest {
     }
 
     @Test
+    fun customColourNotificationDoesNotForceLightTheme() {
+        val selectedBefore = ThemeUtil.themeState.value
+        val revisionBefore = ThemeUtil.customThemeRevision.value
+        ThemeUtil.notifyCustomThemeChanged()
+        assertEquals("颜色存盘通知不应覆盖深色/AMOLED 当前主题",
+            selectedBefore, ThemeUtil.themeState.value)
+        assertEquals(revisionBefore + 1, ThemeUtil.customThemeRevision.value)
+    }
+
+    @Test
     fun extremePaletteContrastRemainsReadable() {
         val black = android.graphics.Color.BLACK
         val white = android.graphics.Color.WHITE
