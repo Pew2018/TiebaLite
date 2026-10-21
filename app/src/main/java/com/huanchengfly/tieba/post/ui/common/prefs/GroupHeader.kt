@@ -24,6 +24,8 @@ fun GroupHeader(
         Modifier
             .padding(
                 start = StartPadding,
+                top = 16.dp,
+                bottom = 8.dp,
             )
             .fillMaxWidth(),
         contentAlignment = Alignment.CenterStart

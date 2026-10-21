@@ -388,7 +388,6 @@ fun Dialog(
         ConstraintLayout(
             modifier = modifier
                 .wrapContentHeight()
-                .animateContentSize()
                 .widthIn(max = 310.dp)
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -419,7 +418,7 @@ fun Dialog(
                             .padding(horizontal = 24.dp)
                             .align(Alignment.Start)
                     ) {
-                        ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)) {
+                        ProvideTextStyle(value = MaterialTheme.typography.h6) {
                             title()
                         }
                     }

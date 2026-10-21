@@ -91,11 +91,11 @@ fun NavigationDrawerItem(
     modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
     badge: (@Composable () -> Unit)? = null,
-    shape: Shape = MaterialTheme.shapes.medium,
+    shape: Shape = MaterialTheme.shapes.large,
     backgroundColor: Color = Color.Transparent,
-    selectedBackgroundColor: Color = MaterialTheme.colors.primary.copy(0.25f),
+    selectedBackgroundColor: Color = ExtendedTheme.colors.accentMuted,
     itemColor: Color = MaterialTheme.colors.onSurface,
-    selectedItemColor: Color = MaterialTheme.colors.primary,
+    selectedItemColor: Color = ExtendedTheme.colors.accentText,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() }
 ) {
     Surface(
@@ -330,7 +330,7 @@ fun NavigationRail(
                                     atEnd = index == currentPosition
                                 ),
                                 contentDescription = navigationItem.title(index == currentPosition),
-                                modifier = Modifier.size(16.dp),
+                                modifier = Modifier.size(24.dp),
                             )
                             if (navigationItem.badge) {
                                 Text(
@@ -360,14 +360,12 @@ fun NavigationRail(
 fun BottomNavigationDivider(
     themeColors: ExtendedColors = ExtendedTheme.colors
 ) {
-    if (!themeColors.isNightMode) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(1.5.dp)
-                .background(themeColors.divider)
-        )
-    }
+    Spacer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(themeColors.divider)
+    )
 }
 
 @OptIn(ExperimentalAnimationGraphicsApi::class)
@@ -424,7 +422,7 @@ fun BottomNavigation(
                             }
                         }
                     },
-                    selectedContentColor = MaterialTheme.colors.secondary,
+                    selectedContentColor = themeColors.accentText,
                     unselectedContentColor = themeColors.unselected,
                     alwaysShowLabel = false
                 )

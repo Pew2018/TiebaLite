@@ -54,7 +54,6 @@ internal fun LeadingIcon(
 ) {
     CompositionLocalProvider(LocalContentColor provides ExtendedTheme.colors.primary) {
         content()
-        Spacer(modifier = Modifier.width(56.dp))
     }
 }
 
@@ -121,7 +120,7 @@ fun SettingsPage(
                     title = {
                         Text(
                             text = stringResource(id = R.string.title_settings),
-                            fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6
+                            style = MaterialTheme.typography.h6
                         )
                     },
                     navigationIcon = {
@@ -132,7 +131,7 @@ fun SettingsPage(
         ) {
             PrefsScreen(
                 dataStore = LocalContext.current.dataStore,
-                dividerThickness = 0.dp,
+                dividerThickness = 1.dp,
                 modifier = Modifier
                     .padding(it)
                     .fillMaxSize(),

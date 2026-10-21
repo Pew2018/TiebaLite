@@ -149,7 +149,7 @@ fun TabRow(
     },
     divider: @Composable @UiComposable () -> Unit =
         @Composable {
-            TabRowDefaults.Divider()
+            TabRowDefaults.Divider(color = ExtendedTheme.colors.divider, thickness = 1.dp)
         },
     tabs: @Composable @UiComposable () -> Unit,
 ) {
@@ -162,9 +162,9 @@ fun TabRow(
             val tabRowWidth = constraints.maxWidth
             val tabMeasurables = subcompose(TabSlots.Tabs, tabs)
             val tabCount = tabMeasurables.size
-            val tabWidth = (tabRowWidth / tabCount)
+            val tabWidth = if (tabCount > 0) tabRowWidth / tabCount else tabRowWidth
             val tabPlaceables = tabMeasurables.map {
-                it.measure(constraints.copy(minWidth = tabWidth, maxWidth = tabWidth))
+                it.measure(constraints.copy(minWidth = tabWidth, maxWidth = tabWidth, minHeight = minOf(constraints.maxHeight, 48.dp.roundToPx())))
             }
 
             val tabRowHeight = tabPlaceables.maxByOrNull { it.height }?.height ?: 0
@@ -238,13 +238,13 @@ fun ScrollableTabRow(
     edgePadding: Dp = TabRowDefaults.ScrollableTabRowPadding,
     indicator: @Composable @UiComposable
         (tabPositions: List<TabPosition>) -> Unit = @Composable { tabPositions ->
-        TabRowDefaults.Indicator(
+        ClassicTabIndicator(
             Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
         )
     },
     divider: @Composable @UiComposable () -> Unit =
         @Composable {
-            TabRowDefaults.Divider()
+            TabRowDefaults.Divider(color = ExtendedTheme.colors.divider, thickness = 1.dp)
         },
     tabs: @Composable @UiComposable () -> Unit,
 ) {
@@ -273,7 +273,7 @@ fun ScrollableTabRow(
             val tabConstraints = constraints.copy()
 
             val tabPlaceables = subcompose(TabSlots.Tabs, tabs)
-                .map { it.measure(tabConstraints) }
+                .map { it.measure(tabConstraints.copy(minHeight = minOf(tabConstraints.maxHeight, 48.dp.roundToPx()))) }
 
             var layoutWidth = padding * 2
             var layoutHeight = 0
@@ -414,14 +414,13 @@ fun PagerTabIndicator(
             fraction < 0 && prevTab != null -> lerp(currentTab.width, prevTab.width, -fraction)
             else -> currentTab.width
         }
-        val animatedIndicatorOffset by animateDpAsState(targetValue = indicatorOffset)
-        val animatedIndicatorWidth by animateDpAsState(targetValue = indicatorWidth)
+        // Pager offset already changes continuously; avoid an extra smoothing pass.
         Box(
             Modifier
                 .fillMaxWidth()
                 .wrapContentSize(Alignment.BottomStart)
-                .offset(x = animatedIndicatorOffset)
-                .width(animatedIndicatorWidth)
+                .offset(x = indicatorOffset)
+                .width(indicatorWidth)
                 .height(2.dp)
                 .background(color = ExtendedTheme.colors.progressColor)
         )
@@ -448,20 +447,7 @@ fun TabIndicator(
     tabPositions: List<TabPosition>
 ) {
     if (tabPositions.isNotEmpty()) {
-        val tabIndicatorWidth = 16.dp
-        val currentTab = tabPositions[selectedTabIndex]
-        val currentTabLeft = currentTab.left + (currentTab.width / 2 - tabIndicatorWidth / 2)
-        val animatedIndicatorOffset by animateDpAsState(targetValue = currentTabLeft)
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .wrapContentSize(Alignment.BottomStart)
-                .offset(x = animatedIndicatorOffset, y = (-8).dp)
-                .width(tabIndicatorWidth)
-                .height(3.dp)
-                .clip(RoundedCornerShape(100))
-                .background(color = LocalContentColor.current)
-        )
+        ClassicTabIndicator(Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex.coerceIn(0, tabPositions.lastIndex)]))
     }
 }
 

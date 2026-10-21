@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
+import androidx.compose.material.SliderDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
 import com.huanchengfly.tieba.post.ui.common.prefs.LocalPrefsDataStore
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.common.prefs.roundToDP
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -112,7 +114,12 @@ fun SliderPref(
                 valueRange = valueRange,
                 steps = steps,
                 onValueChangeFinished = { edit() },
-                enabled = enabled
+                enabled = enabled,
+                colors = SliderDefaults.colors(
+                    thumbColor = ExtendedTheme.colors.accentFill,
+                    activeTrackColor = ExtendedTheme.colors.accentFill,
+                    inactiveTrackColor = ExtendedTheme.colors.switchOff
+                )
             )
 
             if (showValue) {

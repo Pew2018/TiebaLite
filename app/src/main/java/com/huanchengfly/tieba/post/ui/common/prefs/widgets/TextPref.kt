@@ -44,7 +44,7 @@ fun TextPref(
 ) {
     PrefsListItem(
         text = { Text(title) },
-        modifier = if (onClick != null && enabled) modifier.clickable { onClick() } else modifier,
+        modifier = if (onClick != null) modifier.clickable(enabled = enabled) { onClick() } else modifier,
         enabled = enabled,
         darkenOnDisable = darkenOnDisable,
         textColor = textColor,

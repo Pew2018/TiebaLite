@@ -76,12 +76,12 @@ fun PrefsListItem(
 }
 
 private object AnyLine {
-    private val MinHeight = 48.dp
-    private val MinHeightSmaller = 32.dp
-    private val IconMinPaddedWidth = 40.dp
+    private val MinHeight = 56.dp
+    private val MinHeightSmaller = 40.dp
+    private val IconMinPaddedWidth = 56.dp
     private val ContentPadding = 16.dp
-    private val VerticalPadding = 16.dp
-    private val SingleLinePadding = 16.dp //used when no secondary text is supplied
+    private val VerticalPadding = 8.dp
+    private val SingleLinePadding = 8.dp //used when no secondary text is supplied
 
     @Composable
     fun CustomListItem(
@@ -94,16 +94,21 @@ private object AnyLine {
     ) {
         Row(
             modifier
-                .heightIn(min = if (minimalHeight) MinHeightSmaller else MinHeight)
+                .heightIn(min = when {
+                    minimalHeight -> MinHeightSmaller
+                    secondaryText != null -> 72.dp
+                    else -> MinHeight
+                })
                 .padding(
                     start = ContentPadding,
                     end = ContentPadding,
                     top = when {
-                        secondaryText == null && !minimalHeight -> SingleLinePadding
+                        minimalHeight -> 4.dp
+                        secondaryText == null -> SingleLinePadding
                         else -> VerticalPadding
                     },
                     bottom = when {
-                        minimalHeight -> 0.dp
+                        minimalHeight -> 4.dp
                         secondaryText == null -> SingleLinePadding
                         else -> VerticalPadding
                     }
@@ -125,7 +130,10 @@ private object AnyLine {
                 modifier = Modifier.weight(1f)
             ) {
                 text()
-                secondaryText?.invoke()
+                if (secondaryText != null) {
+                    Spacer(Modifier.height(3.dp))
+                    secondaryText()
+                }
             }
 
             if (trailing != null) {

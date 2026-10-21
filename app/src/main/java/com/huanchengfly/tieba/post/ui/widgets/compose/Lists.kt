@@ -24,7 +24,7 @@ fun ListMenuItem(
     icon: ImageVector,
     text: String,
     modifier: Modifier = Modifier,
-    iconColor: Color = ExtendedTheme.colors.primary,
+    iconColor: Color = ExtendedTheme.colors.textSecondary,
     onClick: (() -> Unit)? = null,
     customContent: @Composable (RowScope.() -> Unit)? = null,
 ) {
@@ -45,7 +45,7 @@ fun ListMenuItem(
         Text(
             text = text,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             maxLines = 1,
             modifier = Modifier.weight(1f),
         )

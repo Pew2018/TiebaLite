@@ -8,21 +8,13 @@ import androidx.compose.ui.unit.sp
 
 internal val DefaultTextStyle = TextStyle.Default.copy()
 
-// Set of Material typography styles to start with
+// Classic Material / OxygenOS 7.1.1 typography.
 val Typography = Typography(
-    body1 = DefaultTextStyle.copy(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp
-    ),
-    subtitle1 = DefaultTextStyle.copy(
-        fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
-        letterSpacing = 0.15.sp
-    ),
-    button = DefaultTextStyle.copy(
-        fontWeight = FontWeight.Medium,
-        fontSize = 14.sp,
-        letterSpacing = 0.15.sp
-    )
+    h6 = DefaultTextStyle.copy(fontFamily = FontFamily.Default, fontWeight = FontWeight.Medium, fontSize = 20.sp, letterSpacing = 0.sp),
+    subtitle1 = DefaultTextStyle.copy(fontWeight = FontWeight.Normal, fontSize = 16.sp, letterSpacing = 0.sp),
+    subtitle2 = DefaultTextStyle.copy(fontWeight = FontWeight.Medium, fontSize = 14.sp, letterSpacing = 0.sp),
+    body1 = DefaultTextStyle.copy(fontWeight = FontWeight.Normal, fontSize = 16.sp, letterSpacing = 0.sp),
+    body2 = DefaultTextStyle.copy(fontWeight = FontWeight.Normal, fontSize = 14.sp, letterSpacing = 0.sp),
+    caption = DefaultTextStyle.copy(fontWeight = FontWeight.Normal, fontSize = 12.sp, letterSpacing = 0.sp),
+    button = DefaultTextStyle.copy(fontWeight = FontWeight.Medium, fontSize = 14.sp, letterSpacing = 0.sp)
 )

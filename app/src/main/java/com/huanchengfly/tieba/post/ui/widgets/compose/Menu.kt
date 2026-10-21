@@ -189,7 +189,7 @@ fun ClassicDropdownMenuItem(
         ProvideTextStyle(
             MaterialTheme.typography.body1.copy(
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Medium,
+                fontWeight = FontWeight.Normal,
                 color = ExtendedTheme.colors.text,
             )
         ) { content() }

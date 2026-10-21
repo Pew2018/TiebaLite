@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import com.huanchengfly.tieba.post.ui.common.prefs.LocalPrefsDataStore
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import kotlinx.coroutines.launch
 
 /**
@@ -82,7 +83,11 @@ fun CheckBoxPref(
         Checkbox(
             checked = checked,
             enabled = enabled,
-            colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colors.primary),
+            colors = CheckboxDefaults.colors(
+                checkedColor = ExtendedTheme.colors.accentFill,
+                uncheckedColor = ExtendedTheme.colors.textSecondary,
+                checkmarkColor = ExtendedTheme.colors.onAccentFill
+            ),
             onCheckedChange = {
                 edit(it)
             }

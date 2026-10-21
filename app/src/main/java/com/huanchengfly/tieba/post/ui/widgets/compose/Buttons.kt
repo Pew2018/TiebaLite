@@ -37,7 +37,7 @@ fun Button(
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     elevation: ButtonElevation? = ButtonDefaults.elevation(0.dp, 0.dp, 0.dp, 0.dp, 0.dp),
-    shape: Shape = RoundedCornerShape(100),
+    shape: Shape = RoundedCornerShape(4.dp),
     border: BorderStroke? = null,
     colors: ButtonColors = ButtonDefaults.buttonColors(
         backgroundColor = ExtendedTheme.colors.accentFill,
@@ -84,7 +84,7 @@ fun TextButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    shape: Shape = RoundedCornerShape(100),
+    shape: Shape = RoundedCornerShape(4.dp),
     border: BorderStroke? = null,
     color: Color = ExtendedTheme.colors.accentText,
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,

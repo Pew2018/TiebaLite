@@ -193,11 +193,12 @@ fun ActionItem(
     contentDescription: String,
     onClick: () -> Unit
 ) {
-    ProvideContentColor(color = ExtendedTheme.colors.onTopBar) {
+    ProvideContentColor(color = rememberRoleColors().onTopBar) {
         IconButton(onClick = onClick) {
             Icon(
                 imageVector = icon,
-                contentDescription = contentDescription
+                contentDescription = contentDescription,
+                modifier = Modifier.size(24.dp)
             )
         }
     }
@@ -205,11 +206,12 @@ fun ActionItem(
 
 @Composable
 fun BackNavigationIcon(onBackPressed: () -> Unit) {
-    ProvideContentColor(color = ExtendedTheme.colors.onTopBar) {
+    ProvideContentColor(color = rememberRoleColors().onTopBar) {
         IconButton(onClick = onBackPressed) {
             Icon(
                 imageVector = ImageVector.vectorResource(id = R.drawable.ic_round_arrow_back),
-                contentDescription = stringResource(id = R.string.button_back)
+                contentDescription = stringResource(id = R.string.button_back),
+                modifier = Modifier.size(24.dp)
             )
         }
     }
@@ -275,6 +277,7 @@ fun TitleCentredToolbar(
                         modifier = Modifier.fillMaxHeight()
                     ) {
                         navigationIcon?.invoke()
+                        Spacer(Modifier.width(16.dp))
                         // weight/actions 必须作为 Row 的直接子项（RowScope 由 Row 提供），
                         // 不能包在 Provide* 的普通 () -> Unit lambda 内，否则拿不到 RowScope。
                         Box(
@@ -283,7 +286,7 @@ fun TitleCentredToolbar(
                                 .weight(1f),
                             contentAlignment = Alignment.CenterStart
                         ) {
-                            ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)) {
+                            ProvideTextStyle(value = MaterialTheme.typography.h6) {
                                 ProvideContentColor(color = roleColors.onTopBar) {
                                     title()
                                 }
@@ -333,7 +336,7 @@ fun Toolbar(
         topBar = {
             TopAppBar(
                 title = {
-                    ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)) {
+                    ProvideTextStyle(value = MaterialTheme.typography.h6) {
                         ProvideContentColor(color = resolvedContent, content = title)
                     }
                 },

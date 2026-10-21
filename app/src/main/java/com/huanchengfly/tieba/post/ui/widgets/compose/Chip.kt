@@ -31,7 +31,7 @@ fun Chip(
     appendIcon: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     invertColor: Boolean = false,
-    shape: Shape = RoundedCornerShape(100),
+    shape: Shape = RoundedCornerShape(4.dp),
 ) {
     val color =
         if (invertColor) ExtendedTheme.colors.invertChipContent else ExtendedTheme.colors.onChip
@@ -63,7 +63,7 @@ fun Chip(
             }
             Text(
                 fontSize = 12.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 text = text
             )
             appendIcon?.let {
