@@ -14,8 +14,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -106,7 +106,7 @@ fun UserLikeForumPage(
         },
         errorScreen = { ErrorScreen(error = error.getOrNull()) },
     ) {
-        val pullRefreshState = rememberPullRefreshState(
+        val pullRefreshState = rememberClassicPullRefreshState(
             refreshing = isRefreshing,
             onRefresh = ::reload
         )
@@ -114,7 +114,7 @@ fun UserLikeForumPage(
         val lazyListState = rememberLazyListState()
 
         val pullRefreshModifier =
-            if (enablePullRefresh) Modifier.pullRefresh(pullRefreshState) else Modifier
+            if (enablePullRefresh) Modifier.pullRefresh(pullRefreshState.state) else Modifier
 
         Box(modifier = pullRefreshModifier) {
             LoadMoreLayout(
@@ -137,13 +137,16 @@ fun UserLikeForumPage(
                 )
             }
 
-            ClassicPullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
-                modifier = Modifier.align(Alignment.TopCenter),
-                backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
-                contentColor = ExtendedTheme.colors.primary,
-            )
+            if (enablePullRefresh) {
+                ClassicPullRefreshIndicator(
+                    refreshing = pullRefreshState.isRefreshing,
+                    state = pullRefreshState.state,
+                    holdAtRest = pullRefreshState.isActive,
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
+                    contentColor = ExtendedTheme.colors.progressColor,
+                )
+            }
         }
     }
 }

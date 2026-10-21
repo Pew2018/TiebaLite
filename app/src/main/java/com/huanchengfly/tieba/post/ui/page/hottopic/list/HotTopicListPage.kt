@@ -19,8 +19,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -187,7 +187,7 @@ fun HotTopicListPage(
             )
         },
     ) { contentPaddings ->
-        val pullRefreshState = rememberPullRefreshState(
+        val pullRefreshState = rememberClassicPullRefreshState(
             refreshing = isRefreshing,
             onRefresh = { viewModel.send(HotTopicListUiIntent.Load) }
         )
@@ -195,7 +195,7 @@ fun HotTopicListPage(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPaddings)
-                .pullRefresh(pullRefreshState)
+                .pullRefresh(pullRefreshState.state)
         ) {
             MyLazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -227,11 +227,12 @@ fun HotTopicListPage(
             }
 
             ClassicPullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
                 modifier = Modifier.align(Alignment.TopCenter),
                 backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
-                contentColor = ExtendedTheme.colors.primary,
+                contentColor = ExtendedTheme.colors.progressColor,
             )
         }
     }

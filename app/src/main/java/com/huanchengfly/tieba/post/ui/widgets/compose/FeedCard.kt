@@ -613,7 +613,7 @@ fun OriginThreadCard(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Column {
+        Column(modifier = Modifier.fillMaxWidth()) {
             contentRenders.fastForEach {
                 it.Render()
             }

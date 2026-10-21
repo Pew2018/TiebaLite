@@ -17,8 +17,8 @@ import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -162,14 +162,14 @@ fun ThreadStorePage(
                 }
             }
         ) {
-            val pullRefreshState = rememberPullRefreshState(
+            val pullRefreshState = rememberClassicPullRefreshState(
                 refreshing = isRefreshing,
                 onRefresh = { viewModel.send(ThreadStoreUiIntent.Refresh) }
             )
 
             val lazyListState = rememberLazyListState()
 
-            Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+            Box(modifier = Modifier.pullRefresh(pullRefreshState.state)) {
                 LoadMoreLayout(
                     isLoading = isLoadingMore,
                     onLoadMore = { viewModel.send(ThreadStoreUiIntent.LoadMore(currentPage + 1)) },
@@ -216,11 +216,12 @@ fun ThreadStorePage(
                 }
 
                 ClassicPullRefreshIndicator(
-                    refreshing = isRefreshing,
-                    state = pullRefreshState,
+                    refreshing = pullRefreshState.isRefreshing,
+                    state = pullRefreshState.state,
+                    holdAtRest = pullRefreshState.isActive,
                     modifier = Modifier.align(Alignment.TopCenter),
                     backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
-                    contentColor = ExtendedTheme.colors.primary,
+                    contentColor = ExtendedTheme.colors.progressColor,
                 )
             }
         }

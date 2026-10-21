@@ -1,5 +1,6 @@
 package com.huanchengfly.tieba.post.ui.widgets.compose
 
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -36,5 +37,21 @@ class ClassicRefreshCycleTest {
         cycle.expireIfNeverStarted()
         assertFalse(cycle.pending)
         assertEquals(ClassicRefreshPhase.Settling, cycle.phase)
+    }
+
+    @Test fun refreshGlyphHasReadableContrastOnLightDarkAndAccentSurfaces() {
+        val surfaces = listOf(
+            0xFF0071CD.toInt(), // classic blue
+            0xFFFFFFFF.toInt(), // light / translucent fallback
+            0xFF000000.toInt(), // AMOLED
+            0xFFFFFF00.toInt(), // high-luminance custom accent
+        )
+        surfaces.forEach { surface ->
+            val foreground = ThemeColorMath.readableOnInt(surface)
+            assertTrue(
+                "contrast ${ThemeColorMath.contrastInt(surface, foreground)} for #${surface.toUInt().toString(16)}",
+                ThemeColorMath.contrastInt(surface, foreground) >= 3.0,
+            )
+        }
     }
 }

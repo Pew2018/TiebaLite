@@ -263,9 +263,9 @@ fun SearchPage(
                 topBar = {
                     Box(
                         modifier = Modifier
-                            .height(64.dp)
+                            .height(56.dp)
                             .background(ExtendedTheme.colors.topBar)
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
                     ) {
                         SearchTopBar(
                             keyword = inputKeyword,
@@ -641,9 +641,9 @@ fun PreviewSearchBox() {
     TiebaLiteTheme {
         Box(
             modifier = Modifier
-                .height(64.dp)
+                .height(56.dp)
                 .background(ExtendedTheme.colors.topBar)
-                .padding(vertical = 8.dp, horizontal = 16.dp)
+                .padding(vertical = 4.dp, horizontal = 16.dp)
         ) {
             SearchTopBar(
                 keyword = keyword,

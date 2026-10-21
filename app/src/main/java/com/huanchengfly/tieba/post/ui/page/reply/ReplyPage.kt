@@ -127,6 +127,8 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.flow.first
 import org.litepal.LitePal
 import org.litepal.extension.deleteAllAsync
 import org.litepal.extension.findFirstAsync
@@ -147,13 +149,33 @@ data class ReplyArgs(
 )
 
 @Composable
+@OptIn(ExperimentalLayoutApi::class)
 fun ReplyDialog(
     args: ReplyArgs,
     state: DialogState = rememberDialogState(),
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val density = LocalDensity.current
+    val imeInsets = WindowInsets.ime
+    val scope = rememberCoroutineScope()
+    var dismissPending by remember(state) { mutableStateOf(false) }
     BaseDialog(
         dialogState = state,
         imePadding = false,
+        onDismissRequest = { finishDismiss ->
+            if (!dismissPending) {
+                dismissPending = true
+                keyboardController?.hide()
+                scope.launch {
+                    withTimeoutOrNull(900) {
+                        snapshotFlow { imeInsets.getBottom(density) }
+                            .filter { it == 0 }
+                            .first()
+                    }
+                    finishDismiss()
+                }
+            }
+        },
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),

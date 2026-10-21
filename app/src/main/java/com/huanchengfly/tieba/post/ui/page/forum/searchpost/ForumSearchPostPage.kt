@@ -34,8 +34,8 @@ import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -280,7 +280,7 @@ fun ForumSearchPostPage(
         )
     }
 
-    val pullRefreshState = rememberPullRefreshState(
+    val pullRefreshState = rememberClassicPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = ::refresh
     )
@@ -307,9 +307,9 @@ fun ForumSearchPostPage(
                 topBar = {
                     Box(
                         modifier = Modifier
-                            .height(64.dp)
+                            .height(56.dp)
                             .background(ExtendedTheme.colors.topBar)
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
                     ) {
                         SearchBox(
                             keyword = inputKeyword,
@@ -385,7 +385,7 @@ fun ForumSearchPostPage(
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()
-                                .pullRefresh(pullRefreshState)
+                                .pullRefresh(pullRefreshState.state)
                         ) {
                             LoadMoreLayout(
                                 isLoading = isLoadingMore,
@@ -579,11 +579,12 @@ fun ForumSearchPostPage(
                             }
 
                             ClassicPullRefreshIndicator(
-                                refreshing = isRefreshing,
-                                state = pullRefreshState,
+                                refreshing = pullRefreshState.isRefreshing,
+                                state = pullRefreshState.state,
+                                holdAtRest = pullRefreshState.isActive,
                                 modifier = Modifier.align(Alignment.TopCenter),
                                 backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
-                                contentColor = ExtendedTheme.colors.primary,
+                                contentColor = ExtendedTheme.colors.progressColor,
                             )
                         }
                     }

@@ -197,11 +197,21 @@ object ThemeUtil {
     @ColorInt
     fun mainToolbarColor(theme: String): Int {
         if (isTranslucentTheme(theme)) return android.graphics.Color.TRANSPARENT
-        if (theme == THEME_AMOLED_DARK) return Color.BLACK
         if (!INSTANCE.appPreferences.toolbarPrimaryColor) {
             return INSTANCE.appPreferences.customTopBarColor?.let { value ->
                 runCatching { Color.parseColor(value) }.getOrNull()
-            } ?: 0xFF212121.toInt()
+            } ?: if (theme == THEME_AMOLED_DARK) Color.BLACK else 0xFF212121.toInt()
+        }
+        if (theme == THEME_AMOLED_DARK) {
+            // AMOLED controls the page surface, while the toolbar still follows the
+            // selected palette. Users who want a black toolbar can set it explicitly.
+            val palette = selectedPaletteTheme()
+            if (palette == THEME_CUSTOM) {
+                return INSTANCE.appPreferences.customPrimaryColor?.let { value ->
+                    runCatching { Color.parseColor(value) }.getOrNull()
+                } ?: 0xFF0071CD.toInt()
+            }
+            return ThemePresets.presetOf(palette)?.seedColor ?: 0xFF0071CD.toInt()
         }
         val night = isNightMode(theme)
         if (theme == THEME_CUSTOM) {
@@ -210,7 +220,6 @@ object ThemeUtil {
             } ?: 0xFF0071CD.toInt()
         }
         if (ThemePresets.isPreset(theme)) {
-            if (night) return 0xFF212121.toInt()
             val seed = ThemePresets.presetOf(theme)!!.seedColor
             return seed
         }
@@ -231,18 +240,15 @@ object ThemeUtil {
     /** 主功能页面状态栏色（比顶栏略深一档，还原 2017 年 经典 Material Design 的上下层次） */
     @ColorInt
     fun mainStatusBarColor(theme: String): Int =
-        if (theme == THEME_AMOLED_DARK) Color.BLACK else
-            com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-                .darkenInt(mainToolbarColor(theme), 0.08f)
+        com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+            .darkenInt(mainToolbarColor(theme), 0.08f)
 
-    /** 设置类页面顶栏色：经典深色 */
+    /** Settings and content pages share the user's active top-bar preference. */
     @ColorInt
-    fun settingsToolbarColor(theme: String): Int =
-        if (theme == THEME_AMOLED_DARK) Color.BLACK else 0xFF212121.toInt()
+    fun settingsToolbarColor(theme: String): Int = mainToolbarColor(theme)
 
     @ColorInt
-    fun settingsStatusBarColor(theme: String): Int =
-        if (theme == THEME_AMOLED_DARK) Color.BLACK else 0xFF1E1E1E.toInt()
+    fun settingsStatusBarColor(theme: String): Int = mainStatusBarColor(theme)
 
     /** 顶栏前景（标题/图标）：按对比度自动选择白字或深字 */
     @ColorInt
@@ -536,8 +542,8 @@ object ThemeUtil {
     fun isStatusBarFontDark(): Boolean {
         val theme = getRawTheme()
         val isToolbarPrimaryColor: Boolean = INSTANCE.appPreferences.toolbarPrimaryColor
-        if (ThemePresets.isPreset(theme)) {
-            // 预设：状态栏文字明暗由主功能顶栏实际颜色的对比度决定
+        if (ThemePresets.isPreset(theme) || theme == THEME_AMOLED_DARK) {
+            // 状态栏图标明暗依据实际顶栏颜色，包括 AMOLED 下独立的主题配色。
             // （深色/彩色顶栏 → 浅色文字；浅色顶栏 → 深色文字）
             return onToolbarColor(theme) != Color.WHITE
         }

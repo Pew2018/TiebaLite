@@ -323,6 +323,7 @@ fun BaseDialog(
     cancelable: Boolean = true,
     cancelableOnTouchOutside: Boolean = true,
     imePadding: Boolean = true,
+    onDismissRequest: ((() -> Unit) -> Unit)? = null,
     content: @Composable (DialogScope.() -> Unit),
 ) {
     var showDialog by remember {
@@ -345,8 +346,16 @@ fun BaseDialog(
                 isActiveClose = true
             },
         )
+        val requestDismiss = {
+            if (onDismissRequest != null) {
+                onDismissRequest.invoke { dialogState.show = false }
+            } else {
+                isActiveClose = true
+            }
+        }
         AnyPopDialog(
             isActiveClose = isActiveClose,
+            onDismissRequest = if (cancelable || cancelableOnTouchOutside) requestDismiss else null,
             onDismiss = {
                 onDismiss?.invoke()
                 dialogState.show = false

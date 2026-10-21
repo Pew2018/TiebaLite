@@ -64,7 +64,8 @@ private const val DefaultDurationMillis: Int = 250
 @Composable
 private fun DialogFullScreen(
     isActiveClose: Boolean,
-    onDismissRequest: () -> Unit,
+    onDismiss: () -> Unit,
+    onDismissRequest: (() -> Unit)?,
     properties: AnyPopDialogProperties,
     content: @Composable () -> Unit,
 ) {
@@ -83,13 +84,17 @@ private fun DialogFullScreen(
 
     val handleBackPress = {
         if (!isBackPress) {
-            isBackPress = true
-            isAnimateLayout = false
+            if (onDismissRequest != null) {
+                onDismissRequest.invoke()
+            } else {
+                isBackPress = true
+                isAnimateLayout = false
+            }
         }
     }
 
     Dialog(
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = { handleBackPress() },
         properties = DialogProperties(
             // 这里不使用新的测量规范，不能设置为false
             usePlatformDefaultWidth = true,
@@ -110,7 +115,7 @@ private fun DialogFullScreen(
                     delay(properties.durationMillis.toLong())
                 }
                 if (!isAnimateLayout) {
-                    onDismissRequest.invoke()
+                    onDismiss.invoke()
                 }
             }
             val activityWindow = getActivityWindow()
@@ -189,6 +194,7 @@ private fun DialogFullScreen(
 @Composable
 fun AnyPopDialog(
     onDismiss: () -> Unit,
+    onDismissRequest: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     isActiveClose: Boolean = false,
     properties: AnyPopDialogProperties = AnyPopDialogProperties(direction = DirectionState.BOTTOM),
@@ -196,7 +202,8 @@ fun AnyPopDialog(
 ) {
     DialogFullScreen(
         isActiveClose = isActiveClose,
-        onDismissRequest = onDismiss,
+        onDismiss = onDismiss,
+        onDismissRequest = onDismissRequest,
         properties = properties
     ) {
         val innerModifier = if (properties.imePadding) {

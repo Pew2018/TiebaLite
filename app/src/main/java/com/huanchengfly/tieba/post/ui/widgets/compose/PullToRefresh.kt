@@ -54,7 +54,9 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
 import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.common.theme.compose.toArgbInt
 import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshDefaults.loadPreUpPostDownNestedScrollConnection
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
@@ -178,6 +180,16 @@ fun ClassicPullRefreshIndicator(
     holdAtRest: Boolean = refreshing,
 ) {
     val progress = state.progress.coerceIn(0f, 1f)
+    // Several legacy palettes use the same seed for the indicator surface and spinner.
+    // Keep the caller's semantic foreground when it is readable; otherwise derive a
+    // high-contrast neutral so the glyph cannot disappear into the circle.
+    val visibleContentColor = remember(backgroundColor, contentColor) {
+        if (ThemeColorMath.contrastInt(backgroundColor.toArgbInt(), contentColor.toArgbInt()) >= 3.0) {
+            contentColor
+        } else {
+            Color(ThemeColorMath.readableOnInt(backgroundColor.toArgbInt()))
+        }
+    }
     val density = LocalDensity.current
     val hiddenPx = with(density) { (-40).dp.toPx() }
     val dockPx = with(density) { PullToRefreshDefaults.RefreshingOffset.toPx() }
@@ -204,7 +216,7 @@ fun ClassicPullRefreshIndicator(
             if (spinning) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(22.dp),
-                    color = contentColor,
+                    color = visibleContentColor,
                     strokeWidth = 2.dp,
                 )
             } else {
@@ -212,7 +224,7 @@ fun ClassicPullRefreshIndicator(
                     val stroke = 2.dp.toPx()
                     val arcProgress = if (holdAtRest) 1f else progress
                     drawArc(
-                        color = contentColor,
+                        color = visibleContentColor,
                         startAngle = -90f,
                         sweepAngle = (arcProgress * 270f).coerceAtLeast(1f),
                         useCenter = false,
@@ -222,12 +234,12 @@ fun ClassicPullRefreshIndicator(
                         val center = Offset(size.width / 2f, size.height / 2f)
                         val arrowLength = size.width * 0.24f
                         val end = Offset(center.x, size.height * 0.91f)
-                        drawLine(contentColor, Offset(end.x, end.y - arrowLength),
+                        drawLine(visibleContentColor, Offset(end.x, end.y - arrowLength),
                             end, stroke, StrokeCap.Round)
-                        drawLine(contentColor, end,
+                        drawLine(visibleContentColor, end,
                             Offset(end.x - arrowLength * 0.45f, end.y - arrowLength * 0.45f),
                             stroke, StrokeCap.Round)
-                        drawLine(contentColor, end,
+                        drawLine(visibleContentColor, end,
                             Offset(end.x + arrowLength * 0.45f, end.y - arrowLength * 0.45f),
                             stroke, StrokeCap.Round)
                     }

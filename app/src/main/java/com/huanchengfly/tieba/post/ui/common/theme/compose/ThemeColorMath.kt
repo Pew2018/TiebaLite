@@ -1,6 +1,5 @@
 package com.huanchengfly.tieba.post.ui.common.theme.compose
 
-import android.graphics.Color as AndroidColor
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
@@ -16,9 +15,9 @@ object ThemeColorMath {
 
     /** #AARRGGBB Int 的相对亮度（WCAG） */
     fun luminanceInt(argb: Int): Double {
-        val r = AndroidColor.red(argb) / 255.0
-        val g = AndroidColor.green(argb) / 255.0
-        val b = AndroidColor.blue(argb) / 255.0
+        val r = ((argb ushr 16) and 0xFF) / 255.0
+        val g = ((argb ushr 8) and 0xFF) / 255.0
+        val b = (argb and 0xFF) / 255.0
         fun ch(c: Double): Double =
             if (c <= 0.03928) c / 12.92 else Math.pow((c + 0.055) / 1.055, 2.4)
         return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b)
@@ -40,12 +39,11 @@ object ThemeColorMath {
     fun blendInt(color: Int, target: Int, amount: Float): Int {
         val a = amount.coerceIn(0f, 1f)
         fun ch(from: Int, to: Int): Int = (from + (to - from) * a).toInt().coerceIn(0, 255)
-        return AndroidColor.argb(
-            ch(AndroidColor.alpha(color), AndroidColor.alpha(target)),
-            ch(AndroidColor.red(color), AndroidColor.red(target)),
-            ch(AndroidColor.green(color), AndroidColor.green(target)),
-            ch(AndroidColor.blue(color), AndroidColor.blue(target)),
-        )
+        val alpha = ch((color ushr 24) and 0xFF, (target ushr 24) and 0xFF)
+        val red = ch((color ushr 16) and 0xFF, (target ushr 16) and 0xFF)
+        val green = ch((color ushr 8) and 0xFF, (target ushr 8) and 0xFF)
+        val blue = ch(color and 0xFF, target and 0xFF)
+        return (alpha shl 24) or (red shl 16) or (green shl 8) or blue
     }
 
     /** 提亮（向白混合） */
@@ -90,11 +88,10 @@ object ThemeColorMath {
 }
 
 /** Compose Color -> #AARRGGBB Int */
-fun Color.toArgbInt(): Int = android.graphics.Color.argb(
-    (alpha * 255).toInt(),
-    (red * 255).toInt(),
-    (green * 255).toInt(),
-    (blue * 255).toInt()
-)
+fun Color.toArgbInt(): Int =
+    ((alpha * 255).toInt() shl 24) or
+        ((red * 255).toInt() shl 16) or
+        ((green * 255).toInt() shl 8) or
+        (blue * 255).toInt()
 
 fun Int.toComposeColor(): Color = Color(this)

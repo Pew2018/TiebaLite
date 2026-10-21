@@ -32,6 +32,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ContentCopy
 import androidx.compose.material.icons.rounded.Add
@@ -40,11 +42,9 @@ import androidx.compose.material.icons.rounded.NoAccounts
 import androidx.compose.material.icons.rounded.Verified
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -79,6 +79,7 @@ import com.huanchengfly.tieba.post.goToActivity
 import com.huanchengfly.tieba.post.models.database.Block
 import com.huanchengfly.tieba.post.toastShort
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowWidthSizeClass
 import com.huanchengfly.tieba.post.ui.page.ProvideNavigator
 import com.huanchengfly.tieba.post.ui.page.user.edit.EditProfileActivity
@@ -96,11 +97,12 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoadHorizontalPager
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.ProvideContentColor
-import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshLayout
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.ScrollableTabRow
 import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
 import com.huanchengfly.tieba.post.ui.widgets.compose.Toolbar
 import com.huanchengfly.tieba.post.ui.widgets.compose.UserHeader
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import com.huanchengfly.tieba.post.ui.widgets.compose.states.StateScreen
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
 import com.huanchengfly.tieba.post.utils.BlockManager
@@ -111,9 +113,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
 
@@ -153,18 +153,19 @@ fun UserProfilePage(
     )
 
     val isError by remember {
-        derivedStateOf { error != null }
+        derivedStateOf { error != null && user == null }
     }
     val isEmpty by remember {
         derivedStateOf { user == null }
     }
+    val refreshScope = rememberCoroutineScope()
 
     ProvideNavigator(navigator = navigator) {
         StateScreen(
             modifier = Modifier.fillMaxSize(),
             isEmpty = isEmpty,
             isError = isError,
-            isLoading = isRefreshing,
+            isLoading = isRefreshing && user == null,
             onReload = { viewModel.send(UserProfileUiIntent.Refresh(uid)) },
             errorScreen = { ErrorScreen(error = error.getOrNull()) }
         ) {
@@ -174,6 +175,11 @@ fun UserProfilePage(
                     showActionBtn = account != null,
                     disableButton = disableButton,
                     isSelf = isSelf,
+                    isRefreshing = isRefreshing,
+                    onRefresh = {
+                        viewModel.send(UserProfileUiIntent.Refresh(uid))
+                        refreshScope.emitGlobalEvent(GlobalEvent.Refresh(key = "user_profile"))
+                    },
                     onBack = { navigator.navigateUp() },
                     onFollow = {
                         viewModel.send(
@@ -203,6 +209,8 @@ private fun UserProfileContent(
     showActionBtn: Boolean,
     disableButton: Boolean,
     isSelf: Boolean,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onBack: () -> Unit,
     onFollow: () -> Unit,
     onUnfollow: () -> Unit,
@@ -226,6 +234,8 @@ private fun UserProfileContent(
                 showActionBtn = showActionBtn,
                 disableButton = disableButton,
                 isSelf = isSelf,
+                isRefreshing = isRefreshing,
+                onRefresh = onRefresh,
                 onBack = onBack,
                 onFollow = onFollow,
                 onUnfollow = onUnfollow
@@ -310,20 +320,21 @@ private fun UserProfileToolbar(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
 private fun UserProfileContentNormal(
     user: ImmutableHolder<User>,
     showActionBtn: Boolean,
     disableButton: Boolean,
     isSelf: Boolean,
+    isRefreshing: Boolean,
+    onRefresh: () -> Unit,
     onBack: () -> Unit,
     onFollow: () -> Unit,
     onUnfollow: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
     val density = LocalDensity.current
 
     var heightOffset by rememberSaveable { mutableFloatStateOf(0f) }
@@ -335,37 +346,28 @@ private fun UserProfileContentNormal(
         )
     }
 
-    val isShowHeaderArea by remember {
-        derivedStateOf {
-            heightOffset.absoluteValue < headerHeight
-        }
-    }
-
     MyScaffold(
         topBar = {
             UserProfileToolbar(
                 user = user,
                 isSelf = isSelf,
-                showTitle = !isShowHeaderArea,
+                // Keep the page identity visible from the first frame. The prior
+                // collapse-only title left this toolbar empty on initial entry.
+                showTitle = true,
                 onBack = onBack
             )
         }
     ) { paddingValues ->
-        var isFakeRefreshing by remember { mutableStateOf(false) }
+        val pullRefreshState = rememberClassicPullRefreshState(
+            refreshing = isRefreshing,
+            onRefresh = onRefresh,
+        )
 
-        LaunchedEffect(isFakeRefreshing) {
-            if (isFakeRefreshing) {
-                delay(1000)
-                isFakeRefreshing = false
-            }
-        }
-
-        PullToRefreshLayout(
-            refreshing = isFakeRefreshing,
-            onRefresh = {
-                coroutineScope.emitGlobalEvent(GlobalEvent.Refresh(key = "user_profile"))
-                isFakeRefreshing = true
-            }
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .pullRefresh(pullRefreshState.state)
         ) {
             val headerNestedScrollConnection = remember {
                 object : NestedScrollConnection {
@@ -377,7 +379,7 @@ private fun UserProfileContentNormal(
                             val prevHeightOffset = heightOffset
                             heightOffset = max(heightOffset + available.y, -headerHeight)
                             if (prevHeightOffset != heightOffset) {
-                                return available.copy(x = 0f)
+                                return Offset(x = 0f, y = heightOffset - prevHeightOffset)
                             }
                         }
 
@@ -395,7 +397,7 @@ private fun UserProfileContentNormal(
                             val prevHeightOffset = heightOffset
                             heightOffset = min(heightOffset + available.y, 0f)
                             if (prevHeightOffset != heightOffset) {
-                                return available.copy(x = 0f)
+                                return Offset(x = 0f, y = heightOffset - prevHeightOffset)
                             }
                         }
 
@@ -407,7 +409,7 @@ private fun UserProfileContentNormal(
             ProvideContentColor(color = ExtendedTheme.colors.text) {
                 Column(
                     modifier = Modifier
-                        .padding(paddingValues)
+                        .fillMaxSize()
                         .nestedScroll(headerNestedScrollConnection)
                 ) {
                     val pages = remember {
@@ -531,6 +533,15 @@ private fun UserProfileContentNormal(
                     }
                 }
             }
+
+            ClassicPullRefreshIndicator(
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
+                contentColor = ExtendedTheme.colors.progressColor,
+            )
         }
     }
 }
