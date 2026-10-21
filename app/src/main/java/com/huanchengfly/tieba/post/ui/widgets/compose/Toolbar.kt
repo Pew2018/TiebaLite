@@ -273,33 +273,25 @@ fun TitleCentredToolbar(
                 contentColor = roleColors.onTopBar,
                 elevation = 0.dp
             ) {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.fillMaxHeight()
-                    ) {
-                        ProvideContentColor(color = roleColors.onTopBar) {
-                            navigationIcon?.invoke()
-
-                            Spacer(modifier = Modifier.weight(1f))
-
-                            actions()
-                        }
-                    }
-
-                    Row(
-                        Modifier
-                            .fillMaxHeight()
-                            .align(Alignment.Center),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxHeight()
+                ) {
+                    ProvideContentColor(color = roleColors.onTopBar) {
+                        navigationIcon?.invoke()
+                        ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)) {
                             ProvideContentColor(color = roleColors.onTopBar) {
-                                title()
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxHeight()
+                                        .weight(1f),
+                                    contentAlignment = Alignment.CenterStart
+                                ) {
+                                    title()
+                                }
                             }
                         }
+                        actions()
                     }
                 }
             }
@@ -343,7 +335,7 @@ fun Toolbar(
         topBar = {
             TopAppBar(
                 title = {
-                    ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)) {
+                    ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Medium)) {
                         ProvideContentColor(color = resolvedContent, content = title)
                     }
                 },

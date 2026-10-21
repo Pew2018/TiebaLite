@@ -8,6 +8,10 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.clickable
+import androidx.compose.material.Icon
+import androidx.compose.material.Icons
+import androidx.compose.material.icons.rounded.Refresh
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.absoluteOffset
@@ -233,6 +237,7 @@ fun NetworkImage(
     val context = LocalContext.current
 
     var shouldLoad by remember { mutableStateOf(shouldLoadImage(context, skipNetworkCheck)) }
+    var loadNonce by remember { mutableStateOf(0) }
     val enableClick = remember(photoViewData, shouldLoad) { photoViewData != null || !shouldLoad }
 
     val colorMask =
@@ -244,7 +249,7 @@ fun NetworkImage(
 
     var layoutOffset by remember { mutableStateOf(Offset.Zero) }
 
-    val request = remember(imageUri, shouldLoad, colorMask) {
+    val request = remember(imageUri, shouldLoad, colorMask, loadNonce) {
         DisplayRequest(context, imageUri) {
             placeholder(ImageUtil.getPlaceHolder(context, 0))
             crossfade()
@@ -258,6 +263,7 @@ fun NetworkImage(
     }
 
     val state = rememberAsyncImageState()
+    val isError = state.result is DisplayResult.Error
     val imageAspectRatio by remember {
         derivedStateOf {
             with(state.result) {
@@ -328,6 +334,21 @@ fun NetworkImage(
             contentScale = contentScale,
             state = state,
         )
+        if (isError) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable { loadNonce++ },
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Refresh,
+                    contentDescription = null,
+                    tint = ExtendedTheme.colors.textSecondary,
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+        }
     }
 }
 

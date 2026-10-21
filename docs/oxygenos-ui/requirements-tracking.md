@@ -35,9 +35,9 @@
 | R-6 | 附录 6 | 13 类公共组件统一 | `widgets/compose/**`、`prefs/**` | 组件走查 | 部分实现待验证 |
 | R-7 | 附录 7 | P0→P4 优先级与功能保留 | 全部改动保持业务接口不变 | 功能回归 | 部分实现待验证 |
 | R-8 | 附录 8 | 12 项验收检查表 | `acceptance.md` | 逐项 | 进行中 |
-| B01 | 审计 4 | 导航级预测返回、单一处理者、稳定注册、响应式开关 | `PredictiveBack.kt`、`MainActivityV2.kt`、依赖 2.8.6/1.11.9 | 录屏 | 已实现待验证 |
+| B01 | 审计 4 | 页面级预测返回（局部状态页）+ 根级兜底；单一处理者、稳定注册、响应式开关 | `PredictiveBack.kt`、`MainActivityV2.kt`（依赖未升级：Navigation 2.7.6 / Destinations 1.10.2 / Kotlin 1.9.22） | 录屏 | 已实现待验证（页面级；导航级受 Kotlin 版本所限未实现） |
 | B02 | 审计 5 | 二/三项回首页连续预览 | `MainPage.kt`（pager 连续滚动） | 录屏 | 已实现待验证 |
-| B03 | 审计/任务 B03 | 搜索→吧/帖/用户→原结果路径 | `search/**` + 导航级预测 | 路径录屏 | 已实现待验证 |
+| B03 | 审计/任务 B03 | 搜索→吧/帖/用户→原结果路径（页面级预测返回 + 既有 MyBackHandler 回栈） | `search/**`、各结果页 `Modifier.predictiveBack`（导航级预测未升级） | 路径录屏 | 已实现待验证（页面级；导航级受 Kotlin 版本所限未实现） |
 | B04 | 任务 B04 | 全部路径/业务拦截；WebView 历史优先 | `WebViewPage.kt`、`ThreadPage.kt`、`ReplyPage.kt` | 路径走查 | 部分实现待验证 |
 | T01 | 任务 T01 | 40 ID 一致解析、迁移按 key | `ThemePresets.kt`、`ThemeUtil.kt`、`App.kt` | 自动化/手工 | 已实现待验证 |
 | T02 | 任务 T02 | 系统栏表面驱动 | `SystemBars.kt`、`BaseComposeActivity.kt`、`UserPage.kt` | 截图 | 已实现待验证 |
@@ -63,5 +63,5 @@
 | 反馈 | 解决 |
 |---|---|
 | 选主题后部分交互控件仍黑色、颜色覆盖错误 | T03 用途色体系 + 消费者接入（Switch/Tabs/Buttons/Dialogs/GroupHeader/进度）；顶栏角色分离；Material2 显式配对 |
-| 预测返回只有部分路径有效 | B01 升级 Navigation 2.8.6 + Destinations 1.11.9 获得 NavHost 级预测返回；页面级 handler 仅用于局部状态；统一优先级 |
+| 预测返回只有部分路径有效 | B01 采用页面级 `Modifier.predictiveBack`（activity-compose 1.8.2 `PredictiveBackHandler`）+ `MainActivityV2` 根级兜底覆盖 MainPage/SearchPage/ThreadPage/ReplyPage/SubPostsPage/WebViewPage；**导航级 NavHost 预测返回因 Destinations 1.11.x 需 Kotlin 2.1 元数据、与本项目 Kotlin 1.9.22 不兼容而未升级，未实现**；页面级已在支持页生效 |
 | 搜索进入吧/帖/用户后缺完整预测返回；底栏二/三项回首页动画异常 | B03 依赖导航级预览；B02 MainPage 连续滚动预览（真实首页为目标、取消完整恢复、不进中间页） |
