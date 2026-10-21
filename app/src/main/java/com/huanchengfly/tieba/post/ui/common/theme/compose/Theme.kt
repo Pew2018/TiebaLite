@@ -395,6 +395,12 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
         Color(App.ThemeDelegate.getColorByAttr(context, R.attr.colorText, nowTheme))
     val bottomBarColor =
         Color(App.ThemeDelegate.getColorByAttr(context, R.attr.colorNavBar, nowTheme))
+    // 用途色派生源：当前种子强调色（先求值，供下方命名参数使用）
+    val seedColor = App.ThemeDelegate.getColorByAttr(context, R.attr.colorAccent, nowTheme)
+    val backgroundColorArgb = Color(
+        App.ThemeDelegate.getColorByAttr(context, R.attr.colorBackground, nowTheme)
+    ).toArgbInt()
+    val seedArgb = Color(seedColor).toArgbInt()
     return ExtendedColors(
         theme = nowTheme,
         isNightMode = ThemeUtil.isNightMode(nowTheme),
@@ -531,13 +537,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
             )
         ),
         switchOff = if (ThemeUtil.isNightMode(nowTheme)) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
-        fab = Color(
-            App.ThemeDelegate.getColorByAttr(
-                context,
-                R.attr.colorAccent,
-                nowTheme
-            )
-        ),
+        fab = Color(seedColor),
         selected = Color(
             App.ThemeDelegate.getColorByAttr(
                 context,
@@ -553,67 +553,22 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
             .copy(alpha = 0.7f),
         // 用途色：从种子派生，全部经过对比度核查
         accentFill = fab,
-        onAccentFill = Color(ThemeColorMath.readableOnInt(fab.toArgbInt())),
+        onAccentFill = Color(ThemeColorMath.readableOnInt(seedArgb)),
         accentText = Color(
-            ThemeColorMath.readableAccentTextInt(
-                fab.toArgbInt(),
-                Color(
-                    App.ThemeDelegate.getColorByAttr(
-                        context,
-                        R.attr.colorBackground,
-                        nowTheme
-                    )
-                ).toArgbInt()
-            )
+            ThemeColorMath.readableAccentTextInt(seedArgb, backgroundColorArgb)
         ),
         accentMuted = Color(
-            ThemeColorMath.mutedAccentBgInt(
-                fab.toArgbInt(),
-                Color(
-                    App.ThemeDelegate.getColorByAttr(
-                        context,
-                        R.attr.colorBackground,
-                        nowTheme
-                    )
-                ).toArgbInt()
-            )
+            ThemeColorMath.mutedAccentBgInt(seedArgb, backgroundColorArgb)
         ),
         onAccentMuted = Color(
-            ThemeColorMath.onMutedAccentBgInt(
-                fab.toArgbInt(),
-                Color(
-                    App.ThemeDelegate.getColorByAttr(
-                        context,
-                        R.attr.colorBackground,
-                        nowTheme
-                    )
-                ).toArgbInt()
-            )
+            ThemeColorMath.onMutedAccentBgInt(seedArgb, backgroundColorArgb)
         ),
         progressColor = fab,
         selectedBg = Color(
-            ThemeColorMath.mutedAccentBgInt(
-                fab.toArgbInt(),
-                Color(
-                    App.ThemeDelegate.getColorByAttr(
-                        context,
-                        R.attr.colorBackground,
-                        nowTheme
-                    )
-                ).toArgbInt()
-            )
+            ThemeColorMath.mutedAccentBgInt(seedArgb, backgroundColorArgb)
         ),
         onSelectedBg = Color(
-            ThemeColorMath.onMutedAccentBgInt(
-                fab.toArgbInt(),
-                Color(
-                    App.ThemeDelegate.getColorByAttr(
-                        context,
-                        R.attr.colorBackground,
-                        nowTheme
-                    )
-                ).toArgbInt()
-            )
+            ThemeColorMath.onMutedAccentBgInt(seedArgb, backgroundColorArgb)
         ),
     )
 }

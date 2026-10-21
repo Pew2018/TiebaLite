@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.dp
 import com.huanchengfly.tieba.post.BuildConfig
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.dataStore
-import com.huanchengfly.tieba.post.ui.common.theme.LocalPageRole
-import com.huanchengfly.tieba.post.ui.common.theme.PageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.LocalPageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.PageRole
 import com.huanchengfly.tieba.post.ui.common.prefs.PrefsScreen
 import com.huanchengfly.tieba.post.ui.common.prefs.dependNot
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.SwitchPref

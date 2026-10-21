@@ -40,8 +40,8 @@ import com.huanchengfly.tieba.post.activities.AppFontSizeActivity
 import com.huanchengfly.tieba.post.dataStore
 import com.huanchengfly.tieba.post.goToActivity
 import com.huanchengfly.tieba.post.rememberPreferenceAsState
-import com.huanchengfly.tieba.post.ui.common.theme.LocalPageRole
-import com.huanchengfly.tieba.post.ui.common.theme.PageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.LocalPageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.PageRole
 import com.huanchengfly.tieba.post.ui.common.prefs.PrefsScreen
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.ListPref
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.SwitchPref
