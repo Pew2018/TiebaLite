@@ -552,7 +552,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
         onSettingsTopBarSecondary = Color(ThemeUtil.onToolbarColor(ThemeUtil.settingsToolbarColor(nowTheme)))
             .copy(alpha = 0.7f),
         // 用途色：从种子派生，全部经过对比度核查
-        accentFill = fab,
+        accentFill = Color(seedColor),
         onAccentFill = Color(ThemeColorMath.readableOnInt(seedArgb)),
         accentText = Color(
             ThemeColorMath.readableAccentTextInt(seedArgb, backgroundColorArgb)
@@ -563,7 +563,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
         onAccentMuted = Color(
             ThemeColorMath.onMutedAccentBgInt(seedArgb, backgroundColorArgb)
         ),
-        progressColor = fab,
+        progressColor = Color(seedColor),
         selectedBg = Color(
             ThemeColorMath.mutedAccentBgInt(seedArgb, backgroundColorArgb)
         ),

@@ -170,7 +170,7 @@ fun WebViewPage(
             // 无历史才离开页面（工具栏关闭按钮、系统返回、边缘手势行为一致）
             .predictiveBack {
                 if (webViewNavigator.canGoBack) {
-                    webViewNavigator.goBack()
+                    webViewNavigator.navigateBack()
                 } else {
                     navigator.navigateUp()
                 }

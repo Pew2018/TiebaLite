@@ -3,6 +3,7 @@ package com.huanchengfly.tieba.post.ui.widgets.compose
 import android.os.Build
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,8 +27,15 @@ object AnimTokens {
     const val DURATION_SHORT = 120
     const val DURATION_MEDIUM = 220
     const val DURATION_LONG = 300
+    const val DURATION_PAGE = 250
+
     const val PREDICTIVE_BACK_SCALE = 0.94f
     const val PREDICTIVE_BACK_SHIFT_DP = 20f
+    const val PREDICTIVE_BACK_ALPHA_MIN = 0.75f
+
+    val EASING_STANDARD = FastOutSlowInEasing
+    val EASING_DECELERATE = androidx.compose.animation.core.LinearOutSlowInEasing
+    val EASING_ACCELERATE = androidx.compose.animation.core.FastOutLinearInEasing
 }
 
 /**
@@ -82,7 +90,10 @@ fun Modifier.predictiveBack(
             withContext(NonCancellable) {
                 progress.animateTo(
                     targetValue = 0f,
-                    animationSpec = tween(durationMillis = AnimTokens.DURATION_SHORT)
+                    animationSpec = tween(
+                        durationMillis = AnimTokens.DURATION_SHORT,
+                        easing = AnimTokens.EASING_STANDARD
+                    )
                 )
             }
         }

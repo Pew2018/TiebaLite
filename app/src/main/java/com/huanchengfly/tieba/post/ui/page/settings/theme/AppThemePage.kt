@@ -61,8 +61,8 @@ import com.huanchengfly.tieba.post.components.dialogs.CustomThemeDialog
 import com.huanchengfly.tieba.post.goToActivity
 import com.huanchengfly.tieba.post.rememberPreferenceAsMutableState
 import com.huanchengfly.tieba.post.rememberPreferenceAsState
-import com.huanchengfly.tieba.post.ui.common.theme.LocalPageRole
-import com.huanchengfly.tieba.post.ui.common.theme.PageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.LocalPageRole
+import com.huanchengfly.tieba.post.ui.common.theme.compose.PageRole
 import com.huanchengfly.tieba.post.ui.common.theme.ThemeGroup
 import com.huanchengfly.tieba.post.ui.common.theme.ThemePreset
 import com.huanchengfly.tieba.post.ui.common.theme.ThemePresets
@@ -338,7 +338,7 @@ private fun AppThemeContent(
                             !ThemeUtil.isTranslucentTheme(currentTheme) &&
                             currentTheme != ThemeUtil.THEME_CUSTOM &&
                             ThemePresets.presetOf(currentTheme)?.id == preset.id &&
-                            !ThemeUtil.isPresetDark(currentTheme)
+                            !ThemePresets.isPresetDark(currentTheme)
                     ThemePresetRow(
                         preset = preset,
                         selected = selected,
@@ -531,7 +531,7 @@ private fun ThemePresetRow(
             .height(56.dp)
             .clickable(
                 onClickLabel = preset.name,
-                role = Role.Radio,
+                role = Role.RadioButton,
                 onClick = onClick
             )
             .padding(horizontal = 16.dp),
