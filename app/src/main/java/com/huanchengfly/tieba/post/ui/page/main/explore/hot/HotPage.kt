@@ -55,6 +55,7 @@ import com.huanchengfly.tieba.post.ui.page.destinations.ForumPageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.HotTopicListPageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.ThreadPageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.UserProfilePageDestination
+import com.huanchengfly.tieba.post.ui.widgets.compose.ErrorScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.Container
 import com.huanchengfly.tieba.post.ui.widgets.compose.FeedCard
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
@@ -64,6 +65,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalGrid
 import com.huanchengfly.tieba.post.ui.widgets.compose.items
 import com.huanchengfly.tieba.post.ui.widgets.compose.itemsIndexed
+import com.huanchengfly.tieba.post.ui.widgets.compose.states.StateScreen
 import com.huanchengfly.tieba.post.utils.StringUtil.getShortNumString
 import com.ramcosta.composedestinations.annotation.Destination
 
@@ -99,6 +101,10 @@ fun HotPage(
         prop1 = HotUiState::tabList,
         initial = emptyList()
     )
+    val error by viewModel.uiState.collectPartialAsState(
+        prop1 = HotUiState::error,
+        initial = null
+    )
     val currentTabCode by viewModel.uiState.collectPartialAsState(
         prop1 = HotUiState::currentTabCode,
         initial = "all"
@@ -115,6 +121,18 @@ fun HotPage(
             modifier = Modifier
                 .fillMaxWidth(),
         ) {
+            if (topicList.isEmpty() && threadList.isEmpty()) {
+                item(key = "HotState") {
+                    StateScreen(
+                        isEmpty = true,
+                        isError = error != null,
+                        isLoading = isLoading,
+                        onReload = { viewModel.send(HotUiIntent.Load) },
+                        modifier = Modifier.fillMaxWidth(),
+                        errorScreen = { error?.let { ErrorScreen(error = it) } },
+                    ) {}
+                }
+            }
             if (topicList.isNotEmpty()) {
                 item(key = "TopicHeader") {
                     Container {

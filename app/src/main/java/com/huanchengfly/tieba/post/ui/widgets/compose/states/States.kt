@@ -2,59 +2,39 @@ package com.huanchengfly.tieba.post.ui.widgets.compose.states
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.requiredWidthIn
-import androidx.compose.material.MaterialTheme
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.widgets.compose.Button
 import com.huanchengfly.tieba.post.ui.widgets.compose.TipScreen
 
+/** Initial loading never drives the independently managed pull-refresh indicator. */
 val DefaultLoadingScreen: @Composable StateScreenScope.() -> Unit = {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_loading_paperplane))
     Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxWidth().padding(vertical = 24.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        Box(modifier = Modifier.requiredWidthIn(max = 500.dp)) {
-            LottieAnimation(
-                composition = composition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f)
-            )
-        }
+        CircularProgressIndicator(
+            modifier = Modifier.size(32.dp),
+            strokeWidth = 2.dp,
+            color = ExtendedTheme.colors.primary,
+        )
     }
-//    CircularProgressIndicator(modifier = Modifier.size(48.dp), color = MaterialTheme.colors.primary)
 }
 
 val DefaultEmptyScreen: @Composable StateScreenScope.() -> Unit = {
     TipScreen(
         title = { Text(text = stringResource(id = R.string.title_empty)) },
-        image = {
-            val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_empty_box))
-            LottieAnimation(
-                composition = composition,
-                iterations = LottieConstants.IterateForever,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .aspectRatio(2f)
-            )
-        },
         actions = {
             if (canReload) {
                 Button(onClick = { reload() }) {
@@ -67,10 +47,16 @@ val DefaultEmptyScreen: @Composable StateScreenScope.() -> Unit = {
 }
 
 val DefaultErrorScreen: @Composable StateScreenScope.() -> Unit = {
-    Text(
-        text = stringResource(id = R.string.error_tip),
-        style = MaterialTheme.typography.body1,
-        color = ExtendedTheme.colors.textSecondary
+    TipScreen(
+        title = { Text(text = stringResource(id = R.string.error_tip)) },
+        actions = {
+            if (canReload) {
+                Button(onClick = { reload() }) {
+                    Text(text = stringResource(id = R.string.btn_reload))
+                }
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
     )
 }
 
@@ -93,8 +79,7 @@ fun StateScreen(
         onClick = onReload
     ) else Modifier
     Box(
-        modifier = modifier
-                then clickableModifier,
+        modifier = modifier.then(clickableModifier),
         contentAlignment = Alignment.Center
     ) {
         if (!isEmpty) {

@@ -163,14 +163,15 @@ sealed interface ConcernPartialChange : PartialChange<ConcernUiState> {
     sealed class Refresh private constructor() : ConcernPartialChange {
         override fun reduce(oldState: ConcernUiState): ConcernUiState =
             when (this) {
-                Start -> oldState.copy(isRefreshing = true)
+                Start -> oldState.copy(isRefreshing = true, error = null)
                 is Success -> oldState.copy(
                     isRefreshing = false,
+                    error = null,
                     data = data.distinctById(),
                     hasMore = hasMore,
                     nextPageTag = nextPageTag,
                 )
-                is Failure -> oldState.copy(isRefreshing = false)
+                is Failure -> oldState.copy(isRefreshing = false, error = error)
             }
 
         data object Start : Refresh()
@@ -217,6 +218,7 @@ data class ConcernUiState(
     val isRefreshing: Boolean = true,
     val isLoadingMore: Boolean = false,
     val hasMore: Boolean = true,
+    val error: Throwable? = null,
     val nextPageTag: String = "",
     val data: ImmutableList<ConcernData> = persistentListOf(),
 ): UiState

@@ -216,7 +216,7 @@ private fun ForumHeader(
     val (forum) = forumInfoImmutableHolder
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -263,8 +263,7 @@ private fun ForumHeader(
                                 )
                             ),
                             modifier = Modifier
-                                .clip(RoundedCornerShape(100))
-                                .height(8.dp),
+                                .height(4.dp),
                             color = ExtendedTheme.colors.primary,
                             backgroundColor = ExtendedTheme.colors.primary.copy(alpha = 0.25f)
                         )
@@ -276,7 +275,7 @@ private fun ForumHeader(
                             ),
                             style = MaterialTheme.typography.caption,
                             color = ExtendedTheme.colors.textSecondary,
-                            fontSize = 10.sp,
+                            fontSize = 12.sp,
                         )
                     }
                 }
@@ -287,7 +286,7 @@ private fun ForumHeader(
                 Button(
                     onClick = onBtnClick,
                     elevation = null,
-                    shape = RoundedCornerShape(100),
+                    shape = RoundedCornerShape(2.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = ExtendedTheme.colors.primary,
                         contentColor = ExtendedTheme.colors.onAccent
@@ -774,8 +773,8 @@ fun ForumPage(
                             }
 
                             val tabTextStyle = MaterialTheme.typography.button.copy(
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 13.sp,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 14.sp,
                                 letterSpacing = 0.sp
                             )
 
@@ -997,7 +996,9 @@ private fun ForumToolbar(
                 text = stringResource(
                     id = R.string.title_forum,
                     forumName
-                )
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         },
         navigationIcon = { BackNavigationIcon(onBackPressed = { navigator.navigateUp() }) },

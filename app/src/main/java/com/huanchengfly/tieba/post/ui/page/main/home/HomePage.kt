@@ -18,6 +18,8 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -62,6 +64,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,7 +88,8 @@ import com.huanchengfly.tieba.post.ui.page.destinations.SearchPageDestination
 import com.huanchengfly.tieba.post.ui.widgets.compose.ActionItem
 import com.huanchengfly.tieba.post.ui.widgets.compose.Avatar
 import com.huanchengfly.tieba.post.ui.widgets.compose.Button
-import com.huanchengfly.tieba.post.ui.widgets.compose.Chip
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicSectionHeader
+import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.ConfirmDialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.ErrorScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.LongClickMenu
@@ -138,15 +142,16 @@ fun SearchBox(
         Surface(
             color = backgroundColor,
             contentColor = contentColor,
-            shape = RoundedCornerShape(6.dp),
+            shape = RoundedCornerShape(2.dp),
             modifier = Modifier
                 .fillMaxWidth()
+                .height(48.dp)
                 .clickable(onClick = onClick)
         ) {
             Row(
                 verticalAlignment = CenterVertically,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = 12.dp)
             ) {
                 Icon(
                     imageVector = Icons.Rounded.Search,
@@ -170,15 +175,10 @@ fun SearchBox(
 private fun Header(
     text: String,
     modifier: Modifier = Modifier,
-    invert: Boolean = false
+    invert: Boolean = false,
 ) {
-    Chip(
-        text = text,
-        modifier = Modifier
-            .padding(start = 16.dp)
-            .then(modifier),
-        invertColor = invert
-    )
+    // 'invert' is retained for existing call sites; visual headings never require a chip.
+    ClassicSectionHeader(text = text, modifier = modifier)
 }
 
 @Composable
@@ -188,7 +188,8 @@ private fun ForumItemPlaceholder(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .heightIn(min = 56.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         if (showAvatar) {
             Image(
@@ -214,19 +215,19 @@ private fun ForumItemPlaceholder(
                 .weight(1f)
                 .align(CenterVertically)
                 .placeholder(visible = true, color = ExtendedTheme.colors.chip),
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
             maxLines = 1,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Box(
             modifier = Modifier
-                .width(54.dp)
+                .widthIn(min = 42.dp)
                 .background(
                     color = ExtendedTheme.colors.chip,
                     shape = RoundedCornerShape(3.dp)
                 )
-                .padding(vertical = 4.dp)
+                .padding(horizontal = 6.dp, vertical = 4.dp)
                 .align(CenterVertically)
                 .placeholder(visible = true, color = ExtendedTheme.colors.chip)
         ) {
@@ -234,7 +235,7 @@ private fun ForumItemPlaceholder(
                 text = "0",
                 color = ExtendedTheme.colors.onChip,
                 fontSize = 11.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Normal,
                 modifier = Modifier.align(Center)
             )
         }
@@ -292,9 +293,10 @@ private fun ForumItemContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .heightIn(min = 56.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
-        AnimatedVisibility(visible = showAvatar) {
+        if (showAvatar) {
             Row {
                 Avatar(data = item.avatar, size = 40.dp, contentDescription = null)
                 Spacer(modifier = Modifier.width(14.dp))
@@ -306,19 +308,20 @@ private fun ForumItemContent(
             modifier = Modifier
                 .weight(1f)
                 .align(CenterVertically),
-            fontSize = 15.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
+            overflow = TextOverflow.Ellipsis,
             maxLines = 1,
         )
         Spacer(modifier = Modifier.width(8.dp))
         Box(
             modifier = Modifier
-                .width(54.dp)
+                .widthIn(min = 42.dp)
                 .background(
                     color = ExtendedTheme.colors.chip,
                     shape = RoundedCornerShape(3.dp)
                 )
-                .padding(vertical = 4.dp)
+                .padding(horizontal = 6.dp, vertical = 4.dp)
                 .align(CenterVertically)
         ) {
             Row(
@@ -328,7 +331,7 @@ private fun ForumItemContent(
                     text = "Lv.${item.levelId}",
                     color = ExtendedTheme.colors.onChip,
                     fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Normal,
                     modifier = Modifier.align(CenterVertically)
                 )
                 if (item.isSign) {
@@ -377,7 +380,10 @@ private fun ForumItem(
             onClick(item)
         }
     ) {
-        ForumItemContent(item = item, showAvatar = showAvatar)
+        Column {
+            ForumItemContent(item = item, showAvatar = showAvatar)
+            VerticalDivider(startIndent = if (showAvatar) 70.dp else 16.dp)
+        }
     }
 }
 
@@ -571,8 +577,7 @@ fun HomePage(
                                                     modifier = Modifier
                                                         .padding(horizontal = 4.dp)
                                                         .height(IntrinsicSize.Min)
-                                                        .clip(RoundedCornerShape(100))
-                                                        .background(color = ExtendedTheme.colors.chip)
+                                                        .clip(RoundedCornerShape(2.dp))
                                                         .clickable {
                                                             navigator.navigate(
                                                                 ForumPageDestination(
@@ -580,7 +585,7 @@ fun HomePage(
                                                                 )
                                                             )
                                                         }
-                                                        .padding(4.dp),
+                                                        .padding(horizontal = 8.dp, vertical = 6.dp),
                                                     verticalAlignment = CenterVertically,
                                                     horizontalArrangement = Arrangement.spacedBy(4.dp)
                                                 ) {
@@ -593,7 +598,7 @@ fun HomePage(
                                                     Text(
                                                         text = it.title,
                                                         fontSize = 12.sp,
-                                                        fontWeight = FontWeight.Bold,
+                                                        fontWeight = FontWeight.Normal,
                                                         modifier = Modifier.padding(end = 4.dp)
                                                     )
                                                 }

@@ -3,6 +3,7 @@ package com.huanchengfly.tieba.post.ui.page.main.explore.concern
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -28,12 +29,14 @@ import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.ForumPageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.ThreadPageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.UserProfilePageDestination
+import com.huanchengfly.tieba.post.ui.widgets.compose.ErrorScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.Container
 import com.huanchengfly.tieba.post.ui.widgets.compose.FeedCard
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.LoadMoreLayout
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyLazyColumn
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
+import com.huanchengfly.tieba.post.ui.widgets.compose.states.StateScreen
 import kotlinx.collections.immutable.persistentListOf
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -53,6 +56,14 @@ fun ConcernPage(
     val isLoadingMore by viewModel.uiState.collectPartialAsState(
         prop1 = ConcernUiState::isLoadingMore,
         initial = false
+    )
+    val hasMore by viewModel.uiState.collectPartialAsState(
+        prop1 = ConcernUiState::hasMore,
+        initial = true
+    )
+    val error by viewModel.uiState.collectPartialAsState(
+        prop1 = ConcernUiState::error,
+        initial = null
     )
     val nextPageTag by viewModel.uiState.collectPartialAsState(
         prop1 = ConcernUiState::nextPageTag,
@@ -78,8 +89,18 @@ fun ConcernPage(
     Box(
         modifier = Modifier.pullRefresh(pullRefreshState.state)
     ) {
+        StateScreen(
+            isEmpty = data.isEmpty(),
+            isError = error != null,
+            isLoading = isRefreshing,
+            onReload = { viewModel.send(ConcernUiIntent.Refresh) },
+            modifier = Modifier.fillMaxSize(),
+            errorScreen = { error?.let { ErrorScreen(error = it) } },
+        ) {
         LoadMoreLayout(
             isLoading = isLoadingMore,
+            isEmpty = data.isEmpty(),
+            loadEnd = !hasMore,
             onLoadMore = { viewModel.send(ConcernUiIntent.LoadMore(nextPageTag)) },
             lazyListState = lazyListState,
         ) {
@@ -131,7 +152,7 @@ fun ConcernPage(
                                 if (index < data.size - 1) {
                                     VerticalDivider(
                                         modifier = Modifier.padding(horizontal = 16.dp),
-                                        thickness = 2.dp
+                                        thickness = 1.dp
                                     )
                                 }
                             }
@@ -141,6 +162,7 @@ fun ConcernPage(
                     }
                 }
             }
+        }
         }
 
         ClassicPullRefreshIndicator(

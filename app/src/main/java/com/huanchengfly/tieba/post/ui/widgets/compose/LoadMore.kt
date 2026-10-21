@@ -33,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -191,22 +192,22 @@ fun DefaultIndicator(
     releaseToLoadText: String = stringResource(id = R.string.release_to_load),
 ) {
     Surface(
-        elevation = 8.dp,
-        shape = RoundedCornerShape(100),
-        color = ExtendedTheme.colors.loadMoreIndicator,
-        contentColor = ExtendedTheme.colors.text
+        elevation = 0.dp,
+        shape = RoundedCornerShape(2.dp),
+        color = Color.Transparent,
+        contentColor = ExtendedTheme.colors.textSecondary
     ) {
         Row(
             modifier = Modifier
                 .height(IntrinsicSize.Min)
-                .padding(10.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .animateContentSize(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             if (isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.size(24.dp),
-                    strokeWidth = 3.dp,
+                    strokeWidth = 2.dp,
                     color = ExtendedTheme.colors.primary
                 )
                 Spacer(modifier = Modifier.width(8.dp))

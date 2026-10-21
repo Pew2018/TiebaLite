@@ -101,8 +101,8 @@ private fun TabText(
     selected: Boolean
 ) {
     val style = MaterialTheme.typography.button.copy(
-        letterSpacing = 0.75.sp,
-        fontWeight = if (selected) FontWeight.Bold else FontWeight.Normal,
+        letterSpacing = 0.sp,
+        fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
         textAlign = TextAlign.Center
     )
     Text(text = text, style = style)
@@ -116,7 +116,7 @@ fun ExplorePage() {
 
     val loggedIn = remember(account) { account != null }
 
-    val pages = remember {
+    val pages = remember(loggedIn) {
         listOfNotNull(
             if (loggedIn) ExplorePageItem(
                 "concern",

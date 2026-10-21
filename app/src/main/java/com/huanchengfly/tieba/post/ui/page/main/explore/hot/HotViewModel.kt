@@ -105,16 +105,17 @@ sealed interface HotPartialChange : PartialChange<HotUiState> {
     sealed class Load : HotPartialChange {
         override fun reduce(oldState: HotUiState): HotUiState =
             when (this) {
-                Start -> oldState.copy(isRefreshing = true)
+                Start -> oldState.copy(isRefreshing = true, error = null)
                 is Success -> oldState.copy(
                     isRefreshing = false,
+                    error = null,
                     currentTabCode = "all",
                     topicList = topicList.wrapImmutable(),
                     tabList = tabList.wrapImmutable(),
                     threadList = threadList.wrapImmutable()
                 )
 
-                is Failure -> oldState.copy(isRefreshing = false)
+                is Failure -> oldState.copy(isRefreshing = false, error = error)
             }
 
         object Start : Load()
@@ -133,14 +134,14 @@ sealed interface HotPartialChange : PartialChange<HotUiState> {
     sealed class RefreshThreadList : HotPartialChange {
         override fun reduce(oldState: HotUiState): HotUiState =
             when (this) {
-                is Start -> oldState.copy(isLoadingThreadList = true, currentTabCode = tabCode)
+                is Start -> oldState.copy(isLoadingThreadList = true, currentTabCode = tabCode, error = null)
                 is Success -> oldState.copy(
                     isLoadingThreadList = false,
                     currentTabCode = tabCode,
                     threadList = threadList.wrapImmutable()
                 )
 
-                is Failure -> oldState.copy(isLoadingThreadList = false)
+                is Failure -> oldState.copy(isLoadingThreadList = false, error = error)
             }
 
         data class Start(val tabCode: String) : RefreshThreadList()
@@ -250,6 +251,7 @@ sealed interface HotPartialChange : PartialChange<HotUiState> {
 data class HotUiState(
     val isRefreshing: Boolean = true,
     val currentTabCode: String = "all",
+    val error: Throwable? = null,
     val isLoadingThreadList: Boolean = false,
     val topicList: ImmutableList<ImmutableHolder<RecommendTopicList>> = persistentListOf(),
     val tabList: ImmutableList<ImmutableHolder<FrsTabInfo>> = persistentListOf(),

@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -90,7 +91,8 @@ fun UserHeader(
                 value = MaterialTheme.typography.subtitle1.merge(
                     TextStyle(
                         color = ExtendedTheme.colors.text,
-                        fontSize = 13.sp
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium
                     )
                 )
             ) {
@@ -101,7 +103,7 @@ fun UserHeader(
                     value = MaterialTheme.typography.caption.merge(
                         TextStyle(
                             color = ExtendedTheme.colors.textSecondary,
-                            fontSize = 11.sp
+                            fontSize = 12.sp
                         )
                     )
                 ) {
@@ -111,4 +113,21 @@ fun UserHeader(
         }
         content?.invoke(this)
     }
+}
+/** A flat OxygenOS-era section label reused across content screens. */
+@Composable
+fun ClassicSectionHeader(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        modifier = modifier.padding(start = 16.dp, top = 8.dp, bottom = 4.dp),
+        color = ExtendedTheme.colors.accentText,
+        style = MaterialTheme.typography.overline.copy(
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 0.sp,
+        ),
+    )
 }

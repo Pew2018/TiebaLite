@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -214,8 +215,8 @@ fun Card(
 ) {
     val cardModifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
 
-    val paddingModifier = if (action != null) Modifier.padding(top = 16.dp)
-    else Modifier.padding(vertical = 16.dp)
+    val paddingModifier = if (action != null) Modifier.padding(top = 12.dp)
+    else Modifier.padding(vertical = 12.dp)
 
     Column(
         modifier = cardModifier
@@ -275,7 +276,7 @@ fun ThreadContent(
 ) {
     val content = buildAnnotatedString {
         if (showTitle) {
-            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+            withStyle(style = SpanStyle(fontWeight = FontWeight.Medium)) {
                 if (isGood) {
                     withStyle(style = SpanStyle(color = ExtendedTheme.colors.accent)) {
                         append(stringResource(id = R.string.tip_good))
@@ -322,7 +323,7 @@ fun FeedCardPlaceholder() {
                 text = "TitlePlaceholder",
                 style = MaterialTheme.typography.subtitle1,
                 fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
@@ -368,11 +369,9 @@ fun ForumInfoChip(
     val name = nameProvider()
     Row(
         modifier = Modifier
-            .height(IntrinsicSize.Min)
-            .clip(RoundedCornerShape(4.dp))
-            .background(color = ExtendedTheme.colors.chip)
+            .clip(RoundedCornerShape(2.dp))
             .clickable(onClick = onClick)
-            .padding(4.dp),
+            .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
@@ -381,15 +380,14 @@ fun ForumInfoChip(
                 data = imageUri,
                 contentDescription = null,
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .aspectRatio(1f),
+                    .size(20.dp),
                 shape = RoundedCornerShape(4.dp)
             )
         }
         Text(
             text = stringResource(id = R.string.title_forum_name, name),
             style = MaterialTheme.typography.body2,
-            color = ExtendedTheme.colors.onChip,
+            color = ExtendedTheme.colors.accentText,
             fontSize = 12.sp,
         )
     }
@@ -722,7 +720,7 @@ fun ThreadAgreeBtn(
 @Composable
 fun ThreadShareBtn(
     shareNum: Long,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     ActionBtn(
@@ -789,12 +787,12 @@ fun FeedCard(
                     OriginThreadCard(
                         originThreadInfo = it,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
+                            .clip(RoundedCornerShape(2.dp))
                             .background(ExtendedTheme.colors.floorCard)
                             .clickable {
                                 onClickOriginThread(it.get())
                             }
-                            .padding(16.dp)
+                            .padding(12.dp)
                     )
                 }
 
@@ -804,7 +802,7 @@ fun FeedCard(
             Row(modifier = Modifier.fillMaxWidth()) {
                 ThreadShareBtn(
                     shareNum = item.get { shareNum },
-                    onClick = {},
+                    onClick = null,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -871,12 +869,12 @@ fun FeedCard(
                     OriginThreadCard(
                         originThreadInfo = it,
                         modifier = Modifier
-                            .clip(RoundedCornerShape(6.dp))
+                            .clip(RoundedCornerShape(2.dp))
                             .background(ExtendedTheme.colors.floorCard)
                             .clickable {
                                 onClickOriginThread(it.get())
                             }
-                            .padding(16.dp)
+                            .padding(12.dp)
                     )
                 }
 
@@ -890,7 +888,7 @@ fun FeedCard(
             Row(modifier = Modifier.fillMaxWidth()) {
                 ThreadShareBtn(
                     shareNum = item.get { share_num }.toLong(),
-                    onClick = {},
+                    onClick = null,
                     modifier = Modifier.weight(1f)
                 )
 
@@ -946,14 +944,15 @@ private fun ActionBtn(
 ) {
     val clickableModifier = if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier
     Row(
-        modifier = clickableModifier
-            .padding(vertical = 16.dp)
-            .then(modifier),
+        modifier = modifier
+            .heightIn(min = 48.dp)
+            .then(clickableModifier)
+            .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
     ) {
         ProvideContentColor(color = color) {
-            Box(modifier = Modifier.size(18.dp)) {
+            Box(modifier = Modifier.size(20.dp)) {
                 icon()
             }
             Spacer(modifier = Modifier.width(8.dp))

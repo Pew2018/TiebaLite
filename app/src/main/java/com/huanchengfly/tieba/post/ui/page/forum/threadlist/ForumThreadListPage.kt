@@ -219,7 +219,7 @@ private fun ThreadList(
                 blockedTip = { BlockTip(text = { Text(text = stringResource(id = R.string.tip_blocked_thread)) }) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp, horizontal = 16.dp),
+                    .padding(vertical = 4.dp),
             ) {
                 val (item) = holder
                 Column(

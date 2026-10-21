@@ -1632,26 +1632,24 @@ private fun TopBar(
                 if (forum.get { name }.isNotBlank()) {
                     Row(
                         modifier = Modifier
-                            .padding(horizontal = 48.dp)
-                            .height(IntrinsicSize.Min)
-                            .clip(RoundedCornerShape(100))
-                            .background(ExtendedTheme.colors.chip)
+                            .padding(horizontal = 8.dp)
+                            .height(40.dp)
+                            .clip(RoundedCornerShape(2.dp))
                             .clickable(onClick = onForumClick)
-                            .padding(4.dp),
+                            .padding(horizontal = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Avatar(
                             data = forum.get { avatar },
                             contentDescription = it.get { name },
                             modifier = Modifier
-                                .fillMaxHeight()
-                                .aspectRatio(1f)
+                                .size(24.dp)
                         )
 
                         Text(
                             text = stringResource(id = R.string.title_forum, it.get { name }),
-                            fontSize = 14.sp,
-                            color = ExtendedTheme.colors.text,
+                            fontSize = 16.sp,
+                            color = ExtendedTheme.colors.onTopBar,
                             modifier = Modifier.padding(horizontal = 8.dp),
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
@@ -1924,7 +1922,7 @@ fun PostCard(
                             Text(
                                 text = post.title,
                                 style = MaterialTheme.typography.subtitle1,
-                                fontSize = 15.sp
+                                fontSize = 16.sp
                             )
                         }
 
@@ -1950,9 +1948,9 @@ fun PostCard(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .then(paddingModifier)
-                                .clip(RoundedCornerShape(6.dp))
+                                .clip(RoundedCornerShape(2.dp))
                                 .background(ExtendedTheme.colors.floorCard)
-                                .padding(vertical = 12.dp),
+                                .padding(vertical = 8.dp),
                             verticalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
                             subPosts.fastForEach { item ->

@@ -3,7 +3,6 @@ package com.huanchengfly.tieba.post.ui.widgets.compose
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredWidthIn
@@ -13,17 +12,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.api.retrofit.exception.NoConnectivityException
 import com.huanchengfly.tieba.post.api.retrofit.exception.TiebaApiException
@@ -66,7 +60,7 @@ fun TipScreen(
             ProvideTextStyle(
                 value = MaterialTheme.typography.h6.copy(
                     color = ExtendedTheme.colors.text,
-                    fontWeight = FontWeight.Bold,
+                    fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center
                 )
             ) {
@@ -169,51 +163,6 @@ fun ErrorTipScreen(
             }
         },
         modifier = modifier,
-        image = {
-            when (errorType) {
-                ErrorType.NETWORK -> {
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_no_internet))
-                    LottieAnimation(
-                        composition = composition,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(2f)
-                    )
-                }
-
-                ErrorType.SERVER -> {
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_error))
-                    LottieAnimation(
-                        composition = composition,
-                        iterations = LottieConstants.IterateForever,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(2f)
-                    )
-                }
-
-                ErrorType.UNKNOWN -> {
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_bug_hunting))
-                    LottieAnimation(
-                        composition = composition,
-                        iterations = LottieConstants.IterateForever,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(2f)
-                    )
-                }
-
-                ErrorType.NOT_LOGGED_IN -> {
-                    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lottie_astronaut))
-                    LottieAnimation(
-                        composition = composition,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(2f)
-                    )
-                }
-            }
-        },
         message = {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
