@@ -43,7 +43,7 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/master' && github.ref != 'refs/heads/4.0-dev' }}
 
       - name: Build with Gradle
-        run: ./gradlew assembleRelease
+        run: ./gradlew :app:testDebugUnitTest assembleRelease --console=plain
 
       - name: Parse version metadata
         id: version

@@ -41,7 +41,7 @@ import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Search
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -476,13 +476,13 @@ fun HomePage(
         },
         modifier = Modifier.fillMaxSize(),
     ) { contentPaddings ->
-        val pullRefreshState = rememberPullRefreshState(
+        val pullRefreshState = rememberClassicPullRefreshState(
             refreshing = isLoading,
             onRefresh = { viewModel.send(HomeUiIntent.Refresh) }
         )
         Box(
             modifier = Modifier
-                .pullRefresh(pullRefreshState)
+                .pullRefresh(pullRefreshState.state)
                 .padding(contentPaddings)
         ) {
             Column {
@@ -677,8 +677,9 @@ fun HomePage(
             }
 
             ClassicPullRefreshIndicator(
-                refreshing = isLoading,
-                state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
                 modifier = Modifier.align(Alignment.TopCenter),
                 backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
                 contentColor = ExtendedTheme.colors.primary,

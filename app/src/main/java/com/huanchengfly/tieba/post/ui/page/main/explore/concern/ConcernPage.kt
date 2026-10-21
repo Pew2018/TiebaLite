@@ -9,7 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -62,7 +62,7 @@ fun ConcernPage(
         prop1 = ConcernUiState::data,
         initial = persistentListOf()
     )
-    val pullRefreshState = rememberPullRefreshState(
+    val pullRefreshState = rememberClassicPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { viewModel.send(ConcernUiIntent.Refresh) })
 
@@ -76,7 +76,7 @@ fun ConcernPage(
     viewModel.bindScrollToTopEvent(lazyListState = lazyListState)
 
     Box(
-        modifier = Modifier.pullRefresh(pullRefreshState)
+        modifier = Modifier.pullRefresh(pullRefreshState.state)
     ) {
         LoadMoreLayout(
             isLoading = isLoadingMore,
@@ -144,8 +144,9 @@ fun ConcernPage(
         }
 
         ClassicPullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
             modifier = Modifier.align(Alignment.TopCenter),
             backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
             contentColor = ExtendedTheme.colors.primary,

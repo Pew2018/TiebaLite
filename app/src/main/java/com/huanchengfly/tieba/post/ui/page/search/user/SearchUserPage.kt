@@ -16,7 +16,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -72,7 +72,7 @@ fun SearchUserPage(
         prop1 = SearchUserUiState::error,
         initial = null
     )
-    val pullRefreshState = rememberPullRefreshState(
+    val pullRefreshState = rememberClassicPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { viewModel.send(SearchUserUiIntent.Refresh(keyword)) }
     )
@@ -126,7 +126,7 @@ fun SearchUserPage(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .pullRefresh(pullRefreshState)
+                .pullRefresh(pullRefreshState.state)
         ) {
             MyLazyColumn(modifier = Modifier.fillMaxSize()) {
                 if (showExactMatchResult) {
@@ -186,8 +186,9 @@ fun SearchUserPage(
             }
 
             ClassicPullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
                 modifier = Modifier.align(Alignment.TopCenter),
                 backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
                 contentColor = ExtendedTheme.colors.primary,

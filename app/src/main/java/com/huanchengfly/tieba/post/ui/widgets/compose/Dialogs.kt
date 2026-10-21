@@ -58,13 +58,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun DialogScope.DialogPositiveButton(
     text: String,
-    onClick: () -> Unit = {}
+    onClick: () -> Unit = {},
+    enabled: Boolean = true,
+    dismissOnClick: Boolean = true,
 ) {
     TextButton(
         onClick = {
             onClick()
-            dismiss()
+            if (dismissOnClick) dismiss()
         },
+        enabled = enabled,
         shape = RoundedCornerShape(2.dp),
         colors = ButtonDefaults.textButtonColors(
             backgroundColor = Color.Transparent,
@@ -82,7 +85,7 @@ fun DialogScope.DialogPositiveButton(
 @Composable
 fun DialogScope.DialogNegativeButton(
     text: String,
-    onClick: (() -> Unit)? = null
+    onClick: (() -> Unit)? = null,
 ) {
     TextButton(
         onClick = {
@@ -124,8 +127,8 @@ fun TimePickerDialog(
         onDismiss = onCancel,
         title = title,
         buttons = {
-            DialogPositiveButton(text = confirmText, onClick = { onConfirm.invoke(timeVal) })
             DialogNegativeButton(text = cancelText, onClick = onCancel)
+            DialogPositiveButton(text = confirmText, onClick = { onConfirm.invoke(timeVal) })
         },
     ) {
         Column(modifier = Modifier.padding(horizontal = 24.dp)) {
@@ -220,8 +223,8 @@ fun ConfirmDialog(
         onDismiss = onDismiss,
         title = title,
         buttons = {
-            DialogPositiveButton(text = confirmText, onClick = onConfirm)
             DialogNegativeButton(text = cancelText, onClick = onCancel)
+            DialogPositiveButton(text = confirmText, onClick = onConfirm)
         },
     ) {
         Column(modifier = Modifier.padding(horizontal = 24.dp)) {
@@ -263,8 +266,8 @@ fun PromptDialog(
         onDismiss = onCancel,
         title = title,
         buttons = {
-            DialogPositiveButton(text = confirmText, onClick = { onConfirm.invoke(textVal) })
             DialogNegativeButton(text = cancelText, onClick = onCancel)
+            DialogPositiveButton(text = confirmText, onClick = { onConfirm.invoke(textVal) })
         },
     ) {
         val focusRequester = remember { FocusRequester() }
@@ -490,7 +493,11 @@ class DialogState private constructor(
 class DialogScope(
     private val onDismiss: () -> Unit,
 ) {
+    private var dismissed = false
+
     fun dismiss() {
+        if (dismissed) return
+        dismissed = true
         onDismiss()
     }
 }

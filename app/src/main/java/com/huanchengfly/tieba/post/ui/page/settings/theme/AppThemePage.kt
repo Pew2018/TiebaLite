@@ -26,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ColorLens
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -94,6 +95,8 @@ private fun AppThemeContent(
             )
         )
     }
+    var customPrimaryHex by remember { mutableStateOf(customPrimaryColor.toHex()) }
+    val customPrimaryHexValid = normalizedHexRgb(customPrimaryHex) != null
     // Read the real persisted value up front. The generic preference state helper starts from its
     // default and can briefly write that default back before its collector receives stored data.
     var topBarFollowsTheme by remember {
@@ -105,52 +108,58 @@ private fun AppThemeContent(
     var customTopBarHex by remember {
         mutableStateOf(context.appPreferences.customTopBarColor ?: "#212121")
     }
-    val customTopBarHexValid = remember(customTopBarHex) {
-        "^#([0-9a-fA-F]{6})$".toRegex().matches(customTopBarHex)
+    val customTopBarHexValid = normalizedHexRgb(customTopBarHex) != null
+    LaunchedEffect(customPrimaryColorDialogState.show) {
+        if (customPrimaryColorDialogState.show) customPrimaryHex = customPrimaryColor.toHex()
+    }
+    LaunchedEffect(customTopBarDialogState.show) {
+        if (customTopBarDialogState.show) {
+            customTopBarHex = context.appPreferences.customTopBarColor ?: "#212121"
+        }
     }
 
     Dialog(
         dialogState = customPrimaryColorDialogState,
+        onDismiss = { customPrimaryHex = customPrimaryColor.toHex() },
         title = { Text(text = stringResource(id = R.string.title_custom_theme)) },
         buttons = {
+            DialogNegativeButton(text = stringResource(id = R.string.button_cancel))
             DialogPositiveButton(
                 text = stringResource(id = R.string.button_finish),
+                enabled = customPrimaryHexValid,
                 onClick = {
-                    val primary = CustomThemeDialog.toString(customPrimaryColor.toArgb())
-                    // Keep the legacy booleans readable, but publish all visible roles together.
+                    val hex = normalizedHexRgb(customPrimaryHex) ?: return@DialogPositiveButton
+                    val confirmed = Color(android.graphics.Color.parseColor(hex))
+                    val primary = CustomThemeDialog.toString(confirmed.toArgb())
                     context.appPreferences.applyCustomThemeColors(
                         primary = primary,
-                        topBar = if (topBarFollowsTheme) primary else customTopBarHex,
+                        topBar = if (topBarFollowsTheme) primary
+                            else (context.appPreferences.customTopBarColor ?: "#212121"),
                         topBarContent = String.format("#%06X", 0xFFFFFF and
                             com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-                                .readableOnInt(customPrimaryColor.toArgb())),
+                                .readableOnInt(confirmed.toArgb())),
                         accent = primary,
                     )
+                    customPrimaryColor = confirmed
                     ThemeUtil.switchTheme(ThemeUtil.THEME_CUSTOM)
-                }
-            )
-            DialogNegativeButton(
-                text = stringResource(id = R.string.button_cancel),
-                onClick = {
-                    customPrimaryColor = Color(
-                        App.ThemeDelegate.getColorByAttr(
-                            context,
-                            R.attr.colorPrimary,
-                            ThemeUtil.THEME_CUSTOM
-                        )
-                    )
                 }
             )
         }
     ) {
         CustomColorPickerContent(
-            color = customPrimaryColor,
-            onColorChange = { customPrimaryColor = it },
+            inputHexColor = customPrimaryHex,
+            onHexChange = { customPrimaryHex = it },
+            previewColor = normalizedHexRgb(customPrimaryHex)?.let {
+                Color(android.graphics.Color.parseColor(it))
+            } ?: customPrimaryColor,
         )
     }
 
     Dialog(
         dialogState = customTopBarDialogState,
+        onDismiss = {
+            customTopBarHex = context.appPreferences.customTopBarColor ?: "#212121"
+        },
         title = { Text(text = stringResource(id = R.string.title_custom_top_bar_color)) },
         buttons = {
             DialogNegativeButton(
@@ -164,18 +173,18 @@ private fun AppThemeContent(
             )
             DialogPositiveButton(
                 text = stringResource(id = R.string.button_save),
+                enabled = customTopBarHexValid,
                 onClick = {
-                    if (customTopBarHexValid) {
-                        val normalized = customTopBarHex.uppercase()
-                        val color = android.graphics.Color.parseColor(normalized)
-                        context.appPreferences.customTopBarColor = normalized
-                        context.appPreferences.customTopBarContentColor = String.format(
-                            "#%06X",
-                            0xFFFFFF and com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-                                .readableOnInt(color)
-                        )
-                        ThemeUtil.notifyThemeSettingsChanged()
-                    }
+                    val normalized = normalizedHexRgb(customTopBarHex) ?: return@DialogPositiveButton
+                    val color = android.graphics.Color.parseColor(normalized)
+                    context.appPreferences.customTopBarColor = normalized
+                    context.appPreferences.customTopBarContentColor = String.format(
+                        "#%06X",
+                        0xFFFFFF and com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                            .readableOnInt(color)
+                    )
+                    customTopBarHex = normalized
+                    ThemeUtil.notifyThemeSettingsChanged()
                 }
             )
         }
@@ -193,20 +202,20 @@ private fun AppThemeContent(
                         .size(32.dp)
                         .clip(CircleShape)
                         .background(
-                            if (customTopBarHexValid) Color(android.graphics.Color.parseColor(customTopBarHex))
+                            if (customTopBarHexValid) Color(android.graphics.Color.parseColor(normalizedHexRgb(customTopBarHex)!!))
                             else ExtendedTheme.colors.divider
                         )
                 )
                 OutlinedTextField(
                     value = customTopBarHex,
-                    onValueChange = { customTopBarHex = it.trim() },
+                    onValueChange = { customTopBarHex = it },
                     label = { Text(stringResource(id = R.string.label_hex_color)) },
-                    isError = customTopBarHex.isNotEmpty() && !customTopBarHexValid,
+                    isError = !customTopBarHexValid,
                     singleLine = true,
                     modifier = Modifier.weight(1f)
                 )
             }
-            if (customTopBarHex.isNotEmpty() && !customTopBarHexValid) {
+            if (!customTopBarHexValid) {
                 Text(
                     text = stringResource(id = R.string.error_hex_color),
                     color = MaterialTheme.colors.error,
@@ -319,7 +328,7 @@ private fun AppThemeContent(
                                     .size(28.dp)
                                     .clip(CircleShape)
                                     .background(
-                                        if (customTopBarHexValid) Color(android.graphics.Color.parseColor(customTopBarHex))
+                                        if (customTopBarHexValid) Color(android.graphics.Color.parseColor(normalizedHexRgb(customTopBarHex)!!))
                                         else ExtendedTheme.colors.divider
                                     )
                             )
@@ -380,11 +389,11 @@ private fun ToggleSettingRow(
 /** Compact custom editor.  It intentionally avoids the former full-screen colour wheel. */
 @Composable
 private fun CustomColorPickerContent(
-    color: Color,
-    onColorChange: (Color) -> Unit,
+    inputHexColor: String,
+    onHexChange: (String) -> Unit,
+    previewColor: Color,
 ) {
-    var inputHexColor by remember(color) { mutableStateOf(color.toHex()) }
-    val validHex = "^#([0-9a-fA-F]{6})$".toRegex().matches(inputHexColor)
+    val validHex = normalizedHexRgb(inputHexColor) != null
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -401,23 +410,18 @@ private fun CustomColorPickerContent(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
-                    .background(color)
+                     .background(previewColor)
             )
             OutlinedTextField(
                 value = inputHexColor,
-                onValueChange = {
-                    inputHexColor = it.trim()
-                    if ("^#([0-9a-fA-F]{6})$".toRegex().matches(inputHexColor)) {
-                        onColorChange(Color(android.graphics.Color.parseColor(inputHexColor)))
-                    }
-                },
+                onValueChange = onHexChange,
                 label = { Text(stringResource(id = R.string.label_hex_color)) },
-                isError = inputHexColor.isNotEmpty() && !validHex,
+                isError = !validHex,
                 singleLine = true,
                 modifier = Modifier.weight(1f)
             )
         }
-        if (inputHexColor.isNotEmpty() && !validHex) {
+        if (!validHex) {
             Text(
                 text = stringResource(id = R.string.error_hex_color),
                 color = MaterialTheme.colors.error,

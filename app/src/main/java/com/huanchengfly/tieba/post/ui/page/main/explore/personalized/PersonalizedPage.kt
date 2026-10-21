@@ -31,7 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -116,7 +116,7 @@ fun PersonalizedPage(
         prop1 = PersonalizedUiState::hiddenThreadIds,
         initial = persistentListOf()
     )
-    val pullRefreshState = rememberPullRefreshState(
+    val pullRefreshState = rememberClassicPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { viewModel.send(PersonalizedUiIntent.Refresh) }
     )
@@ -181,7 +181,7 @@ fun PersonalizedPage(
             }
         }
     ) {
-        Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+        Box(modifier = Modifier.pullRefresh(pullRefreshState.state)) {
             LoadMoreLayout(
                 isLoading = isLoadingMore,
                 onLoadMore = { viewModel.send(PersonalizedUiIntent.LoadMore(currentPage + 1)) },
@@ -238,8 +238,9 @@ fun PersonalizedPage(
             }
 
             ClassicPullRefreshIndicator(
-                refreshing = isRefreshing,
-                state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
                 modifier = Modifier.align(Alignment.TopCenter),
                 backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
                 contentColor = ExtendedTheme.colors.primary,

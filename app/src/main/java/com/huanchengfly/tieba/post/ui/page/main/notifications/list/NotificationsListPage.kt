@@ -15,7 +15,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -83,13 +83,13 @@ fun NotificationsListPage(
         prop1 = NotificationsListUiState::currentPage,
         initial = 1
     )
-    val pullRefreshState = rememberPullRefreshState(
+    val pullRefreshState = rememberClassicPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { viewModel.send(NotificationsListUiIntent.Refresh) }
     )
     val lazyListState = rememberLazyListState()
     Box(
-        modifier = Modifier.pullRefresh(pullRefreshState)
+        modifier = Modifier.pullRefresh(pullRefreshState.state)
     ) {
         LoadMoreLayout(
             isLoading = isLoadingMore,
@@ -222,8 +222,9 @@ fun NotificationsListPage(
         }
 
         ClassicPullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
             modifier = Modifier.align(Alignment.TopCenter),
             backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
             contentColor = ExtendedTheme.colors.primary,

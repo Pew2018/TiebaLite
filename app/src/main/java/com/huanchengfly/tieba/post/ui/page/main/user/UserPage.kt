@@ -26,7 +26,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -273,14 +273,14 @@ fun UserPage(
             )
         },
     ) { contentPaddings ->
-        val pullRefreshState = rememberPullRefreshState(
+        val pullRefreshState = rememberClassicPullRefreshState(
             refreshing = isLoading,
             onRefresh = { viewModel.send(UserUiIntent.Refresh) })
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPaddings)
-                .pullRefresh(pullRefreshState),
+                .pullRefresh(pullRefreshState.state),
         ) {
             Column(
                 modifier = Modifier
@@ -401,8 +401,9 @@ fun UserPage(
             }
 
             ClassicPullRefreshIndicator(
-                refreshing = isLoading,
-                state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
                 modifier = Modifier.align(Alignment.TopCenter),
                 backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
                 contentColor = ExtendedTheme.colors.primary,

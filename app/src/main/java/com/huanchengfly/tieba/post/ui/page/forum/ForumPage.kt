@@ -114,7 +114,9 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.MenuScope
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
-import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshLayout
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
+import androidx.compose.material.pullrefresh.pullRefresh
 import com.huanchengfly.tieba.post.ui.widgets.compose.ScrollableTabRow
 import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
 import com.huanchengfly.tieba.post.ui.widgets.compose.TabClickMenu
@@ -654,20 +656,19 @@ fun ForumPage(
                     }
                 }
             ) { contentPadding ->
-                PullToRefreshLayout(
-                    refreshing = isLoading,
+                var listRefreshing by remember(forumName) { mutableStateOf(false) }
+                val pullRefreshState = rememberClassicPullRefreshState(
+                    refreshing = listRefreshing,
                     onRefresh = {
                         coroutineScope.emitGlobalEvent(
                             ForumThreadListUiEvent.Refresh(
                                 currentPage == 1,
-                                getSortType(
-                                    context,
-                                    forumName
-                                )
+                                getSortType(context, forumName)
                             )
                         )
                     }
-                ) {
+                )
+                Box(modifier = Modifier.pullRefresh(pullRefreshState.state)) {
                     val headerNestedScrollConnection = remember {
                         object : NestedScrollConnection {
                             override fun onPreScroll(
@@ -879,11 +880,23 @@ fun ForumPage(
                                         forumId = forumInfo!!.get { id },
                                         forumName = forumInfo!!.get { name },
                                         isGood = it == 1,
+                                        isActiveTab = pagerState.currentPage == it,
+                                        onRefreshingChange = { active ->
+                                            if (pagerState.currentPage == it) listRefreshing = active
+                                        },
                                     )
                                 }
                             }
                         }
                     }
+                    ClassicPullRefreshIndicator(
+                        refreshing = pullRefreshState.isRefreshing,
+                        state = pullRefreshState.state,
+                        holdAtRest = pullRefreshState.isActive,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = contentPadding.calculateTopPadding()),
+                    )
                 }
             }
         }

@@ -24,9 +24,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.SnackbarResult
 import androidx.compose.material.Text
-import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -261,6 +260,8 @@ fun ForumThreadListPage(
     forumId: Long,
     forumName: String,
     isGood: Boolean = false,
+    isActiveTab: Boolean = true,
+    onRefreshingChange: (Boolean) -> Unit = {},
     viewModel: ForumThreadListViewModel = if (isGood) pageViewModel<GoodThreadListViewModel>() else pageViewModel<LatestThreadListViewModel>()
 ) {
     val context = LocalContext.current
@@ -339,10 +340,9 @@ fun ForumThreadListPage(
         prop1 = ForumThreadListUiState::goodClassifies,
         initial = persistentListOf()
     )
-    val pullRefreshState = rememberPullRefreshState(
-        refreshing = isRefreshing,
-        onRefresh = { viewModel.send(getRefreshIntent(context, forumName, isGood)) }
-    )
+    LaunchedEffect(isRefreshing, isActiveTab) {
+        if (isActiveTab) onRefreshingChange(isRefreshing)
+    }
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -431,12 +431,5 @@ fun ForumThreadListPage(
             }
         }
 
-        ClassicPullRefreshIndicator(
-            refreshing = isRefreshing,
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-            backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
-            contentColor = ExtendedTheme.colors.primary,
-        )
     }
 }

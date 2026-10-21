@@ -23,7 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.KeyboardArrowRight
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -107,10 +107,10 @@ fun HotPage(
         prop1 = HotUiState::isLoadingThreadList,
         initial = false
     )
-    val pullRefreshState = rememberPullRefreshState(
+    val pullRefreshState = rememberClassicPullRefreshState(
         refreshing = isLoading,
         onRefresh = { viewModel.send(HotUiIntent.Load) })
-    Box(modifier = Modifier.pullRefresh(pullRefreshState)) {
+    Box(modifier = Modifier.pullRefresh(pullRefreshState.state)) {
         MyLazyColumn(
             modifier = Modifier
                 .fillMaxWidth(),
@@ -367,8 +367,9 @@ fun HotPage(
         }
 
         ClassicPullRefreshIndicator(
-            refreshing = isLoading,
-            state = pullRefreshState,
+                refreshing = pullRefreshState.isRefreshing,
+                state = pullRefreshState.state,
+                holdAtRest = pullRefreshState.isActive,
             modifier = Modifier.align(Alignment.TopCenter),
             backgroundColor = ExtendedTheme.colors.pullRefreshIndicator,
             contentColor = ExtendedTheme.colors.primary,

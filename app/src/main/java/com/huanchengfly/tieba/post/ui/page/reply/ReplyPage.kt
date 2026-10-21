@@ -322,9 +322,6 @@ internal fun ReplyPageContent(
         }
     }
 
-    var closingPanel by remember { mutableStateOf(false) }
-    var startClosingAnimation by remember { mutableStateOf(false) }
-
     fun showKeyboard() {
         editTextView?.apply {
             requestFocus()
@@ -342,16 +339,20 @@ internal fun ReplyPageContent(
     }
 
     fun switchToPanel(type: ReplyPanelType) {
-        if (curKeyboardType == type || type == NONE) {
-            if (curKeyboardType != NONE) {
+        when {
+            // Tapping the active panel button returns to the editor and opens the IME.
+            type != NONE && curKeyboardType == type -> {
+                viewModel.send(ReplyUiIntent.SwitchPanel(NONE))
                 showKeyboard()
-                closingPanel = true
-                startClosingAnimation = false
             }
-            viewModel.send(ReplyUiIntent.SwitchPanel(NONE))
-        } else {
-            hideKeyboard()
-            viewModel.send(ReplyUiIntent.SwitchPanel(type))
+            // Input focus hides any accessory without reopening the IME or stealing focus.
+            type == NONE -> {
+                if (curKeyboardType != NONE) viewModel.send(ReplyUiIntent.SwitchPanel(NONE))
+            }
+            else -> {
+                hideKeyboard()
+                viewModel.send(ReplyUiIntent.SwitchPanel(type))
+            }
         }
     }
 
@@ -380,12 +381,15 @@ internal fun ReplyPageContent(
             .distinctUntilChanged()
             .collect { value = it }
     }
-    val imeAnimationEnd by remember { derivedStateOf { imeCurrentHeight == imeAnimationTargetHeight } }
 
     // Sending never tears down the panel ahead of the IME. The success state is already
     // idempotent, so repeated inset frames cannot trigger an early visual close.
+    var successClosed by remember { mutableStateOf(false) }
     LaunchedEffect(replySuccess, imeCurrentHeight, imeAnimationTargetHeight) {
-        if (replySuccess && imeCurrentHeight == 0 && imeAnimationTargetHeight == 0) {
+        if (replySuccess && !successClosed &&
+            imeCurrentHeight == 0 && imeAnimationTargetHeight == 0
+        ) {
+            successClosed = true
             onBack()
         }
     }
@@ -419,22 +423,11 @@ internal fun ReplyPageContent(
         style = LocalTextStyle.current
     ).size.height.pxToDpFloat().dp
 
-    LaunchedEffect(closingPanel, imeAnimationEnd) {
-        if (closingPanel) {
-            if (!startClosingAnimation && !imeAnimationEnd) {
-                startClosingAnimation = true
-            } else if (startClosingAnimation && imeAnimationEnd) {
-                closingPanel = false
-                startClosingAnimation = false
-            }
-        }
-    }
-
     val canSend by remember { derivedStateOf { !isTextEmpty || selectedImageList.isNotEmpty() } }
 
     val textFieldScrollState = rememberScrollState()
 
-    val parentModifier = if (curKeyboardType == NONE && !closingPanel) {
+    val parentModifier = if (curKeyboardType == NONE) {
         Modifier
             .fillMaxWidth()
             .navigationBarsPadding()
@@ -486,12 +479,14 @@ internal fun ReplyPageContent(
                             null
                         ) as UndoableEditText).apply {
                             editTextView = this
+                            // Do not request editor focus when the bottom sheet is first displayed.
+                            clearFocus()
                             if (subPostId != null && subPostId != 0L && replyUserName != null) {
                                 hint = ctx.getString(R.string.hint_reply, replyUserName)
                             }
                             setOnFocusChangeListener { _, hasFocus ->
                                 if (hasFocus) {
-                                    switchToPanel(NONE)
+                                    viewModel.send(ReplyUiIntent.SwitchPanel(NONE))
                                 }
                             }
                             addTextChangedListener(
@@ -633,11 +628,13 @@ internal fun ReplyPageContent(
                 }
             }
         }
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .windowInsetsBottomHeight(WindowInsets.ime)
-        )
+        if (curKeyboardType == NONE) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .windowInsetsBottomHeight(WindowInsets.ime)
+            )
+        }
         if (curKeyboardType != NONE) {
             Column(modifier = Modifier.height(panelHeight)) {
                 when (curKeyboardType) {
@@ -674,12 +671,6 @@ internal fun ReplyPageContent(
                     else -> {}
                 }
             }
-        } else if (closingPanel) {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(panelHeight)
-            )
         }
     }
 
@@ -718,21 +709,25 @@ internal fun ReplyPageContent(
         dialogState = warningDialogState,
         title = { Text(text = stringResource(id = R.string.title_dialog_reply_warning)) },
         buttons = {
-            DialogPositiveButton(
-                text = stringResource(id = R.string.button_official_client_reply),
-                onClick = { launchOfficialApp() }
-            )
-            DialogNegativeButton(text = stringResource(id = R.string.btn_continue_reply))
             DialogNegativeButton(
                 text = stringResource(id = R.string.btn_cancel_reply),
                 onClick = { onBack() }
             )
+            DialogPositiveButton(text = stringResource(id = R.string.btn_continue_reply))
         },
     ) {
-        Text(
-            text = stringResource(id = R.string.message_dialog_reply_warning),
-            modifier = Modifier.padding(horizontal = 24.dp)
-        )
+        Column(modifier = Modifier.padding(horizontal = 24.dp)) {
+            Text(text = stringResource(id = R.string.message_dialog_reply_warning))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+            ) {
+                DialogPositiveButton(
+                    text = stringResource(id = R.string.button_official_client_reply),
+                    onClick = { launchOfficialApp() }
+                )
+            }
+        }
     }
 
     LaunchedEffect(Unit) {
