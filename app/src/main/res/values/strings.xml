@@ -564,4 +564,10 @@
     <string name="button_save">保存</string>
     <string name="button_restore_default">恢复默认</string>
     <string name="title_my">我的</string>
+    <string name="title_night_mode">夜间模式</string>
+    <string name="btn_manual_night_mode">改为手动</string>
+    <string name="message_manual_night_mode">当前正在跟随系统。若要手动切换，请先关闭跟随系统。</string>
+    <string name="message_login_required">请先登录查看消息</string>
+    <string name="message_empty_replies">暂无回复消息</string>
+    <string name="message_empty_mentions">暂无提到你的消息</string>
 </resources>

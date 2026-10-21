@@ -1,6 +1,5 @@
 package com.huanchengfly.tieba.post.ui.page.main.user
 
-import android.graphics.Typeface
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,6 +24,7 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Brightness4
 import androidx.compose.material.pullrefresh.pullRefresh
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberClassicPullRefreshState
 import androidx.compose.runtime.Composable
@@ -32,12 +32,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,12 +81,12 @@ private fun StatCardPlaceholder(modifier: Modifier = Modifier) {
             statNum = 0,
             statText = stringResource(id = R.string.text_stat_follow)
         )
-        HorizontalDivider(color = Color(if (ExtendedTheme.colors.isNightMode) 0xFF808080 else 0xFFDEDEDE))
+        HorizontalDivider(color = ExtendedTheme.colors.divider)
         StatCardItem(
             statNum = 0,
             statText = stringResource(id = R.string.text_stat_fans)
         )
-        HorizontalDivider(color = Color(if (ExtendedTheme.colors.isNightMode) 0xFF808080 else 0xFFDEDEDE))
+        HorizontalDivider(color = ExtendedTheme.colors.divider)
         StatCardItem(
             statNum = 0,
             statText = stringResource(id = R.string.title_stat_posts_num)
@@ -111,12 +110,12 @@ private fun StatCard(
             statNum = concernNum,
             statText = stringResource(id = R.string.text_stat_follow)
         )
-        HorizontalDivider(color = Color(if (ExtendedTheme.colors.isNightMode) 0xFF808080 else 0xFFDEDEDE))
+        HorizontalDivider(color = ExtendedTheme.colors.divider)
         StatCardItem(
             statNum = fansNum,
             statText = stringResource(id = R.string.text_stat_fans)
         )
-        HorizontalDivider(color = Color(if (ExtendedTheme.colors.isNightMode) 0xFF808080 else 0xFFDEDEDE))
+        HorizontalDivider(color = ExtendedTheme.colors.divider)
         StatCardItem(
             statNum = postNum,
             statText = stringResource(id = R.string.title_stat_posts_num)
@@ -143,8 +142,10 @@ private fun InfoCard(
             Text(
                 text = userName,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+                fontWeight = FontWeight.Medium,
                 color = ExtendedTheme.colors.text,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
                     .placeholder(visible = isPlaceholder, color = ExtendedTheme.colors.chip),
@@ -154,6 +155,8 @@ private fun InfoCard(
                 text = userIntro,
                 fontSize = 12.sp,
                 color = ExtendedTheme.colors.textSecondary,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 modifier = Modifier
                     .fillMaxWidth()
                     .placeholder(visible = isPlaceholder, color = ExtendedTheme.colors.chip),
@@ -166,7 +169,19 @@ private fun InfoCard(
                 size = Sizes.Large,
                 contentDescription = stringResource(id = R.string.desc_user_avatar),
                 modifier = Modifier
-                    .align(Alignment.Bottom)
+                    .align(Alignment.CenterVertically)
+                    .placeholder(visible = isPlaceholder, color = ExtendedTheme.colors.chip),
+            )
+        } else {
+            Icon(
+                imageVector = Icons.Rounded.AccountCircle,
+                contentDescription = null,
+                tint = ExtendedTheme.colors.onChip,
+                modifier = Modifier
+                    .size(Sizes.Large)
+                    .clip(CircleShape)
+                    .background(ExtendedTheme.colors.chip)
+                    .padding(16.dp)
                     .placeholder(visible = isPlaceholder, color = ExtendedTheme.colors.chip),
             )
         }
@@ -185,7 +200,8 @@ private fun RowScope.StatCardItem(
         Text(
             text = "$statNum",
             fontSize = 20.sp,
-            fontFamily = FontFamily(Typeface.createFromAsset(LocalContext.current.assets, "bebas.ttf")),
+            fontWeight = FontWeight.Medium,
+            color = ExtendedTheme.colors.text,
         )
         Spacer(modifier = Modifier.height(2.dp))
         Text(
@@ -253,15 +269,15 @@ fun UserPage(
     val switchToNightDialogState = rememberDialogState()
     ConfirmDialog(
         dialogState = switchToNightDialogState,
-        onConfirm = {},
-        onCancel = {
+        onConfirm = {
             context.appPreferences.followSystemNight = false
             ThemeUtil.switchNightMode()
         },
-        confirmText = stringResource(id = R.string.btn_keep_following),
-        cancelText = stringResource(id = R.string.btn_close_following)
+        onCancel = {},
+        confirmText = stringResource(id = R.string.btn_manual_night_mode),
+        cancelText = stringResource(id = R.string.button_cancel)
     ) {
-        Text(text = stringResource(id = R.string.message_dialog_follow_system_night))
+        Text(text = stringResource(id = R.string.message_manual_night_mode))
     }
 
     Scaffold(
@@ -351,25 +367,23 @@ fun UserPage(
                 ListMenuItem(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_brush_24),
                     text = stringResource(id = R.string.title_theme),
+                    onClick = { navigator.navigate(AppThemePageDestination) }
+                )
+                ListMenuItem(
+                    icon = Icons.Rounded.Brightness4,
+                    text = stringResource(id = R.string.title_night_mode),
                     onClick = {
-                        navigator.navigate(AppThemePageDestination)
+                        if (context.appPreferences.followSystemNight) {
+                            switchToNightDialogState.show()
+                        } else {
+                            ThemeUtil.switchNightMode()
+                        }
                     }
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.my_info_night),
-                        color = ExtendedTheme.colors.textSecondary,
-                        fontSize = 12.sp,
-                    )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    // Row owns the gesture; the indicator must not toggle twice.
                     Switch(
                         checked = ThemeUtil.isNightMode(ThemeUtil.themeState.value),
-                        onCheckedChange = {
-                            if (context.appPreferences.followSystemNight) {
-                                switchToNightDialogState.show()
-                            } else {
-                                ThemeUtil.switchNightMode()
-                            }
-                        }
+                        onCheckedChange = null
                     )
                 }
                 if (account != null) {

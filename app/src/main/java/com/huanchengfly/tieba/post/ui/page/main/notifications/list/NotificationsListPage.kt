@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -44,6 +45,8 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.LoadMoreLayout
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyLazyColumn
 import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
 import com.huanchengfly.tieba.post.ui.widgets.compose.UserHeader
+import com.huanchengfly.tieba.post.ui.widgets.compose.states.StateScreen
+import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
 import com.huanchengfly.tieba.post.utils.DateTimeUtils
 import com.huanchengfly.tieba.post.utils.StringUtil
 import kotlinx.collections.immutable.persistentListOf
@@ -83,14 +86,42 @@ fun NotificationsListPage(
         prop1 = NotificationsListUiState::currentPage,
         initial = 1
     )
+    val hasLoaded by viewModel.uiState.collectPartialAsState(
+        prop1 = NotificationsListUiState::hasLoaded, initial = false
+    )
+    val refreshError by viewModel.uiState.collectPartialAsState(
+        prop1 = NotificationsListUiState::refreshError, initial = null
+    )
+    val currentAccount = LocalAccount.current
     val pullRefreshState = rememberClassicPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { viewModel.send(NotificationsListUiIntent.Refresh) }
     )
     val lazyListState = rememberLazyListState()
     Box(
-        modifier = Modifier.pullRefresh(pullRefreshState.state)
+        modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState.state)
     ) {
+        if (currentAccount == null || data.isEmpty()) {
+            StateScreen(
+                modifier = Modifier.fillMaxSize(),
+                isEmpty = true,
+                isError = currentAccount != null && refreshError != null,
+                isLoading = currentAccount != null && (!hasLoaded || isRefreshing),
+                onReload = { viewModel.send(NotificationsListUiIntent.Refresh) },
+                emptyScreen = {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = stringResource(
+                                if (currentAccount == null) R.string.message_login_required
+                                else if (type == NotificationsType.ReplyMe) R.string.message_empty_replies
+                                else R.string.message_empty_mentions
+                            ),
+                            color = ExtendedTheme.colors.textSecondary
+                        )
+                    }
+                }
+            ) {}
+        } else {
         LoadMoreLayout(
             isLoading = isLoadingMore,
             onLoadMore = { viewModel.send(NotificationsListUiIntent.LoadMore(currentPage + 1)) },
@@ -116,7 +147,7 @@ fun NotificationsListPage(
                                 }
                             },
                             modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 12.dp)
+                                .padding(vertical = 4.dp)
                         ) {
                             Column(
                                 modifier = Modifier
@@ -138,8 +169,8 @@ fun NotificationsListPage(
                                             )
                                         }
                                     }
-                                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
                             ) {
                                 if (info.replyer != null) {
                                     UserHeader(
@@ -187,7 +218,7 @@ fun NotificationsListPage(
                                         text = quoteText,
                                         modifier = Modifier
                                             .fillMaxWidth()
-                                            .clip(RoundedCornerShape(6.dp))
+                                            .clip(RoundedCornerShape(3.dp))
                                             .clickable {
                                                 if ("1" == info.isFloor && info.quotePid != null) {
                                                     navigator.navigate(
@@ -207,7 +238,7 @@ fun NotificationsListPage(
                                             }
                                             .background(
                                                 ExtendedTheme.colors.chip,
-                                                RoundedCornerShape(6.dp)
+                                                RoundedCornerShape(3.dp)
                                             )
                                             .padding(8.dp),
                                         color = ExtendedTheme.colors.onChip,
@@ -219,6 +250,7 @@ fun NotificationsListPage(
                     }
                 }
             }
+        }
         }
 
         ClassicPullRefreshIndicator(

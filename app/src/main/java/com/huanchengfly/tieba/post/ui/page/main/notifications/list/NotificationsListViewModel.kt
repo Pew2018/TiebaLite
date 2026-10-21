@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
@@ -63,7 +64,7 @@ private class NotificationsListPartialChangeProducer(private val type: Notificat
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun toPartialChangeFlow(intentFlow: Flow<NotificationsListUiIntent>): Flow<NotificationsListPartialChange> =
         merge(
-            intentFlow.filterIsInstance<NotificationsListUiIntent.Refresh>().flatMapConcat { produceRefreshPartialChange() },
+            intentFlow.filterIsInstance<NotificationsListUiIntent.Refresh>().flatMapLatest { produceRefreshPartialChange() },
             intentFlow.filterIsInstance<NotificationsListUiIntent.LoadMore>().flatMapConcat { it.produceLoadMorePartialChange() },
         )
 
@@ -119,15 +120,17 @@ sealed interface NotificationsListPartialChange : PartialChange<NotificationsLis
     sealed class Refresh private constructor(): NotificationsListPartialChange {
         override fun reduce(oldState: NotificationsListUiState): NotificationsListUiState =
             when (this) {
-                Start -> oldState.copy(isRefreshing = true)
+                Start -> oldState.copy(isRefreshing = true, refreshError = null)
                 is Success -> oldState.copy(
                     isRefreshing = false,
+                    hasLoaded = true,
+                    refreshError = null,
                     currentPage = 1,
                     data = data.toImmutableList(),
                     hasMore = hasMore
                 )
 
-                is Failure -> oldState.copy(isRefreshing = false)
+                is Failure -> oldState.copy(isRefreshing = false, hasLoaded = true, refreshError = error.getErrorMessage())
             }
 
         data object Start : Refresh()
@@ -188,6 +191,8 @@ data class NotificationsListUiState(
     val currentPage: Int = 1,
     val hasMore: Boolean = true,
     val data: ImmutableList<MessageItemData> = persistentListOf(),
+    val hasLoaded: Boolean = false,
+    val refreshError: String? = null,
 ) : UiState
 
 sealed interface NotificationsListUiEvent : UiEvent

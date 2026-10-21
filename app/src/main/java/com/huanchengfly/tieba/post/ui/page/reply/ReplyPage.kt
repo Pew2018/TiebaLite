@@ -157,7 +157,7 @@ fun ReplyDialog(
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+            shape = RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp),
             color = ExtendedTheme.colors.windowBackground,
             elevation = 0.dp,
         ) {

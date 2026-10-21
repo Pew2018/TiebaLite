@@ -26,6 +26,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.api.models.SearchForumBean
 import com.huanchengfly.tieba.post.arch.collectPartialAsState
@@ -37,7 +39,6 @@ import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.ForumPageDestination
 import com.huanchengfly.tieba.post.ui.page.search.SearchUiEvent
 import com.huanchengfly.tieba.post.ui.widgets.compose.Avatar
-import com.huanchengfly.tieba.post.ui.widgets.compose.Chip
 import com.huanchengfly.tieba.post.ui.widgets.compose.ErrorScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.LocalShouldLoad
@@ -135,9 +136,11 @@ fun SearchForumPage(
                                 .background(ExtendedTheme.colors.background)
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Chip(
+                            Text(
                                 text = stringResource(id = R.string.title_exact_match),
-                                invertColor = true
+                                color = ExtendedTheme.colors.textSecondary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
@@ -158,9 +161,11 @@ fun SearchForumPage(
                                 .background(ExtendedTheme.colors.background)
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Chip(
+                            Text(
                                 text = stringResource(id = R.string.title_fuzzy_match),
-                                invertColor = false
+                                color = ExtendedTheme.colors.textSecondary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
@@ -209,7 +214,7 @@ private fun SearchForumItem(
         Column(
             modifier = Modifier
                 .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.title_forum, item.forumNameShow.orEmpty()),
@@ -217,7 +222,7 @@ private fun SearchForumItem(
             )
             if (!item.intro.isNullOrEmpty()) {
                 Text(
-                    text = item.slogan.orEmpty(),
+                    text = item.intro.orEmpty(),
                     style = MaterialTheme.typography.body2,
                     maxLines = 1
                 )

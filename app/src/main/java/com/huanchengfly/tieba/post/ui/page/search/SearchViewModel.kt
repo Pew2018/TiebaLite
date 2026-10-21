@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -74,7 +75,7 @@ class SearchViewModel :
                 intentFlow.filterIsInstance<SearchUiIntent.SubmitKeyword>()
                     .flatMapConcat { it.producePartialChange() },
                 intentFlow.filterIsInstance<SearchUiIntent.KeywordInputChanged>()
-                    .flatMapConcat { it.producePartialChange() },
+                    .flatMapLatest { it.producePartialChange() },
             )
 
         private fun produceInitPartialChange() = flow<SearchPartialChange.Init> {
@@ -189,6 +190,7 @@ sealed interface SearchPartialChange : PartialChange<SearchUiState> {
         override fun reduce(oldState: SearchUiState): SearchUiState {
             if (keyword.isEmpty()) {
                 return oldState.copy(
+                    keyword = "",
                     isKeywordEmpty = true,
                     suggestions = persistentListOf()
                 )

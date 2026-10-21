@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.FontWeight
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.api.models.SearchUserBean
 import com.huanchengfly.tieba.post.arch.collectPartialAsState
@@ -38,7 +40,6 @@ import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.UserProfilePageDestination
 import com.huanchengfly.tieba.post.ui.page.search.SearchUiEvent
 import com.huanchengfly.tieba.post.ui.widgets.compose.Avatar
-import com.huanchengfly.tieba.post.ui.widgets.compose.Chip
 import com.huanchengfly.tieba.post.ui.widgets.compose.ErrorScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.LocalShouldLoad
@@ -137,9 +138,11 @@ fun SearchUserPage(
                                 .background(ExtendedTheme.colors.background)
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Chip(
+                            Text(
                                 text = stringResource(id = R.string.title_exact_match),
-                                invertColor = true
+                                color = ExtendedTheme.colors.textSecondary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
@@ -165,9 +168,11 @@ fun SearchUserPage(
                                 .background(ExtendedTheme.colors.background)
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
                         ) {
-                            Chip(
+                            Text(
                                 text = stringResource(id = R.string.title_fuzzy_match_user),
-                                invertColor = false
+                                color = ExtendedTheme.colors.textSecondary,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Medium
                             )
                         }
                     }
@@ -218,7 +223,7 @@ private fun SearchUserItem(
         Column(
             modifier = Modifier
                 .weight(1f),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = StringUtil.getUsernameAnnotatedString(

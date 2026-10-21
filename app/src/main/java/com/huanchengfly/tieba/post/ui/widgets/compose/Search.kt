@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -417,9 +418,9 @@ fun SearchBox(
         elevation = elevation
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             prependIcon()
             BaseTextField(
@@ -446,20 +447,18 @@ fun SearchBox(
                     }
             )
             appendIcon()
-            AnimatedVisibility(visible = isKeywordNotEmpty && isFocused) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
+            // Stable action slots keep the input width constant while typing.
+            Box(modifier = Modifier.size(40.dp), contentAlignment = Alignment.Center) {
+                if (isKeywordNotEmpty && isFocused) {
                     Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(100))
+                        modifier = Modifier.size(40.dp)
+                            .clip(RoundedCornerShape(3.dp))
                             .clickable(
                                 interactionSource = remember { MutableInteractionSource() },
-                                indication = rememberRipple(bounded = false, 24.dp),
+                                indication = rememberRipple(bounded = true),
                                 role = Role.Button
                             ) { onKeywordChange("") },
-                        contentAlignment = Alignment.Center,
+                        contentAlignment = Alignment.Center
                     ) {
                         Icon(
                             imageVector = Icons.Rounded.Clear,
@@ -468,21 +467,23 @@ fun SearchBox(
                     }
                 }
             }
-            AnimatedVisibility(visible = isKeywordNotEmpty) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(100))
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = rememberRipple(bounded = false, 24.dp),
-                            role = Role.Button
-                        ) { onKeywordSubmit(keyword) },
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Search,
-                        contentDescription = stringResource(id = R.string.button_search)
-                    )
+            Box(modifier = Modifier.size(40.dp), contentAlignment = Alignment.Center) {
+                if (isKeywordNotEmpty) {
+                    Box(
+                        modifier = Modifier.size(40.dp)
+                            .clip(RoundedCornerShape(3.dp))
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = rememberRipple(bounded = true),
+                                role = Role.Button
+                            ) { onKeywordSubmit(keyword) },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            imageVector = Icons.Rounded.Search,
+                            contentDescription = stringResource(id = R.string.button_search)
+                        )
+                    }
                 }
             }
         }

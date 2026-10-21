@@ -18,7 +18,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
@@ -39,7 +39,7 @@ class SearchForumViewModel @Inject constructor() :
         override fun toPartialChangeFlow(intentFlow: Flow<SearchForumUiIntent>): Flow<SearchForumPartialChange> =
             merge(
                 intentFlow.filterIsInstance<SearchForumUiIntent.Refresh>()
-                    .flatMapConcat { it.producePartialChange() },
+                    .flatMapLatest { it.producePartialChange() },
             )
 
         private fun SearchForumUiIntent.Refresh.producePartialChange(): Flow<SearchForumPartialChange.Refresh> =

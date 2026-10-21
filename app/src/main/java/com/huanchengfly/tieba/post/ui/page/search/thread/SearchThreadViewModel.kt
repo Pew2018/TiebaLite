@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.merge
 import kotlinx.coroutines.flow.onStart
@@ -40,7 +41,7 @@ class SearchThreadViewModel @Inject constructor() :
         override fun toPartialChangeFlow(intentFlow: Flow<SearchThreadUiIntent>): Flow<SearchThreadPartialChange> =
             merge(
                 intentFlow.filterIsInstance<SearchThreadUiIntent.Refresh>()
-                    .flatMapConcat { it.producePartialChange() },
+                    .flatMapLatest { it.producePartialChange() },
                 intentFlow.filterIsInstance<SearchThreadUiIntent.LoadMore>()
                     .flatMapConcat { it.producePartialChange() },
             )
@@ -66,7 +67,9 @@ class SearchThreadViewModel @Inject constructor() :
                     SearchThreadPartialChange.LoadMore.Success(
                         data = threadList,
                         page = page + 1,
-                        hasMore = it.data.hasMore == 1
+                        hasMore = it.data.hasMore == 1,
+                        keyword = keyword,
+                        sortType = sortType
                     )
                 }
                 .onStart { emit(SearchThreadPartialChange.LoadMore.Start) }
@@ -113,13 +116,15 @@ sealed interface SearchThreadPartialChange : PartialChange<SearchThreadUiState> 
     sealed class LoadMore : SearchThreadPartialChange {
         override fun reduce(oldState: SearchThreadUiState): SearchThreadUiState = when (this) {
             Start -> oldState.copy(isLoadingMore = true, error = null)
-            is Success -> oldState.copy(
-                isLoadingMore = false,
-                error = null,
-                data = (oldState.data + data).toImmutableList(),
-                currentPage = page,
-                hasMore = hasMore
-            )
+            is Success -> if (oldState.keyword == keyword && oldState.sortType == sortType) {
+                oldState.copy(
+                    isLoadingMore = false,
+                    error = null,
+                    data = (oldState.data + data).toImmutableList(),
+                    currentPage = page,
+                    hasMore = hasMore
+                )
+            } else oldState.copy(isLoadingMore = false)
 
             is Failure -> oldState.copy(isLoadingMore = false, error = error.wrapImmutable())
         }
@@ -129,6 +134,8 @@ sealed interface SearchThreadPartialChange : PartialChange<SearchThreadUiState> 
             val data: List<SearchThreadBean.ThreadInfoBean>,
             val page: Int,
             val hasMore: Boolean,
+            val keyword: String,
+            val sortType: Int,
         ) : LoadMore()
 
         data class Failure(val error: Throwable) : LoadMore()

@@ -10,12 +10,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,6 +37,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
 import androidx.compose.material.icons.rounded.Search
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -61,6 +61,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -156,9 +157,11 @@ fun SearchPage(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    var lastSubmittedKeyword by remember { mutableStateOf<String?>(null) }
     val finishSearch: (String) -> Unit = { rawKeyword ->
         val trimmedKeyword = rawKeyword.trim()
-        if (trimmedKeyword.isNotEmpty()) {
+        if (trimmedKeyword.isNotEmpty() && trimmedKeyword != lastSubmittedKeyword) {
+            lastSubmittedKeyword = trimmedKeyword
             keyboardController?.hide()
             focusManager.clearFocus(force = true)
             viewModel.send(SearchUiIntent.SubmitKeyword(trimmedKeyword))
@@ -189,6 +192,7 @@ fun SearchPage(
         enabled = !isKeywordEmpty,
         currentScreen = SearchPageDestination
     ) {
+        lastSubmittedKeyword = null
         viewModel.send(SearchUiIntent.SubmitKeyword(""))
     }
 
@@ -266,12 +270,19 @@ fun SearchPage(
                     ) {
                         SearchTopBar(
                             keyword = inputKeyword,
-                            onKeywordChange = { inputKeyword = it },
+                            onKeywordChange = {
+                                inputKeyword = it
+                                lastSubmittedKeyword = null
+                                if (it.isBlank() && !isKeywordEmpty) {
+                                    viewModel.send(SearchUiIntent.SubmitKeyword(""))
+                                }
+                            },
                             onKeywordSubmit = finishSearch,
                             onBack = {
                                 if (isKeywordEmpty) {
                                     navigator.navigateUp()
                                 } else {
+                                    lastSubmittedKeyword = null
                                     viewModel.send(SearchUiIntent.SubmitKeyword(""))
                                 }
                             },
@@ -410,9 +421,7 @@ private fun ColumnScope.SearchTabRow(
         divider = {},
         backgroundColor = Color.Transparent,
         contentColor = ExtendedTheme.colors.onTopBar,
-        modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .width(76.dp * pages.size),
+        modifier = Modifier.fillMaxWidth(),
     ) {
         pages.fastForEachIndexed { index, item ->
             val tabTextStyle =
@@ -462,7 +471,7 @@ private fun ColumnScope.SearchTabRow(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SearchHistoryList(
     searchHistories: ImmutableList<SearchHistory>,
@@ -504,30 +513,38 @@ private fun SearchHistoryList(
                 )
             }
         }
-        FlowRow(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .animateContentSize(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
+        Column(modifier = Modifier.fillMaxWidth().animateContentSize()) {
             showItem.fastForEach { searchHistory ->
-                Box(
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
                     modifier = Modifier
-                        .padding(bottom = 8.dp)
-                        .clip(RoundedCornerShape(100))
+                        .fillMaxWidth()
                         .combinedClickable(
                             onClick = { onSearchHistoryClick(searchHistory) },
                             onLongClick = { onDelete(searchHistory) }
                         )
-                        .background(ExtendedTheme.colors.chip)
-                        .padding(horizontal = 14.dp, vertical = 6.dp)
+                        .heightIn(min = 52.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
+                    Icon(
+                        imageVector = Icons.Rounded.History,
+                        contentDescription = null,
+                        tint = ExtendedTheme.colors.textSecondary,
+                        modifier = Modifier.size(24.dp)
+                    )
                     Text(
                         text = searchHistory.content,
-                        style = MaterialTheme.typography.caption,
-                        color = ExtendedTheme.colors.textSecondary
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.body1,
+                        color = ExtendedTheme.colors.text,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
                 }
+                com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider(
+                    modifier = Modifier.padding(start = 56.dp, end = 16.dp)
+                )
             }
         }
         if (hasMore) {
@@ -598,10 +615,11 @@ private fun SearchTopBar(
         prependIcon = {
             Box(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(100))
+                    .size(40.dp)
+                    .clip(RoundedCornerShape(3.dp))
                     .clickable(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(bounded = false, 24.dp),
+                        indication = rememberRipple(bounded = true),
                         role = Role.Button,
                         onClick = onBack
                     ),
@@ -613,7 +631,7 @@ private fun SearchTopBar(
                 )
             }
         },
-        shape = RoundedCornerShape(6.dp)
+        shape = RoundedCornerShape(3.dp)
     )
 }
 
