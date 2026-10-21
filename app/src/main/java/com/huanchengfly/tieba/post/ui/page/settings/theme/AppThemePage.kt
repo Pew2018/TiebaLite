@@ -1,6 +1,5 @@
 package com.huanchengfly.tieba.post.ui.page.settings.theme
 
-import android.os.Build
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,26 +12,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Checkbox
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.BorderColor
-import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.ColorLens
-import androidx.compose.material.icons.rounded.Colorize
-import androidx.compose.material.icons.rounded.PhotoSizeSelectActual
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
@@ -49,18 +40,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.datastore.preferences.core.booleanPreferencesKey
-import androidx.datastore.preferences.core.stringPreferencesKey
-import com.godaddy.android.colorpicker.HsvColor
-import com.godaddy.android.colorpicker.harmony.ColorHarmonyMode
-import com.godaddy.android.colorpicker.harmony.HarmonyColorPicker
 import com.huanchengfly.tieba.post.App
 import com.huanchengfly.tieba.post.R
-import com.huanchengfly.tieba.post.activities.TranslucentThemeActivity
 import com.huanchengfly.tieba.post.components.dialogs.CustomThemeDialog
-import com.huanchengfly.tieba.post.goToActivity
-import com.huanchengfly.tieba.post.rememberPreferenceAsMutableState
-import com.huanchengfly.tieba.post.rememberPreferenceAsState
 import com.huanchengfly.tieba.post.ui.common.theme.compose.LocalPageRole
 import com.huanchengfly.tieba.post.ui.common.theme.compose.PageRole
 import com.huanchengfly.tieba.post.ui.common.theme.ThemeGroup
@@ -75,6 +57,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.DialogNegativeButton
 import com.huanchengfly.tieba.post.ui.widgets.compose.DialogPositiveButton
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
+import com.huanchengfly.tieba.post.ui.widgets.compose.Switch
 import com.huanchengfly.tieba.post.ui.widgets.compose.TitleCentredToolbar
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
 import com.huanchengfly.tieba.post.utils.ThemeUtil
@@ -87,27 +70,19 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun AppThemePage(
     navigator: DestinationsNavigator,
 ) {
-    // 设置类页面角色：顶栏/状态栏使用 OxygenOS 深灰
+    // 设置类页面角色：顶栏/状态栏使用 经典深色
     CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
         AppThemeContent(navigator = navigator)
     }
 }
-
 @Composable
 private fun AppThemeContent(
     navigator: DestinationsNavigator,
 ) {
     val context = LocalContext.current
     val currentTheme by remember { ThemeUtil.themeState }
-    val isDynamicTheme by rememberPreferenceAsState(
-        key = booleanPreferencesKey("useDynamicColorTheme"),
-        defaultValue = false
-    )
-    val mainToolbarStyle by rememberPreferenceAsState(
-        key = stringPreferencesKey(ThemeUtil.KEY_MAIN_TOOLBAR_STYLE),
-        defaultValue = ThemeUtil.MAIN_TOOLBAR_APP_BLUE
-    )
     val customPrimaryColorDialogState = rememberDialogState()
+    val customTopBarDialogState = rememberDialogState()
     var customPrimaryColor by remember {
         mutableStateOf(
             Color(
@@ -119,14 +94,20 @@ private fun AppThemeContent(
             )
         )
     }
-    var customToolbarPrimaryColor by rememberPreferenceAsMutableState(
-        key = booleanPreferencesKey(ThemeUtil.KEY_CUSTOM_TOOLBAR_PRIMARY_COLOR),
-        defaultValue = false
-    )
-    var customStatusBarFontDark by rememberPreferenceAsMutableState(
-        key = booleanPreferencesKey(ThemeUtil.KEY_CUSTOM_STATUS_BAR_FONT_DARK),
-        defaultValue = false
-    )
+    // Read the real persisted value up front. The generic preference state helper starts from its
+    // default and can briefly write that default back before its collector receives stored data.
+    var topBarFollowsTheme by remember {
+        mutableStateOf(context.appPreferences.toolbarPrimaryColor)
+    }
+    var selectedDarkTheme by remember {
+        mutableStateOf(context.appPreferences.darkTheme ?: ThemeUtil.THEME_AMOLED_DARK)
+    }
+    var customTopBarHex by remember {
+        mutableStateOf(context.appPreferences.customTopBarColor ?: "#212121")
+    }
+    val customTopBarHexValid = remember(customTopBarHex) {
+        "^#([0-9a-fA-F]{6})$".toRegex().matches(customTopBarHex)
+    }
 
     Dialog(
         dialogState = customPrimaryColorDialogState,
@@ -135,12 +116,16 @@ private fun AppThemeContent(
             DialogPositiveButton(
                 text = stringResource(id = R.string.button_finish),
                 onClick = {
-                    customStatusBarFontDark = customStatusBarFontDark || !customToolbarPrimaryColor
-                    context.appPreferences.customPrimaryColor =
-                        CustomThemeDialog.toString(customPrimaryColor.toArgb())
-                    context.appPreferences.toolbarPrimaryColor = customToolbarPrimaryColor
-                    context.appPreferences.customStatusBarFontDark = customStatusBarFontDark
-                    ThemeUtil.setUseDynamicTheme(false)
+                    val primary = CustomThemeDialog.toString(customPrimaryColor.toArgb())
+                    // Keep the legacy booleans readable, but publish all visible roles together.
+                    context.appPreferences.applyCustomThemeColors(
+                        primary = primary,
+                        topBar = if (topBarFollowsTheme) primary else customTopBarHex,
+                        topBarContent = String.format("#%06X", 0xFFFFFF and
+                            com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                                .readableOnInt(customPrimaryColor.toArgb())),
+                        accent = primary,
+                    )
                     ThemeUtil.switchTheme(ThemeUtil.THEME_CUSTOM)
                 }
             )
@@ -161,21 +146,74 @@ private fun AppThemeContent(
         CustomColorPickerContent(
             color = customPrimaryColor,
             onColorChange = { customPrimaryColor = it },
-            toolbarPrimaryColor = customToolbarPrimaryColor,
-            onToolbarPrimaryColorChange = { customToolbarPrimaryColor = it },
-            statusBarFontDark = customStatusBarFontDark,
-            onStatusBarFontDarkChange = { customStatusBarFontDark = it },
         )
     }
 
-    val isNight = ThemeUtil.isNightMode(currentTheme)
-    val currentPreset = ThemePresets.presetOf(currentTheme)
-    val modeText = when {
-        isDynamicTheme -> stringResource(id = R.string.title_dynamic_theme)
-        ThemeUtil.isTranslucentTheme(currentTheme) -> stringResource(id = R.string.title_theme_translucent)
-        currentTheme == ThemeUtil.THEME_CUSTOM -> stringResource(id = R.string.title_custom_color)
-        currentPreset != null -> currentPreset.name
-        else -> stringResource(id = R.string.title_theme)
+    Dialog(
+        dialogState = customTopBarDialogState,
+        title = { Text(text = stringResource(id = R.string.title_custom_top_bar_color)) },
+        buttons = {
+            DialogNegativeButton(
+                text = stringResource(id = R.string.button_restore_default),
+                onClick = {
+                    customTopBarHex = "#212121"
+                    context.appPreferences.customTopBarColor = customTopBarHex
+                    context.appPreferences.customTopBarContentColor = "#FFFFFF"
+                    ThemeUtil.notifyThemeSettingsChanged()
+                }
+            )
+            DialogPositiveButton(
+                text = stringResource(id = R.string.button_save),
+                onClick = {
+                    if (customTopBarHexValid) {
+                        val normalized = customTopBarHex.uppercase()
+                        val color = android.graphics.Color.parseColor(normalized)
+                        context.appPreferences.customTopBarColor = normalized
+                        context.appPreferences.customTopBarContentColor = String.format(
+                            "#%06X",
+                            0xFFFFFF and com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                                .readableOnInt(color)
+                        )
+                        ThemeUtil.notifyThemeSettingsChanged()
+                    }
+                }
+            )
+        }
+    ) {
+        Column(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (customTopBarHexValid) Color(android.graphics.Color.parseColor(customTopBarHex))
+                            else ExtendedTheme.colors.divider
+                        )
+                )
+                OutlinedTextField(
+                    value = customTopBarHex,
+                    onValueChange = { customTopBarHex = it.trim() },
+                    label = { Text(stringResource(id = R.string.label_hex_color)) },
+                    isError = customTopBarHex.isNotEmpty() && !customTopBarHexValid,
+                    singleLine = true,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+            if (customTopBarHex.isNotEmpty() && !customTopBarHexValid) {
+                Text(
+                    text = stringResource(id = R.string.error_hex_color),
+                    color = MaterialTheme.colors.error,
+                    style = MaterialTheme.typography.caption
+                )
+            }
+        }
     }
 
     MyScaffold(
@@ -199,72 +237,102 @@ private fun AppThemeContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            // 当前状态摘要：明确"当前主题是什么、用在哪"
-            item(key = "current_summary") {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 12.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.title_theme_current),
-                        style = MaterialTheme.typography.caption,
-                        color = ExtendedTheme.colors.textSecondary
-                    )
-                    Text(
-                        text = modeText + " · " + if (isNight) {
-                            stringResource(id = R.string.title_theme_mode_dark)
-                        } else {
-                            stringResource(id = R.string.title_theme_mode_light)
-                        },
-                        style = MaterialTheme.typography.subtitle1,
-                        fontWeight = FontWeight.Medium,
-                        color = ExtendedTheme.colors.text
-                    )
-                    Text(
-                        text = stringResource(id = R.string.summary_theme_roles),
-                        style = MaterialTheme.typography.caption,
-                        color = ExtendedTheme.colors.textSecondary
+            // 预设采用普通 56dp 单选行；选中态由稳定主题 ID 唯一决定。
+            ThemeGroup.entries.forEach { group ->
+                item(key = "header_preset_${group.name}") {
+                    SectionHeader(text = stringResource(id = group.titleRes))
+                }
+                itemsIndexed(
+                    items = ThemePresets.presets.filter { it.group == group },
+                    key = { _, preset -> preset.id }
+                ) { _, preset ->
+                    ThemePresetRow(
+                        preset = preset,
+                        selected = ThemePresets.presetOf(currentTheme)?.id == preset.id,
+                        onClick = {
+                            ThemeUtil.switchTheme(if (ThemeUtil.isNightMode(currentTheme)) preset.darkId else preset.id)
+                        }
                     )
                 }
             }
 
-            // 示意图：真实反映当前解析结果的配色关系
-            item(key = "theme_schematic") {
-                ThemeColorSchematic()
+            item(key = "header_dark_surface") {
+                SectionHeader(text = stringResource(id = R.string.title_dark_surface_mode))
+            }
+            item(key = "dark_surface_normal") {
+                ThemeEntryRow(
+                    title = stringResource(id = R.string.dark_surface_normal),
+                    summary = stringResource(id = R.string.dark_surface_normal_summary),
+                    selected = selectedDarkTheme != ThemeUtil.THEME_AMOLED_DARK,
+                    onClick = {
+                        val presetDark = ThemePresets.presetOf(currentTheme)?.darkId
+                            ?: "material_blue_grey_dark"
+                        selectedDarkTheme = presetDark
+                        context.appPreferences.darkTheme = presetDark
+                        if (ThemeUtil.isNightMode(currentTheme)) {
+                            ThemeUtil.switchTheme(presetDark, recordOldTheme = false)
+                        }
+                        ThemeUtil.notifyThemeSettingsChanged()
+                    }
+                )
+            }
+            item(key = "dark_surface_amoled") {
+                ThemeEntryRow(
+                    title = stringResource(id = R.string.dark_surface_amoled),
+                    summary = stringResource(id = R.string.dark_surface_amoled_summary),
+                    selected = selectedDarkTheme == ThemeUtil.THEME_AMOLED_DARK,
+                    onClick = {
+                        selectedDarkTheme = ThemeUtil.THEME_AMOLED_DARK
+                        context.appPreferences.darkTheme = ThemeUtil.THEME_AMOLED_DARK
+                        if (ThemeUtil.isNightMode(currentTheme)) {
+                            ThemeUtil.switchTheme(ThemeUtil.THEME_AMOLED_DARK, recordOldTheme = false)
+                        }
+                        ThemeUtil.notifyThemeSettingsChanged()
+                    }
+                )
             }
 
-            // 特殊模式：动态取色 / 自定义颜色 / 透明主题（普通设置入口，功能保留）
-            item(key = "header_special") {
-                SectionHeader(text = stringResource(id = R.string.title_theme_special))
+            item(key = "header_custom") {
+                SectionHeader(text = stringResource(id = R.string.title_custom_color_section))
             }
-            item(key = "entry_dynamic") {
-                val supported = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                ThemeEntryRow(
-                    title = stringResource(id = R.string.title_dynamic_theme),
-                    summary = stringResource(
-                        id = if (supported) R.string.summary_dynamic_theme
-                        else R.string.summary_dynamic_theme_unsupported
-                    ),
-                    selected = isDynamicTheme,
-                    enabled = supported,
-                    leading = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = Icons.Rounded.Colorize,
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    onClick = { ThemeUtil.setUseDynamicTheme(true) }
+            item(key = "top_bar_follow") {
+                ToggleSettingRow(
+                    title = stringResource(id = R.string.title_top_bar_follow_theme),
+                    summary = stringResource(id = R.string.summary_top_bar_follow_theme),
+                    checked = topBarFollowsTheme,
+                    onCheckedChange = { checked ->
+                        topBarFollowsTheme = checked
+                        context.appPreferences.toolbarPrimaryColor = checked
+                        ThemeUtil.notifyThemeSettingsChanged()
+                    }
                 )
+            }
+            if (!topBarFollowsTheme) {
+                item(key = "custom_top_bar") {
+                    ThemeEntryRow(
+                        title = stringResource(id = R.string.title_custom_top_bar_color),
+                        summary = stringResource(id = R.string.summary_custom_top_bar_color),
+                        selected = false,
+                        leading = {
+                            Box(
+                                modifier = Modifier
+                                    .size(28.dp)
+                                    .clip(CircleShape)
+                                    .background(
+                                        if (customTopBarHexValid) Color(android.graphics.Color.parseColor(customTopBarHex))
+                                        else ExtendedTheme.colors.divider
+                                    )
+                            )
+                        },
+                        onClick = { customTopBarDialogState.show() }
+                    )
+                }
             }
             item(key = "entry_custom") {
                 ThemeEntryRow(
-                    title = stringResource(id = R.string.title_custom_color),
+                    title = stringResource(id = R.string.title_custom_accent_color),
+                    selected = false,
                     summary = stringResource(id = R.string.summary_custom_theme),
-                    selected = !isDynamicTheme && currentTheme == ThemeUtil.THEME_CUSTOM,
                     leading = {
                         LeadingIcon {
                             AvatarIcon(
@@ -277,78 +345,6 @@ private fun AppThemeContent(
                     onClick = { customPrimaryColorDialogState.show() }
                 )
             }
-            item(key = "entry_translucent") {
-                ThemeEntryRow(
-                    title = stringResource(id = R.string.title_theme_translucent),
-                    summary = stringResource(id = R.string.summary_translucent_theme),
-                    selected = ThemeUtil.isTranslucentTheme(currentTheme),
-                    leading = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = Icons.Rounded.PhotoSizeSelectActual,
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    onClick = { context.goToActivity<TranslucentThemeActivity>() }
-                )
-            }
-
-            // 主功能顶栏风格（设置页面顶栏固定深灰，不随此变化）
-            item(key = "header_toolbar_style") {
-                SectionHeader(text = stringResource(id = R.string.title_main_toolbar_style))
-            }
-            item(key = "toolbar_style_note") {
-                Text(
-                    text = stringResource(id = R.string.summary_main_toolbar_style),
-                    style = MaterialTheme.typography.caption,
-                    color = ExtendedTheme.colors.textSecondary,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
-                )
-            }
-            itemsIndexed(
-                items = ThemeUtil.MAIN_TOOLBAR_STYLES,
-                key = { _, style -> style }
-            ) { _, style ->
-                val labelRes = when (style) {
-                    ThemeUtil.MAIN_TOOLBAR_TEAL -> R.string.main_toolbar_teal
-                    ThemeUtil.MAIN_TOOLBAR_PURPLE -> R.string.main_toolbar_purple
-                    ThemeUtil.MAIN_TOOLBAR_NEUTRAL_DARK -> R.string.main_toolbar_neutral_dark
-                    ThemeUtil.MAIN_TOOLBAR_FOLLOW_SEED -> R.string.main_toolbar_follow_seed
-                    else -> R.string.main_toolbar_app_blue
-                }
-                ThemeEntryRow(
-                    title = stringResource(id = labelRes),
-                    selected = mainToolbarStyle == style,
-                    onClick = { ThemeUtil.setMainToolbarStyle(style) }
-                )
-            }
-
-            // 预设主题：两列分组，一处单选状态
-            ThemeGroup.entries.forEach { group ->
-                item(key = "header_preset_${group.name}") {
-                    SectionHeader(text = stringResource(id = group.titleRes))
-                }
-                itemsIndexed(
-                    items = ThemePresets.presets.filter { it.group == group },
-                    key = { _, preset -> preset.id }
-                ) { _, preset ->
-                    val selected = !isDynamicTheme &&
-                            !ThemeUtil.isTranslucentTheme(currentTheme) &&
-                            currentTheme != ThemeUtil.THEME_CUSTOM &&
-                            ThemePresets.presetOf(currentTheme)?.id == preset.id &&
-                            !ThemePresets.isPresetDark(currentTheme)
-                    ThemePresetRow(
-                        preset = preset,
-                        selected = selected,
-                        onClick = {
-                            ThemeUtil.switchTheme(preset.id)
-                            ThemeUtil.setUseDynamicTheme(false)
-                        }
-                    )
-                }
-            }
             item {
                 Spacer(modifier = Modifier.size(16.dp))
             }
@@ -356,17 +352,39 @@ private fun AppThemeContent(
     }
 }
 
-/** 自定义颜色选择器内容（色轮 + Hex 输入，保留原有能力） */
+@Composable
+private fun ToggleSettingRow(
+    title: String,
+    summary: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(72.dp)
+            .clickable { onCheckedChange(!checked) }
+            .padding(horizontal = 16.dp),
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = title, style = MaterialTheme.typography.subtitle1, color = ExtendedTheme.colors.text)
+            Text(text = summary, style = MaterialTheme.typography.caption, color = ExtendedTheme.colors.textSecondary)
+        }
+        Box(modifier = Modifier.size(width = 48.dp, height = 48.dp), contentAlignment = Alignment.Center) {
+            Switch(checked = checked, onCheckedChange = onCheckedChange)
+        }
+    }
+}
+
+/** Compact custom editor.  It intentionally avoids the former full-screen colour wheel. */
 @Composable
 private fun CustomColorPickerContent(
     color: Color,
     onColorChange: (Color) -> Unit,
-    toolbarPrimaryColor: Boolean,
-    onToolbarPrimaryColorChange: (Boolean) -> Unit,
-    statusBarFontDark: Boolean,
-    onStatusBarFontDarkChange: (Boolean) -> Unit,
 ) {
-    var useInput by remember { mutableStateOf(false) }
+    var inputHexColor by remember(color) { mutableStateOf(color.toHex()) }
+    val validHex = "^#([0-9a-fA-F]{6})$".toRegex().matches(inputHexColor)
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -374,87 +392,37 @@ private fun CustomColorPickerContent(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (useInput) {
-            var inputHexColor by remember { mutableStateOf(color.toHex()) }
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(color)
-                )
-                IconButton(
-                    onClick = {
-                        if ("^#([0-9a-fA-F]{6})$".toRegex().matches(inputHexColor)) {
-                            onColorChange(Color(android.graphics.Color.parseColor(inputHexColor)))
-                        }
-                        useInput = false
-                    }
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Check,
-                        contentDescription = stringResource(id = R.string.button_sure_default)
-                    )
-                }
-            }
-        } else {
-            Box {
-                HarmonyColorPicker(
-                    harmonyMode = ColorHarmonyMode.ANALOGOUS,
-                    color = HsvColor.from(color),
-                    onColorChanged = { onColorChange(it.toColor()) },
-                    modifier = Modifier.sizeIn(maxWidth = 320.dp, maxHeight = 320.dp)
-                )
-                IconButton(
-                    onClick = { useInput = true },
-                    modifier = Modifier.align(Alignment.TopEnd)
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.BorderColor,
-                        contentDescription = stringResource(id = R.string.desc_input_color)
-                    )
-                }
-            }
-        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable(
-                    interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
-                    indication = null,
-                    onClick = { onToolbarPrimaryColorChange(!toolbarPrimaryColor) }
-                )
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Checkbox(
-                checked = toolbarPrimaryColor,
-                onCheckedChange = onToolbarPrimaryColorChange,
-            )
-            Text(text = stringResource(id = R.string.tip_toolbar_primary_color))
-        }
-        if (toolbarPrimaryColor) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(
-                        interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
-                        indication = null,
-                        onClick = { onStatusBarFontDarkChange(!statusBarFontDark) }
-                    )
-            ) {
-                Checkbox(
-                    checked = statusBarFontDark,
-                    onCheckedChange = onStatusBarFontDarkChange,
-                )
-                Text(text = stringResource(id = R.string.tip_status_bar_font))
-            }
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(color)
+            )
+            OutlinedTextField(
+                value = inputHexColor,
+                onValueChange = {
+                    inputHexColor = it.trim()
+                    if ("^#([0-9a-fA-F]{6})$".toRegex().matches(inputHexColor)) {
+                        onColorChange(Color(android.graphics.Color.parseColor(inputHexColor)))
+                    }
+                },
+                label = { Text(stringResource(id = R.string.label_hex_color)) },
+                isError = inputHexColor.isNotEmpty() && !validHex,
+                singleLine = true,
+                modifier = Modifier.weight(1f)
+            )
+        }
+        if (inputHexColor.isNotEmpty() && !validHex) {
+            Text(
+                text = stringResource(id = R.string.error_hex_color),
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.caption
+            )
         }
     }
 }
@@ -550,51 +518,5 @@ private fun ThemePresetRow(
             color = ExtendedTheme.colors.text
         )
         RadioButton(selected = selected, onClick = null)
-    }
-}
-
-/**
- * 主题配色关系示意图：随真实解析结果更新，带语义标签。
- */
-@Composable
-private fun ThemeColorSchematic() {
-    val colors = ExtendedTheme.colors
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(4.dp))
-            .background(colors.background)
-            .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(6.dp)
-    ) {
-        SchematicRow(stringResource(id = R.string.schematic_main_toolbar), colors.topBar)
-        SchematicRow(stringResource(id = R.string.schematic_settings_toolbar), colors.settingsTopBar)
-        SchematicRow(stringResource(id = R.string.schematic_status_bar), colors.statusBar)
-        SchematicRow(stringResource(id = R.string.schematic_text), colors.text)
-        SchematicRow(stringResource(id = R.string.schematic_accent_fill), colors.accentFill)
-        SchematicRow(stringResource(id = R.string.schematic_accent_muted), colors.accentMuted)
-    }
-}
-
-@Composable
-private fun SchematicRow(label: String, color: Color) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Box(
-            modifier = Modifier
-                .size(20.dp)
-                .clip(RoundedCornerShape(2.dp))
-                .background(color)
-        )
-        Spacer(modifier = Modifier.width(12.dp))
-        Text(
-            text = label,
-            style = MaterialTheme.typography.caption,
-            color = ExtendedTheme.colors.textSecondary,
-            modifier = Modifier.weight(1f)
-        )
     }
 }

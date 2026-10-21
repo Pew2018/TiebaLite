@@ -26,7 +26,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
@@ -90,11 +89,11 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.BackNavigationIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.Button
 import com.huanchengfly.tieba.post.ui.widgets.compose.Chip
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClickMenu
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicDropdownMenuItem
 import com.huanchengfly.tieba.post.ui.widgets.compose.ErrorScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoadHorizontalPager
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.ProvideContentColor
 import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshLayout
@@ -162,10 +161,7 @@ fun UserProfilePage(
 
     ProvideNavigator(navigator = navigator) {
         StateScreen(
-            modifier = Modifier
-                .fillMaxSize()
-                // 预测返回（B03）：搜索/帖内进入用户资料后，左滑返回到上一级页面
-                .predictiveBack { navigator.navigateUp() },
+            modifier = Modifier.fillMaxSize(),
             isEmpty = isEmpty,
             isError = isError,
             isLoading = isRefreshing,
@@ -264,7 +260,7 @@ private fun UserProfileToolbar(
             user.takeUnless { isSelf }?.let {
                 ClickMenu(
                     menuContent = {
-                        DropdownMenuItem(
+                        ClassicDropdownMenuItem(
                             onClick = {
                                 BlockManager.addBlockAsync(
                                     Block(
@@ -280,7 +276,7 @@ private fun UserProfileToolbar(
                         ) {
                             Text(text = stringResource(id = R.string.menu_add_user_to_black_list))
                         }
-                        DropdownMenuItem(
+                        ClassicDropdownMenuItem(
                             onClick = {
                                 BlockManager.addBlockAsync(
                                     Block(

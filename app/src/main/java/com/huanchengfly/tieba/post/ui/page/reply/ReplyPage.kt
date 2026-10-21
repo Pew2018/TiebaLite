@@ -107,7 +107,6 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.DialogState
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyBackHandler
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.edittext.widget.UndoableEditText
 import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.Emoticon
@@ -286,12 +285,18 @@ internal fun ReplyPageContent(
     val isTextEmpty by remember { derivedStateOf { curText.isEmpty() } }
 
     viewModel.onEvent<ReplyUiEvent.ReplySuccess> {
+        // Close IME before navigating: otherwise the outgoing screen can inherit its inset.
+        editTextView?.let { editor ->
+            hideKeyboard(context, editor)
+            editor.clearFocus()
+        }
+        keyboardController?.hide()
         if (it.expInc.isEmpty()) {
             context.toastShort(R.string.toast_reply_success_default)
         } else {
             context.toastShort(R.string.toast_reply_success, it.expInc)
         }
-        LitePal.deleteAllAsync<Draft>("hash = ?", hash).listen { onBack() }
+        LitePal.deleteAllAsync<Draft>("hash = ?", hash).listen { }
     }
 
     var waitUploadSuccessToSend by remember { mutableStateOf(false) }
@@ -322,8 +327,8 @@ internal fun ReplyPageContent(
 
     fun showKeyboard() {
         editTextView?.apply {
-            showKeyboard(context, this)
             requestFocus()
+            showKeyboard(context, this)
         }
         keyboardController?.show()
     }
@@ -376,6 +381,14 @@ internal fun ReplyPageContent(
             .collect { value = it }
     }
     val imeAnimationEnd by remember { derivedStateOf { imeCurrentHeight == imeAnimationTargetHeight } }
+
+    // Sending never tears down the panel ahead of the IME. The success state is already
+    // idempotent, so repeated inset frames cannot trigger an early visual close.
+    LaunchedEffect(replySuccess, imeCurrentHeight, imeAnimationTargetHeight) {
+        if (replySuccess && imeCurrentHeight == 0 && imeAnimationTargetHeight == 0) {
+            onBack()
+        }
+    }
     val imeVisibleHeightPx by produceState(
         initialValue = remember { context.appPreferences.imeHeight },
         imeAnimationTargetInset,
@@ -433,11 +446,7 @@ internal fun ReplyPageContent(
     }
 
     Column(
-        modifier = parentModifier
-            // 预测返回：先收起表情/图片面板或键盘，取消手势不丢输入与选择状态
-            .predictiveBack(enabled = curKeyboardType != NONE) {
-                switchToPanel(NONE)
-            },
+        modifier = parentModifier,
         verticalArrangement = Arrangement.Bottom
     ) {
         Row(
@@ -674,16 +683,8 @@ internal fun ReplyPageContent(
         }
     }
 
-    DisposableEffect(editTextView) {
-        if (editTextView != null) {
-            showKeyboard()
-        }
-
-        onDispose {
-            if (editTextView != null) {
-                hideKeyboard()
-            }
-        }
+    DisposableEffect(Unit) {
+        onDispose { hideKeyboard() }
     }
 
     fun getDispatchUri(): Uri {

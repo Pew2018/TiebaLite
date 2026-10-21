@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 
 /**
- * OxygenOS 经典主题的用途色派生与对比度工具。
+ * 经典 Material Design 主题的用途色派生与对比度工具。
  *
  * 规则：
  * - 一般文字对比度目标 4.5:1，关键图标/状态 3:1；

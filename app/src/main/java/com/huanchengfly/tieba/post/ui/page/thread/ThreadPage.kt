@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredHeightIn
@@ -34,7 +35,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -62,7 +62,6 @@ import androidx.compose.material.icons.rounded.RocketLaunch
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material.icons.rounded.StarBorder
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.rememberModalBottomSheetState
@@ -148,6 +147,8 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.ListMenuItem
 import com.huanchengfly.tieba.post.ui.widgets.compose.LoadMoreLayout
 import com.huanchengfly.tieba.post.ui.widgets.compose.LongClickMenu
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicDropdownMenuItem
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyBackHandler
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyLazyColumn
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
@@ -162,7 +163,6 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalGrid
 import com.huanchengfly.tieba.post.ui.widgets.compose.buildChipInlineContent
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberMenuState
 import com.huanchengfly.tieba.post.ui.widgets.compose.states.StateScreen
 import com.huanchengfly.tieba.post.utils.DateTimeUtils.getRelativeTimeString
@@ -363,21 +363,22 @@ private fun ToggleButton(
         onClick = onClick,
         modifier = modifier,
         enabled = true,
-        shape = RoundedCornerShape(6.dp),
+        shape = RoundedCornerShape(4.dp),
         color = animatedBackgroundColor,
         contentColor = animatedColor,
     ) {
-        Box(contentAlignment = Alignment.Center) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.heightIn(min = 52.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 if (icon != null) {
                     icon()
                 }
                 ProvideTextStyle(
                     value = MaterialTheme.typography.subtitle1.copy(
-                        fontSize = 14.sp,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Medium,
                         textAlign = TextAlign.Center,
                     )
                 ) {
@@ -772,7 +773,7 @@ fun ThreadPage(
     }
 
     /**
-     * 统一的返回决策（工具栏返回、系统返回、预测返回共用）：
+     * 统一的返回决策（工具栏返回、系统返回共用）：
      * 1. 底部面板可见 → 先收面板；
      * 2. 收藏帖且需要确认阅读位置 → 先显示确认对话框，不提前提交导航；
      * 3. 否则离开帖子页。
@@ -1127,9 +1128,7 @@ fun ThreadPage(
         ) {
             MyScaffold(
                 scaffoldState = scaffoldState,
-                modifier = Modifier
-                    // 预测返回：与工具栏/系统返回共用同一返回决策
-                    .predictiveBack { onThreadBack() },
+                modifier = Modifier,
                 topBar = {
                     TopBar(
                         forum = forum,
@@ -1189,7 +1188,7 @@ fun ThreadPage(
             ) { paddingValues ->
                 ModalBottomSheetLayout(
                     sheetState = bottomSheetState,
-                    sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+                    sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
                     sheetBackgroundColor = ExtendedTheme.colors.windowBackground,
                     sheetContent = {
                         ThreadMenu(
@@ -1606,7 +1605,7 @@ fun ThreadPage(
                             }
                         }
 
-                        PullRefreshIndicator(
+                        ClassicPullRefreshIndicator(
                             refreshing = isRefreshing,
                             state = pullRefreshState,
                             modifier = Modifier.align(Alignment.TopCenter),
@@ -1814,7 +1813,7 @@ fun PostCard(
             }.takeIf { !context.appPreferences.hideReply },
             menuContent = {
                 if (!context.appPreferences.hideReply) {
-                    DropdownMenuItem(
+                    ClassicDropdownMenuItem(
                         onClick = {
                             onReplyClick(post)
                             menuState.expanded = false
@@ -1824,7 +1823,7 @@ fun PostCard(
                     }
                 }
                 if (onMenuCopyClick != null) {
-                    DropdownMenuItem(
+                    ClassicDropdownMenuItem(
                         onClick = {
                             onMenuCopyClick(post.content.plainText)
                             menuState.expanded = false
@@ -1833,7 +1832,7 @@ fun PostCard(
                         Text(text = stringResource(id = R.string.menu_copy))
                     }
                 }
-                DropdownMenuItem(
+                ClassicDropdownMenuItem(
                     onClick = {
                         coroutineScope.launch {
                             TiebaUtil.reportPost(context, navigator, post.id.toString())
@@ -1844,7 +1843,7 @@ fun PostCard(
                     Text(text = stringResource(id = R.string.title_report))
                 }
                 if (onMenuFavoriteClick != null) {
-                    DropdownMenuItem(
+                    ClassicDropdownMenuItem(
                         onClick = {
                             onMenuFavoriteClick(post)
                             menuState.expanded = false
@@ -1858,7 +1857,7 @@ fun PostCard(
                     }
                 }
                 if (canDelete(post) && onMenuDeleteClick != null) {
-                    DropdownMenuItem(
+                    ClassicDropdownMenuItem(
                         onClick = {
                             onMenuDeleteClick(post)
                             menuState.expanded = false
@@ -2030,7 +2029,7 @@ private fun SubPostItem(
         menuState = menuState,
         menuContent = {
             if (!context.appPreferences.hideReply) {
-                DropdownMenuItem(
+                ClassicDropdownMenuItem(
                     onClick = {
                         onReplyClick?.invoke(subPostList.get())
                         menuState.expanded = false
@@ -2040,7 +2039,7 @@ private fun SubPostItem(
                 }
             }
             if (onMenuCopyClick != null) {
-                DropdownMenuItem(
+                ClassicDropdownMenuItem(
                     onClick = {
                         onMenuCopyClick(subPostList.get())
                         menuState.expanded = false
@@ -2049,7 +2048,7 @@ private fun SubPostItem(
                     Text(text = stringResource(id = R.string.menu_copy))
                 }
             }
-            DropdownMenuItem(
+            ClassicDropdownMenuItem(
                 onClick = {
                     coroutineScope.launch {
                         TiebaUtil.reportPost(context, navigator, subPostList.get { id }.toString())
@@ -2147,20 +2146,20 @@ private fun ThreadMenu(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Spacer(
             modifier = Modifier
                 .padding(horizontal = 16.dp)
-                .height(4.dp)
-                .fillMaxWidth(0.25f)
+                .height(2.dp)
+                .fillMaxWidth(0.12f)
                 .clip(RoundedCornerShape(100))
                 .background(ExtendedTheme.colors.chip)
         )
         VerticalGrid(
             column = 2,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             rowModifier = Modifier.height(IntrinsicSize.Min),
             modifier = Modifier.padding(horizontal = 16.dp),
         ) {

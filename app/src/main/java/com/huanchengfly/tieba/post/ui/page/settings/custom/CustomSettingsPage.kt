@@ -65,7 +65,7 @@ import kotlinx.collections.immutable.persistentListOf
 fun CustomSettingsPage(
     navigator: DestinationsNavigator
 ) {
-    // 设置类页面角色：顶栏/状态栏使用 OxygenOS 深灰
+    // 设置类页面角色：顶栏/状态栏使用 经典深色
     CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
 
     val context = LocalContext.current
@@ -92,27 +92,6 @@ fun CustomSettingsPage(
                 .padding(paddingValues)
                 .fillMaxSize(),
         ) {
-            prefsItem {
-                val predictiveBackSupported =
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE
-                SwitchPref(
-                    key = "predictive_back",
-                    title = stringResource(id = R.string.title_settings_predictive_back),
-                    defaultChecked = true,
-                    enabled = predictiveBackSupported,
-                    summaryOn = stringResource(id = if (predictiveBackSupported) R.string.summary_settings_predictive_back_on else R.string.summary_settings_predictive_back_unsupported),
-                    summaryOff = stringResource(id = if (predictiveBackSupported) R.string.summary_settings_predictive_back_off else R.string.summary_settings_predictive_back_unsupported),
-                    leadingIcon = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = ImageVector.vectorResource(id = R.drawable.ic_round_arrow_back),
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                )
-            }
             prefsItem {
                 TextPref(
                     title = stringResource(id = R.string.title_custom_font_size),

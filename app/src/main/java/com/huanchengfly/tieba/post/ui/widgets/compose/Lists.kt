@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
@@ -36,18 +37,21 @@ fun ListMenuItem(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .then(menuModifier)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .heightIn(min = 56.dp)
+            .padding(horizontal = 16.dp),
     ) {
-        Icon(imageVector = icon, contentDescription = text, tint = iconColor)
-        Spacer(modifier = Modifier.width(16.dp))
+        Icon(imageVector = icon, contentDescription = text, tint = iconColor, modifier = Modifier.width(24.dp))
+        Spacer(modifier = Modifier.width(32.dp))
         Text(
             text = text,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Bold,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Medium,
             maxLines = 1,
             modifier = Modifier.weight(1f),
         )
-        Spacer(modifier = Modifier.width(16.dp))
-        customContent?.invoke(this)
+        customContent?.let {
+            Spacer(modifier = Modifier.width(16.dp))
+            it(this)
+        }
     }
 }

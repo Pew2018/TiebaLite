@@ -69,7 +69,7 @@ fun ReportStatusBarSurface(surface: Color) {
     val controller = LocalSystemBarController.current ?: return
     val darkIcons = controller.darkIconsFor(surface)
     SideEffect {
-        controller.setStatusBar(Color.Transparent, darkIcons)
+        controller.setStatusBar(surface, darkIcons)
     }
 }
 
@@ -81,7 +81,7 @@ fun ReportNavigationBarSurface(surface: Color) {
     val controller = LocalSystemBarController.current ?: return
     val darkIcons = controller.darkIconsFor(surface)
     SideEffect {
-        controller.setNavigationBar(Color.Transparent, darkIcons)
+        controller.setNavigationBar(surface, darkIcons)
     }
 }
 
@@ -92,7 +92,8 @@ fun ReportNavigationBarSurface(surface: Color) {
 fun DefaultNavigationBarStyle() {
     val controller = LocalSystemBarController.current ?: return
     val isNight = MaterialTheme.colors.isLight.not()
+    val background = MaterialTheme.colors.background
     SideEffect {
-        controller.setNavigationBar(Color.Transparent, darkIcons = !isNight)
+        controller.setNavigationBar(background, darkIcons = !isNight)
     }
 }

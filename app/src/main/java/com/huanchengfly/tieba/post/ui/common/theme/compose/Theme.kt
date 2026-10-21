@@ -1,7 +1,6 @@
 package com.huanchengfly.tieba.post.ui.common.theme.compose
 
 import android.annotation.SuppressLint
-import android.os.Build
 import androidx.compose.material.Colors
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -9,17 +8,17 @@ import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import com.huanchengfly.tieba.post.App
 import com.huanchengfly.tieba.post.R
-import com.huanchengfly.tieba.post.rememberPreferenceAsState
 import com.huanchengfly.tieba.post.utils.ThemeUtil
 import com.huanchengfly.tieba.post.utils.appPreferences
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
@@ -62,7 +61,7 @@ data class ExtendedColors(
     val switchOff: Color = Color.Unspecified,
     val fab: Color = Color.Unspecified,
     val selected: Color = Color.Unspecified,
-    // 页面角色：设置类顶栏（OxygenOS 深灰，固定）
+    // 页面角色：设置类顶栏（经典深色，固定）
     val settingsTopBar: Color = Color.Unspecified,
     val settingsStatusBar: Color = Color.Unspecified,
     val onSettingsTopBar: Color = Color.Unspecified,
@@ -401,7 +400,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
         App.ThemeDelegate.getColorByAttr(context, R.attr.colorBackground, nowTheme)
     ).toArgbInt()
     val seedArgb = Color(seedColor).toArgbInt()
-    return ExtendedColors(
+    val defaults = ExtendedColors(
         theme = nowTheme,
         isNightMode = ThemeUtil.isNightMode(nowTheme),
         primary = Color(
@@ -527,7 +526,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
                 nowTheme
             )
         ),
-        // OxygenOS 派生语义角色：状态栏比工具栏略深，控件色由强调色派生
+        // 经典派生语义角色：状态栏比工具栏略深，控件色由强调色派生
         statusBar = Color(ThemeUtil.mainStatusBarColor(nowTheme)),
         switchOn = Color(
             App.ThemeDelegate.getColorByAttr(
@@ -545,11 +544,11 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
                 nowTheme
             )
         ),
-        // 页面角色：设置类顶栏固定 OxygenOS 深灰
+        // 页面角色：设置类顶栏固定 经典深色
         settingsTopBar = Color(ThemeUtil.settingsToolbarColor(nowTheme)),
         settingsStatusBar = Color(ThemeUtil.settingsStatusBarColor(nowTheme)),
-        onSettingsTopBar = Color(ThemeUtil.onToolbarColor(ThemeUtil.settingsToolbarColor(nowTheme))),
-        onSettingsTopBarSecondary = Color(ThemeUtil.onToolbarColor(ThemeUtil.settingsToolbarColor(nowTheme)))
+        onSettingsTopBar = Color(ThemeUtil.onToolbarColor(nowTheme, ThemeUtil.settingsToolbarColor(nowTheme))),
+        onSettingsTopBarSecondary = Color(ThemeUtil.onToolbarColor(nowTheme, ThemeUtil.settingsToolbarColor(nowTheme)))
             .copy(alpha = 0.7f),
         // 用途色：从种子派生，全部经过对比度核查
         accentFill = Color(seedColor),
@@ -571,6 +570,32 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
             ThemeColorMath.onMutedAccentBgInt(seedArgb, backgroundColorArgb)
         ),
     )
+    if (nowTheme != ThemeUtil.THEME_CUSTOM) return defaults
+    fun customColor(value: String?, fallback: Color): Color = runCatching {
+        if (value.isNullOrBlank()) fallback else Color(android.graphics.Color.parseColor(value))
+    }.getOrDefault(fallback)
+    val primary = customColor(context.appPreferences.customPrimaryColor, defaults.primary)
+    val topBar = if (context.appPreferences.toolbarPrimaryColor) {
+        primary
+    } else {
+        customColor(context.appPreferences.customTopBarColor, defaults.topBar)
+    }
+    val onTopBar = Color(ThemeColorMath.readableOnInt(topBar.toArgbInt()))
+    val accent = customColor(context.appPreferences.customAccentColor, primary)
+    val accentArgb = accent.toArgbInt()
+    return defaults.copy(
+        primary = primary, accent = accent, topBar = topBar,
+        statusBar = Color(ThemeColorMath.darkenInt(topBar.toArgbInt(), 0.08f)),
+        onTopBar = onTopBar, onTopBarSecondary = onTopBar.copy(alpha = 0.72f),
+        onTopBarActive = onTopBar, switchOn = accent, fab = accent, selected = accent,
+        accentFill = accent, onAccentFill = Color(ThemeColorMath.readableOnInt(accentArgb)),
+        accentText = Color(ThemeColorMath.readableAccentTextInt(accentArgb, backgroundColorArgb)),
+        accentMuted = Color(ThemeColorMath.mutedAccentBgInt(accentArgb, backgroundColorArgb)),
+        onAccentMuted = Color(ThemeColorMath.onMutedAccentBgInt(accentArgb, backgroundColorArgb)),
+        progressColor = accent,
+        selectedBg = Color(ThemeColorMath.mutedAccentBgInt(accentArgb, backgroundColorArgb)),
+        onSelectedBg = Color(ThemeColorMath.onMutedAccentBgInt(accentArgb, backgroundColorArgb)),
+    )
 }
 
 @Composable
@@ -579,10 +604,7 @@ fun TiebaLiteTheme(
 ) {
     val context = LocalContext.current
     val theme by remember { ThemeUtil.themeState }
-    val isDynamicTheme by rememberPreferenceAsState(
-        key = booleanPreferencesKey("useDynamicColorTheme"),
-        defaultValue = false
-    )
+    val customRevision by remember { ThemeUtil.customThemeRevision }
     val isDarkColorPalette by remember {
         derivedStateOf {
             ThemeUtil.isNightMode(theme)
@@ -590,12 +612,16 @@ fun TiebaLiteTheme(
         }
     }
 
-    val useDynamicTheme = isDynamicTheme && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    // System wallpaper dynamic colours are intentionally unsupported.  Legacy preference is
+    // migrated by ThemeUtil, so both Compose and legacy View consumers resolve the same palette.
+    // Reading the revision makes consecutive edits while already on custom recompose immediately.
+    @Suppress("UNUSED_VARIABLE") val customThemeRevision = customRevision
+    val extendedColors = getThemeColorForTheme(theme)
 
-    val extendedColors = if (!useDynamicTheme || ThemeUtil.isTranslucentTheme(theme)) {
-        getThemeColorForTheme(theme)
-    } else {
-        getDynamicColor(theme, dynamicTonalPalette(context))
+    LaunchedEffect(theme) {
+        // Do not bless a newly selected theme until Compose has produced a real frame.
+        withFrameNanos { }
+        ThemeUtil.markThemeApplied(theme)
     }
 
     val colors = getColorPalette(isDarkColorPalette, extendedColors)

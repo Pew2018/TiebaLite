@@ -25,6 +25,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.flow.flatMapConcat
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
@@ -54,7 +55,8 @@ class HomeViewModel : BaseViewModel<HomeUiIntent, HomePartialChange, HomeUiState
         override fun toPartialChangeFlow(intentFlow: Flow<HomeUiIntent>): Flow<HomePartialChange> {
             return merge(
                 intentFlow.filterIsInstance<HomeUiIntent.Refresh>()
-                    .flatMapConcat { produceRefreshPartialChangeFlow() },
+                    // A new pull-to-refresh supersedes an older request instead of queuing it.
+                    .flatMapLatest { produceRefreshPartialChangeFlow() },
                 intentFlow.filterIsInstance<HomeUiIntent.RefreshHistory>()
                     .flatMapConcat { produceRefreshHistoryPartialChangeFlow() },
                 intentFlow.filterIsInstance<HomeUiIntent.TopForums.Delete>()

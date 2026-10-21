@@ -29,7 +29,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
@@ -107,12 +107,12 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.AvatarPlaceholder
 import com.huanchengfly.tieba.post.ui.widgets.compose.BackNavigationIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.Button
 import com.huanchengfly.tieba.post.ui.widgets.compose.ClickMenu
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicDropdownMenuItem
 import com.huanchengfly.tieba.post.ui.widgets.compose.ConfirmDialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.FeedCardPlaceholder
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.MenuScope
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshLayout
 import com.huanchengfly.tieba.post.ui.widgets.compose.ScrollableTabRow
@@ -526,16 +526,13 @@ fun ForumPage(
             MyScaffold(
                 scaffoldState = scaffoldState,
                 backgroundColor = Color.Transparent,
-                modifier = Modifier
-                    .fillMaxSize()
-                    // 预测返回（B03）：搜索/帖内进入贴吧后，左滑返回到上一级页面
-                    .predictiveBack { navigator.navigateUp() },
+                modifier = Modifier.fillMaxSize(),
                 topBar = {
                     ForumToolbar(
                         forumName = forumName,
                         showTitle = !isShowTopBarArea,
                         menuContent = {
-                            DropdownMenuItem(
+                            ClassicDropdownMenuItem(
                                 onClick = {
                                     shareForum(context, forumName)
                                     dismiss()
@@ -543,7 +540,7 @@ fun ForumPage(
                             ) {
                                 Text(text = stringResource(id = R.string.title_share))
                             }
-                            DropdownMenuItem(
+                            ClassicDropdownMenuItem(
                                 onClick = {
                                     if (forumInfo != null) {
                                         val (forum) = forumInfo!!
@@ -578,7 +575,7 @@ fun ForumPage(
                             ) {
                                 Text(text = stringResource(id = R.string.title_send_to_desktop))
                             }
-                            DropdownMenuItem(
+                            ClassicDropdownMenuItem(
                                 onClick = {
                                     unlikeDialogState.show()
                                     dismiss()
@@ -629,33 +626,36 @@ fun ForumPage(
                                     }
                                 }
                             },
-                            backgroundColor = ExtendedTheme.colors.windowBackground,
-                            contentColor = ExtendedTheme.colors.primary,
-                            modifier = Modifier.navigationBarsPadding()
+                            backgroundColor = ExtendedTheme.colors.fab,
+                            contentColor = ExtendedTheme.colors.onAccentFill,
+                            modifier = Modifier
+                                .navigationBarsPadding()
+                                .padding(end = 16.dp, bottom = 16.dp)
+                                .size(56.dp)
                         ) {
-                            Icon(
-                                imageVector = when (context.appPreferences.forumFabFunction) {
-                                    "refresh" -> Icons.Rounded.Refresh
-                                    "back_to_top" -> Icons.Rounded.VerticalAlignTop
-                                    else -> Icons.Rounded.Add
-                                },
-                                contentDescription = null
-                            )
+                            if (isLoading && context.appPreferences.forumFabFunction == "refresh") {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(24.dp),
+                                    color = ExtendedTheme.colors.onAccentFill,
+                                    strokeWidth = 2.dp,
+                                )
+                            } else {
+                                Icon(
+                                    imageVector = when (context.appPreferences.forumFabFunction) {
+                                        "refresh" -> Icons.Rounded.Refresh
+                                        "back_to_top" -> Icons.Rounded.VerticalAlignTop
+                                        else -> Icons.Rounded.Add
+                                    },
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp),
+                                )
+                            }
                         }
                     }
                 }
             ) { contentPadding ->
-                var isFakeLoading by remember { mutableStateOf(false) }
-
-                LaunchedEffect(isFakeLoading) {
-                    if (isFakeLoading) {
-                        delay(1000)
-                        isFakeLoading = false
-                    }
-                }
-
                 PullToRefreshLayout(
-                    refreshing = isFakeLoading,
+                    refreshing = isLoading,
                     onRefresh = {
                         coroutineScope.emitGlobalEvent(
                             ForumThreadListUiEvent.Refresh(
@@ -666,7 +666,6 @@ fun ForumPage(
                                 )
                             )
                         )
-                        isFakeLoading = true
                     }
                 ) {
                     val headerNestedScrollConnection = remember {
@@ -906,7 +905,7 @@ fun LoadingPlaceholder(
                 forumName = forumName,
                 showTitle = false,
                 menuContent = {
-                    DropdownMenuItem(
+                    ClassicDropdownMenuItem(
                         onClick = {
                             shareForum(context, forumName)
                             dismiss()

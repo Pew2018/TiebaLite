@@ -40,7 +40,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun BlockSettingsPage(
     navigator: DestinationsNavigator
 ) {
-    // 设置类页面角色：顶栏/状态栏使用 OxygenOS 深灰
+    // 设置类页面角色：顶栏/状态栏使用 经典深色
     CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
 
     val context = LocalContext.current

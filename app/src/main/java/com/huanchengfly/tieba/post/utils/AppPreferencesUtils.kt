@@ -84,13 +84,36 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
 
     var customPrimaryColor by DataStoreDelegates.string(key = "custom_primary_color")
 
+    // Explicit custom-theme roles.  Empty values intentionally fall back to the legacy seed.
+    var customTopBarColor by DataStoreDelegates.string(key = "custom_top_bar_color")
+    var customTopBarContentColor by DataStoreDelegates.string(key = "custom_top_bar_content_color")
+    var customAccentColor by DataStoreDelegates.string(key = "custom_accent_color")
+
+    /** Writes the four custom roles in one DataStore transaction, so readers never see a mix. */
+    fun applyCustomThemeColors(
+        primary: String,
+        topBar: String,
+        topBarContent: String,
+        accent: String,
+    ) {
+        coroutineScope.launch {
+            preferencesDataStore.edit {
+                it[stringPreferencesKey("custom_primary_color")] = primary
+                it[stringPreferencesKey("custom_top_bar_color")] = topBar
+                it[stringPreferencesKey("custom_top_bar_content_color")] = topBarContent
+                it[stringPreferencesKey("custom_accent_color")] = accent
+            }
+            ThemeUtil.notifyCustomThemeChanged()
+        }
+    }
+
     var customStatusBarFontDark by DataStoreDelegates.boolean(
         defaultValue = false,
         key = "custom_status_bar_font_dark"
     )
 
     var toolbarPrimaryColor by DataStoreDelegates.boolean(
-        defaultValue = false,
+        defaultValue = true,
         key = "custom_toolbar_primary_color"
     )
 
@@ -99,15 +122,10 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
         defaultValue = "0"
     )
 
-    var darkTheme by DataStoreDelegates.string(key = "dark_theme", defaultValue = "material_blue_grey_dark")
+    // 默认深色主题为 A 屏黑（amoled_dark），与 ThemeUtil 读取 dark_theme 的默认值保持一致，
+    // 避免首启 / 未显式设置时两套逻辑取到不同深色主题。
+    var darkTheme by DataStoreDelegates.string(key = "dark_theme", defaultValue = "amoled_dark")
 
-    /**
-     * 预测返回手势开关。
-     * 默认开启；仅在 Android 14（API 34）及以上系统生效，
-     * 旧系统自动降级为普通返回（见 PredictiveBack.kt）。
-     * 持久化于 DataStore，页面重建与进程重启后保留。
-     */
-    var predictiveBack by DataStoreDelegates.boolean(defaultValue = true, key = "predictive_back")
 
     var doNotUsePhotoPicker by DataStoreDelegates.boolean(defaultValue = false)
 

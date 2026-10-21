@@ -112,7 +112,7 @@ private fun BoxScope.SwitchImpl(
     val elevation = 0.dp
     val trackColor by colors.trackColor(enabled, checked)
     Canvas(Modifier.align(Alignment.Center).fillMaxSize()) {
-        drawTrack(trackColor, TrackWidth.toPx(), TrackStrokeWidth.toPx(), checked)
+        drawTrack(trackColor, TrackWidth.toPx(), TrackStrokeWidth.toPx())
     }
     val thumbColor by colors.thumbColor(enabled, checked)
     val elevationOverlay = LocalElevationOverlay.current
@@ -149,16 +149,16 @@ private fun DrawScope.drawTrack(trackColor: Color, trackWidth: Float, strokeWidt
     )
 }
 
-internal val TrackWidth = 35.dp
+internal val TrackWidth = 36.dp
 internal val TrackStrokeWidth = 2.dp
-internal val ThumbDiameter = 9.dp
+internal val ThumbDiameter = 14.dp
 
 private val SwitchWidth = TrackWidth
-private val SwitchHeight = 15.dp + TrackStrokeWidth
+private val SwitchHeight = 20.dp
 private val Gap = (SwitchHeight - TrackStrokeWidth - ThumbDiameter) / 2
 private val ThumbPathLength = TrackWidth - ThumbDiameter - TrackStrokeWidth * 2 - Gap * 2
 
-private val AnimationSpec = TweenSpec<Float>(durationMillis = 100)
+private val AnimationSpec = TweenSpec<Float>(durationMillis = 120)
 
 @Stable
 interface SwitchColors {
@@ -192,9 +192,9 @@ object SwitchDefaults {
      */
     @Composable
     fun colors(
-        checkedThumbColor: Color = Color.White,
+        checkedThumbColor: Color = ExtendedTheme.colors.switchOn,
         checkedTrackColor: Color = ExtendedTheme.colors.switchOn,
-        checkedTrackAlpha: Float = 1f,
+        checkedTrackAlpha: Float = 0.45f,
         uncheckedThumbColor: Color = Color.White,
         uncheckedTrackColor: Color = ExtendedTheme.colors.switchOff,
         uncheckedTrackAlpha: Float = 1f,

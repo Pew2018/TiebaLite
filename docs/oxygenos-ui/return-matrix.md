@@ -1,4 +1,4 @@
-# TiebaLite OxygenOS 改造 — 逐页返回矩阵（阶段 A2）
+# TiebaLite 经典 Material Design 改造 — 逐页返回矩阵（阶段 A2）
 
 > 基线提交：`2885b2aabbbf47aba7bf12b1cd7cbc03b1f5ec15`（4.0-dev / feature/oxygenos-ui 同点）
 > 记录时间：2026-10-21。审计依据：MainActivityV2、MyBackHandler、各页面源码。
@@ -12,9 +12,10 @@
 5. 再返回导航栈上一页面；
 6. 根页面交由系统返回，不吞掉返回事件。
 
-预测返回（应用内预览）通过 `Modifier.predictiveBack` 接入：手势进行时页面按进度缩放位移，
-取消回弹，完成时执行与普通返回完全相同的动作；默认开启、可在「个性化 → 预测返回手势」关闭，
-仅 Android 14（API 34+）生效，旧系统自动降级普通返回。
+预测返回：当前 Navigation 2.7.7 / Compose Destinations 1.10 组合无法在手势期间渲染导航栈
+中的真实上一目的地。`Modifier.predictiveBack` 因此仅保持本地返回优先级：取消没有副作用，
+完成时执行与普通返回相同的动作；不再用当前页面缩放/淡出来冒充上一页预览。真实上一页预览
+属于待完成的依赖升级与回归验证项；默认开关仅 Android 14（API 34+）生效，旧系统降级普通返回。
 
 ## 1. 页面矩阵
 
@@ -55,3 +56,8 @@
 - Navigation 2.8.x 的官方预测返回 NavHost 转场需要 Compose Destinations ≥ 1.11 与 Kotlin/编译器配套验证，本轮不做单点升级（避免破坏 KSP 导航代码生成）。
 - 采用替代实现：activity-compose 1.8.2 自带 `PredictiveBackHandler` + 页面级 `Modifier.predictiveBack`，根级在 MainActivityV2 兜底；旧系统与非支持场景行为完全回退到既有返回链路。
 - `AndroidManifest.xml` 已加 `android:enableOnBackInvokedCallback="true"`（application 级，minSdk 21 旧系统忽略该属性）。
+
+## 3. 本轮补充（经典 Material Design 修复轮次）
+
+- **P6 回复框/输入法动画状态机**：`ReplyPage` 等回复入口统一「面板先于键盘弹出、键盘先于面板关闭」的优先级，避免键盘与表情/图片面板争抢导致的跳动。属于通用返回顺序第 1 条的细化实现，未改变既有返回语义（草稿、图片选择、输入内容在返回/收起时保留）。**已实现待设备验证**（无模拟器，手感与动画时序待真机核对）。
+- **去品牌化**：文档与用户可见文案已全部改为中性词（经典配色/经典蓝/深海蓝/碧玉绿/靛青蓝/经典深色/经典 Material Design）；内部 `oxygen_*` 主题 ID 与样式名保留不改，迁移兼容不受影响。

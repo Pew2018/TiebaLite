@@ -430,7 +430,7 @@ fun PagerTabIndicator(
 
 /**
  * 经典 Tab 选中指示线：约 2dp 细线、贯通整个 tab 格子、使用主题进度色。
- * 对应 OxygenOS 7.1.1 / Material Design 1 的 Tabs 样式。
+ * 对应 经典 Material Design 1 的 Tabs 样式。
  */
 @Composable
 private fun ClassicTabIndicator(modifier: Modifier = Modifier) {

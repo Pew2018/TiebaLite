@@ -64,22 +64,18 @@ import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
 import com.huanchengfly.tieba.post.utils.StringUtil
 
-/**
- * 当前页面角色的顶栏配色：设置类页面固定 OxygenOS 深灰，
- * 主功能页面使用主功能顶栏风格（默认经典一加应用蓝）。
- */
 @Composable
 fun rememberRoleColors(): RoleColors {
     val colors = ExtendedTheme.colors
-    return if (LocalPageRole.current == PageRole.SETTINGS) {
-        RoleColors(
+    return when (LocalPageRole.current) {
+        PageRole.SETTINGS -> RoleColors(
             topBar = colors.settingsTopBar,
             statusBar = colors.settingsStatusBar,
             onTopBar = colors.onSettingsTopBar,
             onTopBarSecondary = colors.onSettingsTopBarSecondary,
         )
-    } else {
-        RoleColors(
+
+        PageRole.MAIN -> RoleColors(
             topBar = colors.topBar,
             statusBar = colors.statusBar,
             onTopBar = colors.onTopBar,

@@ -522,21 +522,14 @@
     <string name="pull_to_load_latest_posts">继续上拉加载最新回复</string>
     <string name="settings_home_page_show_history_forum">首页显示最近逛的吧</string>
 
-    <!-- OxygenOS 7.1.1 经典主题 -->
-    <string name="theme_group_oxygen">氧气风格</string>
-    <string name="theme_group_material">Material 风格</string>
-
-    <!-- 预测返回 -->
-    <string name="title_settings_predictive_back">预测返回手势</string>
-    <string name="summary_settings_predictive_back_on">开启后，在支持的系统上返回时会显示页面预览动画</string>
-    <string name="summary_settings_predictive_back_off">使用普通系统返回，不显示应用内预览动画</string>
-    <string name="summary_settings_predictive_back_unsupported">当前系统版本不支持预测返回，将自动使用普通返回</string>
+    <!-- 经典 Material Design 主题 -->
+    <string name="theme_group_oxygen">经典配色</string>
+    <string name="theme_group_material">Material Design 配色</string>
 
     <!-- 主题页（第二轮） -->
-    <string name="title_theme_current">当前主题</string>
     <string name="title_theme_mode_light">浅色</string>
     <string name="title_theme_mode_dark">深色</string>
-    <string name="summary_theme_roles">主功能页面使用上方顶栏配色，设置类页面固定 OxygenOS 深灰</string>
+    <string name="summary_theme_roles">主功能页面使用上方顶栏配色，设置类页面固定 经典深色</string>
     <string name="title_theme_special">特殊主题</string>
     <string name="summary_dynamic_theme">跟随系统壁纸取色（Android 12 及以上）</string>
     <string name="summary_dynamic_theme_unsupported">当前系统不支持动态取色</string>
@@ -555,4 +548,20 @@
     <string name="schematic_text">主要文字</string>
     <string name="schematic_accent_fill">实心强调（按钮/FAB/进度）</string>
     <string name="schematic_accent_muted">弱强调（选中背景/标签）</string>
+    <string name="title_dark_surface_mode">深色外观</string>
+    <string name="dark_surface_normal">经典深色</string>
+    <string name="dark_surface_normal_summary">使用中性深灰页面、顶栏和系统栏</string>
+    <string name="dark_surface_amoled">A 屏黑</string>
+    <string name="dark_surface_amoled_summary">页面、顶栏和系统栏使用纯黑色</string>
+    <string name="title_custom_color_section">自定义颜色</string>
+    <string name="title_top_bar_follow_theme">顶栏跟随主题色</string>
+    <string name="summary_top_bar_follow_theme">影响首页、贴吧、帖子、消息、搜索和设置等标准页面</string>
+    <string name="title_custom_top_bar_color">自定义顶栏颜色</string>
+    <string name="summary_custom_top_bar_color">独立设置标准页面顶栏；标题和图标颜色会自动适配</string>
+    <string name="title_custom_accent_color">自定义强调色…</string>
+    <string name="label_hex_color">Hex（#RRGGBB）</string>
+    <string name="error_hex_color">请输入 #RRGGBB 格式的颜色</string>
+    <string name="button_save">保存</string>
+    <string name="button_restore_default">恢复默认</string>
+    <string name="title_my">我的</string>
 </resources>

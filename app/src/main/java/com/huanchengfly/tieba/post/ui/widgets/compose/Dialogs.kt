@@ -5,11 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -45,9 +47,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.Visibility
 import com.huanchengfly.tieba.post.R
-import com.huanchengfly.tieba.post.arch.BaseComposeActivity.Companion.LocalWindowSizeClass
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
-import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowWidthSizeClass
 import com.huanchengfly.tieba.post.ui.widgets.compose.dialogs.AnyPopDialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.dialogs.AnyPopDialogProperties
 import com.huanchengfly.tieba.post.ui.widgets.compose.dialogs.DirectionState
@@ -374,16 +374,11 @@ fun Dialog(
     buttons: @Composable (DialogScope.() -> Unit) = {},
     content: @Composable (DialogScope.() -> Unit),
 ) {
-    val windowWidthSizeClass = LocalWindowSizeClass.current.widthSizeClass
     BaseDialog(
         modifier = modifier,
         dialogState = dialogState,
         onDismiss = onDismiss,
-        direction = if (windowWidthSizeClass == WindowWidthSizeClass.Compact) {
-            DirectionState.BOTTOM
-        } else {
-            DirectionState.CENTER
-        },
+        direction = DirectionState.CENTER,
         cancelable = cancelable,
         cancelableOnTouchOutside = cancelableOnTouchOutside,
     ) {
@@ -391,17 +386,12 @@ fun Dialog(
             modifier = modifier
                 .wrapContentHeight()
                 .animateContentSize()
-                .fillMaxWidth(
-                    fraction = if (windowWidthSizeClass == WindowWidthSizeClass.Compact) {
-                        1f
-                    } else {
-                        0.6f
-                    }
-                )
+                .widthIn(max = 310.dp)
+                .fillMaxWidth()
                 .padding(16.dp)
                 .background(
                     color = ExtendedTheme.colors.windowBackground,
-                    shape = RoundedCornerShape(24.dp)
+                    shape = RoundedCornerShape(4.dp)
                 )
                 .padding(vertical = 24.dp),
         ) {
@@ -424,7 +414,7 @@ fun Dialog(
                     Box(
                         modifier = Modifier
                             .padding(horizontal = 24.dp)
-                            .align(Alignment.CenterHorizontally)
+                            .align(Alignment.Start)
                     ) {
                         ProvideTextStyle(value = MaterialTheme.typography.h6.copy(fontWeight = FontWeight.Bold)) {
                             title()
@@ -444,7 +434,7 @@ fun Dialog(
             ) {
                 content()
             }
-            Column(
+            Row(
                 modifier = Modifier
                     .constrainAs(buttonsRef) {
                         start.linkTo(parent.start)
@@ -453,7 +443,8 @@ fun Dialog(
                         width = Dimension.fillToConstraints
                     }
                     .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 buttons()
             }

@@ -33,7 +33,7 @@ import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.ExpandLess
 import androidx.compose.material.icons.rounded.ExpandMore
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material.ripple.rememberRipple
@@ -578,7 +578,7 @@ fun ForumSearchPostPage(
                                 }
                             }
 
-                            PullRefreshIndicator(
+                            ClassicPullRefreshIndicator(
                                 refreshing = isRefreshing,
                                 state = pullRefreshState,
                                 modifier = Modifier.align(Alignment.TopCenter),

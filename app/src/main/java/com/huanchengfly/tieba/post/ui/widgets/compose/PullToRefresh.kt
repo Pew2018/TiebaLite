@@ -7,10 +7,14 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.Canvas
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -18,18 +22,64 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
-import com.huanchengfly.tieba.post.R
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshDefaults.LoadPreUpPostDownNestedScrollConnection
+
+/** Shared classic Material Design pull indicator used by every Material pull-refresh screen. */
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ClassicPullRefreshIndicator(
+    refreshing: Boolean,
+    state: PullRefreshState,
+    modifier: Modifier = Modifier,
+    backgroundColor: Color = ExtendedTheme.colors.pullRefreshIndicator,
+    contentColor: Color = ExtendedTheme.colors.progressColor,
+) {
+    val progress = state.progress.coerceIn(0f, 1f)
+    Box(
+        modifier = modifier
+            .shadow(3.dp, CircleShape)
+            .size(40.dp)
+            .background(backgroundColor, CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (refreshing) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(22.dp),
+                color = contentColor,
+                strokeWidth = 2.dp,
+            )
+        } else {
+            Canvas(
+                modifier = Modifier
+                    .size(20.dp)
+                    .rotate(180f * progress)
+            ) {
+                val x = size.width / 2f
+                val top = size.height * 0.2f
+                val bottom = size.height * 0.78f
+                val wing = size.width * 0.22f
+                drawLine(contentColor, Offset(x, top), Offset(x, bottom), 2.dp.toPx(), StrokeCap.Round)
+                drawLine(contentColor, Offset(x, bottom), Offset(x - wing, bottom - wing), 2.dp.toPx(), StrokeCap.Round)
+                drawLine(contentColor, Offset(x, bottom), Offset(x + wing, bottom - wing), 2.dp.toPx(), StrokeCap.Round)
+            }
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -37,17 +87,36 @@ fun PullToRefreshLayout(
     refreshing: Boolean,
     onRefresh: () -> Unit,
     indicator: @Composable BoxScope.(isRefreshing: Boolean, willLoad: Boolean) -> Unit = { isRefreshing, willLoad ->
+        val indicatorColor = ExtendedTheme.colors.progressColor
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
+                .shadow(3.dp, CircleShape)
+                .size(40.dp)
+                .background(ExtendedTheme.colors.windowBackground, CircleShape),
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = if (isRefreshing || willLoad)
-                    stringResource(id = R.string.release_to_refresh)
-                else stringResource(id = R.string.pull_down_to_refresh),
-                modifier = Modifier.align(Alignment.Center),
-                style = MaterialTheme.typography.caption,
-            )
+            if (isRefreshing) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(22.dp),
+                    color = indicatorColor,
+                    strokeWidth = 2.dp,
+                )
+            } else {
+                Canvas(
+                    modifier = Modifier
+                        .size(20.dp)
+                        .rotate(if (willLoad) 180f else 0f)
+                ) {
+                    val x = size.width / 2f
+                    val top = size.height * 0.2f
+                    val bottom = size.height * 0.78f
+                    val wing = size.width * 0.22f
+                    drawLine(indicatorColor, Offset(x, top), Offset(x, bottom), 2.dp.toPx(), StrokeCap.Round)
+                    drawLine(indicatorColor, Offset(x, bottom), Offset(x - wing, bottom - wing), 2.dp.toPx(), StrokeCap.Round)
+                    drawLine(indicatorColor, Offset(x, bottom), Offset(x + wing, bottom - wing), 2.dp.toPx(), StrokeCap.Round)
+                }
+            }
         }
     },
     refreshDistance: Dp = PullToRefreshDefaults.RefreshDistance,

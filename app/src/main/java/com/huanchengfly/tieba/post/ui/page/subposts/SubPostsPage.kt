@@ -78,7 +78,6 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.TitleCentredToolbar
 import com.huanchengfly.tieba.post.ui.widgets.compose.UserHeader
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberMenuState
 import com.huanchengfly.tieba.post.ui.widgets.compose.states.StateScreen
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
@@ -298,10 +297,7 @@ internal fun SubPostsContent(
         isLoading = isRefreshing
     ) {
         MyScaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                // 预测返回：楼中楼直接回到父帖子（与 onNavigateUp 一致）
-                .predictiveBack { onNavigateUp() },
+            modifier = Modifier.fillMaxSize(),
             topBar = {
                 TitleCentredToolbar(
                     title = {

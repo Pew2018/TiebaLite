@@ -53,7 +53,10 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -90,7 +93,6 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.TabClickMenu
 import com.huanchengfly.tieba.post.ui.widgets.compose.TabRow
 import com.huanchengfly.tieba.post.ui.widgets.compose.TopAppBarContainer
 import com.huanchengfly.tieba.post.ui.widgets.compose.picker.ListSinglePicker
-import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.ramcosta.composedestinations.annotation.DeepLink
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
@@ -151,6 +153,23 @@ fun SearchPage(
     }
 
     var inputKeyword by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val focusManager = LocalFocusManager.current
+    val finishSearch: (String) -> Unit = { rawKeyword ->
+        val trimmedKeyword = rawKeyword.trim()
+        if (trimmedKeyword.isNotEmpty()) {
+            keyboardController?.hide()
+            focusManager.clearFocus(force = true)
+            viewModel.send(SearchUiIntent.SubmitKeyword(trimmedKeyword))
+        }
+    }
+
+    // The destination must enter composition before focus/IME can be requested.
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+        keyboardController?.show()
+    }
 
     LaunchedEffect(Unit) {
         snapshotFlow { inputKeyword }
@@ -248,16 +267,15 @@ fun SearchPage(
                         SearchTopBar(
                             keyword = inputKeyword,
                             onKeywordChange = { inputKeyword = it },
-                            onKeywordSubmit = {
-                                viewModel.send(SearchUiIntent.SubmitKeyword(it))
-                            },
+                            onKeywordSubmit = finishSearch,
                             onBack = {
                                 if (isKeywordEmpty) {
                                     navigator.navigateUp()
                                 } else {
                                     viewModel.send(SearchUiIntent.SubmitKeyword(""))
                                 }
-                            }
+                            },
+                            focusRequester = focusRequester,
                         )
                     }
                 },
@@ -270,10 +288,6 @@ fun SearchPage(
     ) { paddingValues ->
         Box(modifier = Modifier
             .fillMaxSize()
-            // 预测返回：有关键词先清空搜索状态，无关键词才离开（与 MyBackHandler 一致）
-            .predictiveBack(enabled = !isKeywordEmpty) {
-                viewModel.send(SearchUiIntent.SubmitKeyword(""))
-            }
             .padding(paddingValues)) {
             if (!isKeywordEmpty) {
                 ProvideNavigator(navigator = navigator) {
@@ -291,7 +305,7 @@ fun SearchPage(
                         suggestions = suggestions,
                         onItemClick = {
                             inputKeyword = it
-                            viewModel.send(SearchUiIntent.SubmitKeyword(it))
+                            finishSearch(it)
                         }
                     )
                 } else {
@@ -305,7 +319,7 @@ fun SearchPage(
                                 searchHistories = searchHistories,
                                 onSearchHistoryClick = {
                                     inputKeyword = it.content
-                                    viewModel.send(SearchUiIntent.SubmitKeyword(it.content))
+                                    finishSearch(it.content)
                                 },
                                 expanded = expanded,
                                 onToggleExpand = { expanded = !expanded },
@@ -567,12 +581,14 @@ private fun SearchTopBar(
     onKeywordChange: (String) -> Unit,
     onKeywordSubmit: (String) -> Unit = {},
     onBack: () -> Unit = {},
+    focusRequester: FocusRequester = remember { FocusRequester() },
 ) {
     SearchBox(
         keyword = keyword,
         onKeywordChange = onKeywordChange,
         modifier = Modifier.fillMaxSize(),
         onKeywordSubmit = onKeywordSubmit,
+        focusRequester = focusRequester,
         placeholder = {
             Text(
                 text = stringResource(id = R.string.hint_search),

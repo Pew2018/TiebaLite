@@ -471,7 +471,7 @@
     </style>
 
 
-    <!-- ================= OxygenOS 7.1.1 经典主题 ================= -->
+    <!-- ================= 经典 Material Design 主题 ================= -->
 
     <style name="TiebaLite.Light" parent="AppTheme">
         <item name="colorPrimary">@color/oxygen_blue</item>
@@ -933,6 +933,72 @@
         <item name="colorOnAccent">@color/preset_material_light_green_dark_on</item>
         <item name="colorTextOnPrimary">@color/preset_material_light_green_dark_on</item>
         <item name="colorIndicator">@color/preset_material_light_green_dark</item>
+    </style>
+
+
+    <!-- oxygen_deep_sea_blue 深海蓝 -->
+
+    <style name="TiebaLite.Preset.Oxygen.Deep.Sea.Blue" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_deep_sea_blue</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_deep_sea_blue</item>
+        <item name="colorAccent">@color/preset_oxygen_deep_sea_blue</item>
+        <item name="colorOnAccent">@color/preset_oxygen_deep_sea_blue_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_deep_sea_blue_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_deep_sea_blue</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.Deep.Sea.Blue.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_deep_sea_blue_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_deep_sea_blue_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_deep_sea_blue_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_deep_sea_blue_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_deep_sea_blue_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_deep_sea_blue_dark</item>
+    </style>
+
+
+    <!-- oxygen_jade_green 碧玉绿 -->
+
+    <style name="TiebaLite.Preset.Oxygen.Jade.Green" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_jade_green</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_jade_green</item>
+        <item name="colorAccent">@color/preset_oxygen_jade_green</item>
+        <item name="colorOnAccent">@color/preset_oxygen_jade_green_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_jade_green_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_jade_green</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.Jade.Green.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_jade_green_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_jade_green_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_jade_green_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_jade_green_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_jade_green_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_jade_green_dark</item>
+    </style>
+
+
+    <!-- oxygen_indigo_blue 靛青蓝 -->
+
+    <style name="TiebaLite.Preset.Oxygen.Indigo.Blue" parent="TiebaLite.Light">
+        <item name="colorPrimary">@color/preset_oxygen_indigo_blue</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_indigo_blue</item>
+        <item name="colorAccent">@color/preset_oxygen_indigo_blue</item>
+        <item name="colorOnAccent">@color/preset_oxygen_indigo_blue_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_indigo_blue_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_indigo_blue</item>
+    </style>
+
+
+    <style name="TiebaLite.Preset.Oxygen.Indigo.Blue.Dark" parent="TiebaLite.Dark.Oxygen">
+        <item name="colorPrimary">@color/preset_oxygen_indigo_blue_dark</item>
+        <item name="colorNewPrimary">@color/preset_oxygen_indigo_blue_dark</item>
+        <item name="colorAccent">@color/preset_oxygen_indigo_blue_dark</item>
+        <item name="colorOnAccent">@color/preset_oxygen_indigo_blue_dark_on</item>
+        <item name="colorTextOnPrimary">@color/preset_oxygen_indigo_blue_dark_on</item>
+        <item name="colorIndicator">@color/preset_oxygen_indigo_blue_dark</item>
     </style>
 
 </resources>

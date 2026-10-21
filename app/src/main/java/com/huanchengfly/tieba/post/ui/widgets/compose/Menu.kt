@@ -9,10 +9,14 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ProvideTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
@@ -27,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
@@ -51,7 +57,7 @@ fun ClickMenu(
     menuContent: @Composable MenuScope.() -> Unit,
     modifier: Modifier = Modifier,
     menuState: MenuState = rememberMenuState(),
-    menuShape: Shape = RoundedCornerShape(14.dp),
+    menuShape: Shape = RoundedCornerShape(4.dp),
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     indication: Indication? = LocalIndication.current,
     triggerShape: Shape? = null,
@@ -95,7 +101,9 @@ fun ClickMenu(
             DropdownMenu(
                 expanded = menuState.expanded,
                 onDismissRequest = { menuScope.dismiss() },
-                modifier = modifier.background(color = MaterialTheme.colors.surface)
+                modifier = modifier
+                    .clip(menuShape)
+                    .background(color = ExtendedTheme.colors.menuBackground)
             ) {
                 ProvideContentColor(color = ExtendedTheme.colors.text) {
                     menuScope.menuContent()
@@ -154,13 +162,37 @@ fun LongClickMenu(
             DropdownMenu(
                 expanded = menuState.expanded,
                 onDismissRequest = { menuState.expanded = false },
-                modifier = Modifier.background(color = ExtendedTheme.colors.menuBackground)
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(color = ExtendedTheme.colors.menuBackground)
             ) {
                 ProvideContentColor(color = ExtendedTheme.colors.text) {
                     menuContent()
                 }
             }
         }
+    }
+}
+
+/** Shared classic menu row for every anchored and long-press menu. */
+@Composable
+fun ClassicDropdownMenuItem(
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    content: @Composable () -> Unit,
+) {
+    DropdownMenuItem(
+        onClick = onClick,
+        enabled = enabled,
+        modifier = Modifier.heightIn(min = 48.dp).padding(horizontal = 0.dp),
+    ) {
+        ProvideTextStyle(
+            MaterialTheme.typography.body1.copy(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium,
+                color = ExtendedTheme.colors.text,
+            )
+        ) { content() }
     }
 }
 

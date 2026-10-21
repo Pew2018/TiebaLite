@@ -1,4 +1,4 @@
-# TiebaLite OxygenOS 7.1.1 改造 — 本轮交付报告
+# TiebaLite 经典 Material Design 改造 — 本轮交付报告
 
 - 分支：`feature/oxygenos-ui`（从 `4.0-dev` @ `2885b2aa` 切出）
 - 交付提交：`18d0fe8b`（含 6 个提交：主改造 + 5 次 CI/资源修复）
@@ -9,13 +9,13 @@
 
 ### 主题体系（阶段 B）
 - **20 个预设**全部落地，单一数据源 `ThemePresets.kt`（列表、预览、页面取色同源）：
-  - 氧气风格列：氧气蓝 #42A5F5 / 流金橙 #CC6F4E / 柠檬黄 #E6A545 / 青草绿 #7DC22F / 魅力紫 #9575CD / 天空蓝 #26C6DA / 活力红 #F06292 / 时尚粉 #BA68C8
+  - 经典配色列：晴空蓝 #42A5F5 / 流金橙 #CC6F4E / 柠檬黄 #E6A545 / 青草绿 #7DC22F / 魅力紫 #9575CD / 天空蓝 #26C6DA / 活力红 #F06292 / 时尚粉 #BA68C8
   - Material 风格列：M 蓝 #2196F3 / M 青绿 #009688 / M 绿 #4CAF50 / M 红 #F44336 / M 橙 #FF9800 / M 紫 #9C27B0 / M 青 #00BCD4 / M 靛蓝 #3F51B5 / M 粉 #E91E63 / M 蓝灰 #607D8B / M 深橙 #FF5722 / M 浅绿 #8BC34A
-  - 氧气列 Blue 与 Material 列 Blue 为两个不同色值的独立选项；onAccent 按对比度自动选白字/深字
+  - 经典配色列 Blue 与 Material 列 Blue 为两个不同色值的独立选项；onAccent 按对比度自动选白字/深字
 - 语义角色：`ExtendedColors` 扩展 `statusBar/switchOn/switchOff/fab/selected`；浅色基座 `TiebaLite.Light`（工具栏 #212121、内容 #FAFAFA、分割线 #E6E6E6）、深色基座 `TiebaLite.Dark.Oxygen`、纯黑 `TiebaLite.Dark.Amoled` 重制
 - `App.ThemeDelegate` 预设优先解析 `theme_color_*_<preset>` 命名资源，Compose 与 View 两条链路取色一致
 - **旧主题迁移**：tieba→material_blue、blue→oxygen_blue、black→material_blue_grey、pink→oxygen_fashion_pink、red→material_red、purple→material_purple、blue_dark→oxygen_blue_dark、grey_dark→material_blue_grey_dark、dark→oxygen_blue_dark；读取时一次性迁移并写回（含夜间模式选择值），升级用户不崩溃、不空色
-- 浅色回退令牌同步 OxygenOS 基线（背景 #FAFAFA、次文字 #757575、导航栏、chip 等）
+- 浅色回退令牌同步经典 Material Design 基线（背景 #FAFAFA、次文字 #757575、导航栏、chip 等）
 
 ### 组件与设置页（阶段 C）
 - 经典窄轨道 Switch 默认色改用 `switchOn/switchOff` 语义色（白滑块 + 主题色/浅灰轨道）
@@ -34,14 +34,14 @@
 
 | # | 列 | 预设 | 色值 | onAccent | 浅色样式 | 深色样式 |
 |---|---|---|---|---|---|---|
-| 1 | 氧气 | 氧气蓝 | #42A5F5 | 深字 | ✅ | ✅ |
-| 2 | 氧气 | 流金橙 | #CC6F4E | 深字 | ✅ | ✅ |
-| 3 | 氧气 | 柠檬黄 | #E6A545 | 深字 | ✅ | ✅ |
-| 4 | 氧气 | 青草绿 | #7DC22F | 深字 | ✅ | ✅ |
-| 5 | 氧气 | 魅力紫 | #9575CD | 深字 | ✅ | ✅ |
-| 6 | 氧气 | 天空蓝 | #26C6DA | 深字 | ✅ | ✅ |
-| 7 | 氧气 | 活力红 | #F06292 | 深字 | ✅ | ✅ |
-| 8 | 氧气 | 时尚粉 | #BA68C8 | 深字 | ✅ | ✅ |
+| 1 | 经典配色 | 晴空蓝 | #42A5F5 | 深字 | 已实现待设备验证 | 已实现待设备验证 |
+| 2 | 经典配色 | 流金橙 | #CC6F4E | 深字 | 已实现待设备验证 | 已实现待设备验证 |
+| 3 | 经典配色 | 柠檬黄 | #E6A545 | 深字 | 已实现待设备验证 | 已实现待设备验证 |
+| 4 | 经典配色 | 青草绿 | #7DC22F | 深字 | 已实现待设备验证 | 已实现待设备验证 |
+| 5 | 经典配色 | 魅力紫 | #9575CD | 深字 | 已实现待设备验证 | 已实现待设备验证 |
+| 6 | 经典配色 | 天空蓝 | #26C6DA | 深字 | 已实现待设备验证 | 已实现待设备验证 |
+| 7 | 经典配色 | 活力红 | #F06292 | 深字 | 已实现待设备验证 | 已实现待设备验证 |
+| 8 | 经典配色 | 时尚粉 | #BA68C8 | 深字 | 已实现待设备验证 | 已实现待设备验证 |
 | 9 | Material | M 蓝 | #2196F3 | 深字 | ✅ | ✅ |
 | 10 | Material | M 青绿 | #009688 | 深字 | ✅ | ✅ |
 | 11 | Material | M 绿 | #4CAF50 | 深字 | ✅ | ✅ |

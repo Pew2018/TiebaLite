@@ -6,7 +6,7 @@ import androidx.annotation.StringRes
 import com.huanchengfly.tieba.post.R
 
 /**
- * OxygenOS 7.1.1 经典风格主题预设。
+ * 经典 Material Design 风格主题预设。
  *
  * 单一数据源：主题选择页（AppThemePage）、夜间模式列表（CustomSettingsPage）、
  * 主题值映射（ThemeUtil）与资源解析（App.ThemeDelegate）都基于这里的 id。
@@ -35,16 +35,19 @@ object ThemePresets {
     private const val MATERIAL_PREFIX = "material_"
 
     val presets: List<ThemePreset> = listOf(
-        // 氧气风格列
+        // 经典配色列
         ThemePreset("oxygen_blue", "晴空蓝", ThemeGroup.OXYGEN, Color.parseColor("#FF42A5F5"), Color.parseColor("#FF212121")),
+        ThemePreset("oxygen_deep_sea_blue", "深海蓝", ThemeGroup.OXYGEN, Color.parseColor("#FF0071CD"), Color.parseColor("#FFFFFFFF")),
         ThemePreset("oxygen_golden", "流金橙", ThemeGroup.OXYGEN, Color.parseColor("#FFCC6F4E"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_lemon_yellow", "柠檬黄", ThemeGroup.OXYGEN, Color.parseColor("#FFE6A545"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_grass_green", "青草绿", ThemeGroup.OXYGEN, Color.parseColor("#FF7DC22F"), Color.parseColor("#FF212121")),
+        ThemePreset("oxygen_jade_green", "碧玉绿", ThemeGroup.OXYGEN, Color.parseColor("#FF01998C"), Color.parseColor("#FFFFFFFF")),
         ThemePreset("oxygen_charm_purple", "魅力紫", ThemeGroup.OXYGEN, Color.parseColor("#FF9575CD"), Color.parseColor("#FF212121")),
+        ThemePreset("oxygen_indigo_blue", "靛青蓝", ThemeGroup.OXYGEN, Color.parseColor("#FF3F3DA2"), Color.parseColor("#FFFFFFFF")),
         ThemePreset("oxygen_sky_blue", "天空蓝", ThemeGroup.OXYGEN, Color.parseColor("#FF26C6DA"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_vigour_red", "活力红", ThemeGroup.OXYGEN, Color.parseColor("#FFF06292"), Color.parseColor("#FF212121")),
         ThemePreset("oxygen_fashion_pink", "时尚粉", ThemeGroup.OXYGEN, Color.parseColor("#FFBA68C8"), Color.parseColor("#FF212121")),
-        // Material 风格列（与氧气列的两个 Blue 为不同色值，均为独立选项）
+        // Material 风格列（与经典配色列的两个 Blue 为不同色值，均为独立选项）
         ThemePreset("material_blue", "蓝", ThemeGroup.MATERIAL, Color.parseColor("#FF2196F3"), Color.parseColor("#FF212121")),
         ThemePreset("material_teal", "青绿", ThemeGroup.MATERIAL, Color.parseColor("#FF009688"), Color.parseColor("#FF212121")),
         ThemePreset("material_green", "绿", ThemeGroup.MATERIAL, Color.parseColor("#FF4CAF50"), Color.parseColor("#FF212121")),
@@ -67,7 +70,7 @@ object ThemePresets {
     /** 全部深色主题值 */
     val darkIds: List<String> = presets.map { it.darkId }
 
-    /** 全部合法预设 ID（20 浅色 + 20 深色） */
+    /** 全部合法预设 ID（浅色 + 深色，随上方预设表自动同步，不再手写固定数量）。 */
     val allIds: List<String> = lightIds + darkIds
 
     /**

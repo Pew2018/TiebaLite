@@ -294,7 +294,7 @@
     <color name="user_center_header_mask">#90000000</color>
     <color name="default_color_on_accent">#FFFFFFFF</color>
 
-    <!-- ===== OxygenOS 7.1.1 经典主题：基础令牌（浅色） ===== -->
+    <!-- ===== 经典 Material Design 主题：基础令牌（浅色） ===== -->
     <color name="oxygen_toolbar">#FF212121</color>
     <color name="oxygen_background">#FFFAFAFA</color>
     <color name="oxygen_card">#FFFFFFFF</color>
@@ -310,7 +310,7 @@
     <color name="oxygen_nav_bar">#FFFAFAFA</color>
     <color name="oxygen_shadow">#1A000000</color>
 
-    <!-- ===== OxygenOS 7.1.1 经典主题：基础令牌（深色） ===== -->
+    <!-- ===== 经典 Material Design 主题：基础令牌（深色） ===== -->
     <color name="oxygen_dark_toolbar">#FF212121</color>
     <color name="oxygen_dark_background">#FF121212</color>
     <color name="oxygen_dark_card">#FF1E1E1E</color>
@@ -325,7 +325,7 @@
     <color name="oxygen_dark_placeholder">#FF242424</color>
     <color name="oxygen_dark_nav_bar">#FF121212</color>
 
-    <!-- ===== OxygenOS 7.1.1 经典主题：20 个预设（种子色 / 深色变体 / onAccent） ===== -->
+    <!-- ===== 经典 Material Design 主题：20 个预设（种子色 / 深色变体 / onAccent） ===== -->
     <color name="preset_oxygen_blue">#FF42A5F5</color>
     <color name="preset_oxygen_blue_on">#FF212121</color>
     <color name="preset_oxygen_blue_dark">#FF82C4F8</color>
@@ -407,7 +407,7 @@
     <color name="preset_material_light_green_dark">#FFB2D788</color>
     <color name="preset_material_light_green_dark_on">#FF212121</color>
 
-    <!-- ===== OxygenOS 预设：theme_color_*_<preset> 命名资源（ThemeDelegate 名称解析） ===== -->
+    <!-- ===== 经典预设：theme_color_*_<preset> 命名资源（ThemeDelegate 名称解析） ===== -->
 
     <!-- oxygen_blue -->
     <color name="theme_color_primary_oxygen_blue">@color/preset_oxygen_blue</color>
@@ -1572,4 +1572,195 @@
     <!-- 深色基座默认强调色（#42A5F5 提亮 34%） -->
     <color name="oxygen_blue_dark">#FF82C4F8</color>
     <color name="oxygen_blue_dark_on">#FF212121</color>
+
+    <!-- ===== 经典主题（兼容补齐）：oxygen_deep_sea_blue 深海蓝 ===== -->
+    <color name="preset_oxygen_deep_sea_blue">#FF0071CD</color>
+    <color name="preset_oxygen_deep_sea_blue_on">#FFFFFFFF</color>
+    <color name="preset_oxygen_deep_sea_blue_dark">#FF57A1DE</color>
+    <color name="preset_oxygen_deep_sea_blue_dark_on">#FF212121</color>
+    <color name="theme_color_primary_oxygen_deep_sea_blue">@color/preset_oxygen_deep_sea_blue</color>
+    <color name="theme_color_new_primary_oxygen_deep_sea_blue">@color/preset_oxygen_deep_sea_blue</color>
+    <color name="theme_color_accent_oxygen_deep_sea_blue">@color/preset_oxygen_deep_sea_blue</color>
+    <color name="theme_color_on_accent_oxygen_deep_sea_blue">@color/preset_oxygen_deep_sea_blue_on</color>
+    <color name="theme_color_text_on_primary_oxygen_deep_sea_blue">@color/preset_oxygen_deep_sea_blue_on</color>
+    <color name="theme_color_toolbar_oxygen_deep_sea_blue">@color/oxygen_toolbar</color>
+    <color name="theme_color_toolbar_item_oxygen_deep_sea_blue">@color/white</color>
+    <color name="theme_color_toolbar_item_active_oxygen_deep_sea_blue">@color/white</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_deep_sea_blue">#B3FFFFFF</color>
+    <color name="theme_color_toolbar_surface_oxygen_deep_sea_blue">@color/white</color>
+    <color name="theme_color_on_toolbar_surface_oxygen_deep_sea_blue">@color/oxygen_text_primary</color>
+    <color name="theme_color_nav_oxygen_deep_sea_blue">@color/oxygen_nav_bar</color>
+    <color name="theme_color_nav_bar_surface_oxygen_deep_sea_blue">@color/white</color>
+    <color name="theme_color_on_nav_bar_surface_oxygen_deep_sea_blue">@color/oxygen_text_secondary</color>
+    <color name="theme_color_text_oxygen_deep_sea_blue">@color/oxygen_text_primary</color>
+    <color name="theme_color_text_secondary_oxygen_deep_sea_blue">@color/oxygen_text_secondary</color>
+    <color name="theme_color_text_disabled_oxygen_deep_sea_blue">@color/oxygen_text_disabled</color>
+    <color name="theme_color_background_oxygen_deep_sea_blue">@color/oxygen_background</color>
+    <color name="theme_color_window_background_oxygen_deep_sea_blue">@color/oxygen_background</color>
+    <color name="theme_color_chip_oxygen_deep_sea_blue">@color/oxygen_chip</color>
+    <color name="theme_color_on_chip_oxygen_deep_sea_blue">@color/oxygen_on_chip</color>
+    <color name="theme_color_unselected_oxygen_deep_sea_blue">@color/oxygen_unselected</color>
+    <color name="theme_color_floor_card_oxygen_deep_sea_blue">@color/oxygen_floor_card</color>
+    <color name="theme_color_card_oxygen_deep_sea_blue">@color/oxygen_card</color>
+    <color name="theme_color_divider_oxygen_deep_sea_blue">@color/oxygen_divider</color>
+    <color name="theme_color_shadow_oxygen_deep_sea_blue">@color/oxygen_shadow</color>
+    <color name="theme_color_indicator_oxygen_deep_sea_blue">@color/preset_oxygen_deep_sea_blue</color>
+    <color name="theme_color_placeholder_oxygen_deep_sea_blue">@color/oxygen_placeholder</color>
+    <color name="theme_color_primary_oxygen_deep_sea_blue_dark">@color/preset_oxygen_deep_sea_blue_dark</color>
+    <color name="theme_color_new_primary_oxygen_deep_sea_blue_dark">@color/preset_oxygen_deep_sea_blue_dark</color>
+    <color name="theme_color_accent_oxygen_deep_sea_blue_dark">@color/preset_oxygen_deep_sea_blue_dark</color>
+    <color name="theme_color_on_accent_oxygen_deep_sea_blue_dark">@color/preset_oxygen_deep_sea_blue_dark_on</color>
+    <color name="theme_color_text_on_primary_oxygen_deep_sea_blue_dark">@color/preset_oxygen_deep_sea_blue_dark_on</color>
+    <color name="theme_color_toolbar_oxygen_deep_sea_blue_dark">@color/oxygen_dark_toolbar</color>
+    <color name="theme_color_toolbar_item_oxygen_deep_sea_blue_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_toolbar_item_active_oxygen_deep_sea_blue_dark">@color/white</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_deep_sea_blue_dark">#99E6E7EE</color>
+    <color name="theme_color_toolbar_surface_oxygen_deep_sea_blue_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_on_toolbar_surface_oxygen_deep_sea_blue_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_nav_oxygen_deep_sea_blue_dark">@color/oxygen_dark_nav_bar</color>
+    <color name="theme_color_nav_bar_surface_oxygen_deep_sea_blue_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_on_nav_bar_surface_oxygen_deep_sea_blue_dark">@color/oxygen_dark_text_secondary</color>
+    <color name="theme_color_text_oxygen_deep_sea_blue_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_text_secondary_oxygen_deep_sea_blue_dark">@color/oxygen_dark_text_secondary</color>
+    <color name="theme_color_text_disabled_oxygen_deep_sea_blue_dark">@color/oxygen_dark_text_disabled</color>
+    <color name="theme_color_background_oxygen_deep_sea_blue_dark">@color/oxygen_dark_background</color>
+    <color name="theme_color_window_background_oxygen_deep_sea_blue_dark">@color/oxygen_dark_background</color>
+    <color name="theme_color_chip_oxygen_deep_sea_blue_dark">@color/oxygen_dark_chip</color>
+    <color name="theme_color_on_chip_oxygen_deep_sea_blue_dark">@color/oxygen_dark_on_chip</color>
+    <color name="theme_color_unselected_oxygen_deep_sea_blue_dark">@color/oxygen_dark_unselected</color>
+    <color name="theme_color_floor_card_oxygen_deep_sea_blue_dark">@color/oxygen_dark_floor_card</color>
+    <color name="theme_color_card_oxygen_deep_sea_blue_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_divider_oxygen_deep_sea_blue_dark">@color/oxygen_dark_divider</color>
+    <color name="theme_color_shadow_oxygen_deep_sea_blue_dark">#00000000</color>
+    <color name="theme_color_indicator_oxygen_deep_sea_blue_dark">@color/preset_oxygen_deep_sea_blue_dark</color>
+    <color name="theme_color_placeholder_oxygen_deep_sea_blue_dark">@color/oxygen_dark_placeholder</color>
+
+    <!-- ===== 经典主题（兼容补齐）：oxygen_jade_green 碧玉绿 ===== -->
+    <color name="preset_oxygen_jade_green">#FF01998C</color>
+    <color name="preset_oxygen_jade_green_on">#FF212121</color>
+    <color name="preset_oxygen_jade_green_dark">#FF57BCB3</color>
+    <color name="preset_oxygen_jade_green_dark_on">#FF212121</color>
+    <color name="theme_color_primary_oxygen_jade_green">@color/preset_oxygen_jade_green</color>
+    <color name="theme_color_new_primary_oxygen_jade_green">@color/preset_oxygen_jade_green</color>
+    <color name="theme_color_accent_oxygen_jade_green">@color/preset_oxygen_jade_green</color>
+    <color name="theme_color_on_accent_oxygen_jade_green">@color/preset_oxygen_jade_green_on</color>
+    <color name="theme_color_text_on_primary_oxygen_jade_green">@color/preset_oxygen_jade_green_on</color>
+    <color name="theme_color_toolbar_oxygen_jade_green">@color/oxygen_toolbar</color>
+    <color name="theme_color_toolbar_item_oxygen_jade_green">@color/white</color>
+    <color name="theme_color_toolbar_item_active_oxygen_jade_green">@color/white</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_jade_green">#B3FFFFFF</color>
+    <color name="theme_color_toolbar_surface_oxygen_jade_green">@color/white</color>
+    <color name="theme_color_on_toolbar_surface_oxygen_jade_green">@color/oxygen_text_primary</color>
+    <color name="theme_color_nav_oxygen_jade_green">@color/oxygen_nav_bar</color>
+    <color name="theme_color_nav_bar_surface_oxygen_jade_green">@color/white</color>
+    <color name="theme_color_on_nav_bar_surface_oxygen_jade_green">@color/oxygen_text_secondary</color>
+    <color name="theme_color_text_oxygen_jade_green">@color/oxygen_text_primary</color>
+    <color name="theme_color_text_secondary_oxygen_jade_green">@color/oxygen_text_secondary</color>
+    <color name="theme_color_text_disabled_oxygen_jade_green">@color/oxygen_text_disabled</color>
+    <color name="theme_color_background_oxygen_jade_green">@color/oxygen_background</color>
+    <color name="theme_color_window_background_oxygen_jade_green">@color/oxygen_background</color>
+    <color name="theme_color_chip_oxygen_jade_green">@color/oxygen_chip</color>
+    <color name="theme_color_on_chip_oxygen_jade_green">@color/oxygen_on_chip</color>
+    <color name="theme_color_unselected_oxygen_jade_green">@color/oxygen_unselected</color>
+    <color name="theme_color_floor_card_oxygen_jade_green">@color/oxygen_floor_card</color>
+    <color name="theme_color_card_oxygen_jade_green">@color/oxygen_card</color>
+    <color name="theme_color_divider_oxygen_jade_green">@color/oxygen_divider</color>
+    <color name="theme_color_shadow_oxygen_jade_green">@color/oxygen_shadow</color>
+    <color name="theme_color_indicator_oxygen_jade_green">@color/preset_oxygen_jade_green</color>
+    <color name="theme_color_placeholder_oxygen_jade_green">@color/oxygen_placeholder</color>
+    <color name="theme_color_primary_oxygen_jade_green_dark">@color/preset_oxygen_jade_green_dark</color>
+    <color name="theme_color_new_primary_oxygen_jade_green_dark">@color/preset_oxygen_jade_green_dark</color>
+    <color name="theme_color_accent_oxygen_jade_green_dark">@color/preset_oxygen_jade_green_dark</color>
+    <color name="theme_color_on_accent_oxygen_jade_green_dark">@color/preset_oxygen_jade_green_dark_on</color>
+    <color name="theme_color_text_on_primary_oxygen_jade_green_dark">@color/preset_oxygen_jade_green_dark_on</color>
+    <color name="theme_color_toolbar_oxygen_jade_green_dark">@color/oxygen_dark_toolbar</color>
+    <color name="theme_color_toolbar_item_oxygen_jade_green_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_toolbar_item_active_oxygen_jade_green_dark">@color/white</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_jade_green_dark">#99E6E7EE</color>
+    <color name="theme_color_toolbar_surface_oxygen_jade_green_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_on_toolbar_surface_oxygen_jade_green_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_nav_oxygen_jade_green_dark">@color/oxygen_dark_nav_bar</color>
+    <color name="theme_color_nav_bar_surface_oxygen_jade_green_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_on_nav_bar_surface_oxygen_jade_green_dark">@color/oxygen_dark_text_secondary</color>
+    <color name="theme_color_text_oxygen_jade_green_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_text_secondary_oxygen_jade_green_dark">@color/oxygen_dark_text_secondary</color>
+    <color name="theme_color_text_disabled_oxygen_jade_green_dark">@color/oxygen_dark_text_disabled</color>
+    <color name="theme_color_background_oxygen_jade_green_dark">@color/oxygen_dark_background</color>
+    <color name="theme_color_window_background_oxygen_jade_green_dark">@color/oxygen_dark_background</color>
+    <color name="theme_color_chip_oxygen_jade_green_dark">@color/oxygen_dark_chip</color>
+    <color name="theme_color_on_chip_oxygen_jade_green_dark">@color/oxygen_dark_on_chip</color>
+    <color name="theme_color_unselected_oxygen_jade_green_dark">@color/oxygen_dark_unselected</color>
+    <color name="theme_color_floor_card_oxygen_jade_green_dark">@color/oxygen_dark_floor_card</color>
+    <color name="theme_color_card_oxygen_jade_green_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_divider_oxygen_jade_green_dark">@color/oxygen_dark_divider</color>
+    <color name="theme_color_shadow_oxygen_jade_green_dark">#00000000</color>
+    <color name="theme_color_indicator_oxygen_jade_green_dark">@color/preset_oxygen_jade_green_dark</color>
+    <color name="theme_color_placeholder_oxygen_jade_green_dark">@color/oxygen_dark_placeholder</color>
+
+    <!-- ===== 经典主题（兼容补齐）：oxygen_indigo_blue 靛青蓝 ===== -->
+    <color name="preset_oxygen_indigo_blue">#FF3F3DA2</color>
+    <color name="preset_oxygen_indigo_blue_on">#FFFFFFFF</color>
+    <color name="preset_oxygen_indigo_blue_dark">#FF807FC2</color>
+    <color name="preset_oxygen_indigo_blue_dark_on">#FF212121</color>
+    <color name="theme_color_primary_oxygen_indigo_blue">@color/preset_oxygen_indigo_blue</color>
+    <color name="theme_color_new_primary_oxygen_indigo_blue">@color/preset_oxygen_indigo_blue</color>
+    <color name="theme_color_accent_oxygen_indigo_blue">@color/preset_oxygen_indigo_blue</color>
+    <color name="theme_color_on_accent_oxygen_indigo_blue">@color/preset_oxygen_indigo_blue_on</color>
+    <color name="theme_color_text_on_primary_oxygen_indigo_blue">@color/preset_oxygen_indigo_blue_on</color>
+    <color name="theme_color_toolbar_oxygen_indigo_blue">@color/oxygen_toolbar</color>
+    <color name="theme_color_toolbar_item_oxygen_indigo_blue">@color/white</color>
+    <color name="theme_color_toolbar_item_active_oxygen_indigo_blue">@color/white</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_indigo_blue">#B3FFFFFF</color>
+    <color name="theme_color_toolbar_surface_oxygen_indigo_blue">@color/white</color>
+    <color name="theme_color_on_toolbar_surface_oxygen_indigo_blue">@color/oxygen_text_primary</color>
+    <color name="theme_color_nav_oxygen_indigo_blue">@color/oxygen_nav_bar</color>
+    <color name="theme_color_nav_bar_surface_oxygen_indigo_blue">@color/white</color>
+    <color name="theme_color_on_nav_bar_surface_oxygen_indigo_blue">@color/oxygen_text_secondary</color>
+    <color name="theme_color_text_oxygen_indigo_blue">@color/oxygen_text_primary</color>
+    <color name="theme_color_text_secondary_oxygen_indigo_blue">@color/oxygen_text_secondary</color>
+    <color name="theme_color_text_disabled_oxygen_indigo_blue">@color/oxygen_text_disabled</color>
+    <color name="theme_color_background_oxygen_indigo_blue">@color/oxygen_background</color>
+    <color name="theme_color_window_background_oxygen_indigo_blue">@color/oxygen_background</color>
+    <color name="theme_color_chip_oxygen_indigo_blue">@color/oxygen_chip</color>
+    <color name="theme_color_on_chip_oxygen_indigo_blue">@color/oxygen_on_chip</color>
+    <color name="theme_color_unselected_oxygen_indigo_blue">@color/oxygen_unselected</color>
+    <color name="theme_color_floor_card_oxygen_indigo_blue">@color/oxygen_floor_card</color>
+    <color name="theme_color_card_oxygen_indigo_blue">@color/oxygen_card</color>
+    <color name="theme_color_divider_oxygen_indigo_blue">@color/oxygen_divider</color>
+    <color name="theme_color_shadow_oxygen_indigo_blue">@color/oxygen_shadow</color>
+    <color name="theme_color_indicator_oxygen_indigo_blue">@color/preset_oxygen_indigo_blue</color>
+    <color name="theme_color_placeholder_oxygen_indigo_blue">@color/oxygen_placeholder</color>
+    <color name="theme_color_primary_oxygen_indigo_blue_dark">@color/preset_oxygen_indigo_blue_dark</color>
+    <color name="theme_color_new_primary_oxygen_indigo_blue_dark">@color/preset_oxygen_indigo_blue_dark</color>
+    <color name="theme_color_accent_oxygen_indigo_blue_dark">@color/preset_oxygen_indigo_blue_dark</color>
+    <color name="theme_color_on_accent_oxygen_indigo_blue_dark">@color/preset_oxygen_indigo_blue_dark_on</color>
+    <color name="theme_color_text_on_primary_oxygen_indigo_blue_dark">@color/preset_oxygen_indigo_blue_dark_on</color>
+    <color name="theme_color_toolbar_oxygen_indigo_blue_dark">@color/oxygen_dark_toolbar</color>
+    <color name="theme_color_toolbar_item_oxygen_indigo_blue_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_toolbar_item_active_oxygen_indigo_blue_dark">@color/white</color>
+    <color name="theme_color_toolbar_item_secondary_oxygen_indigo_blue_dark">#99E6E7EE</color>
+    <color name="theme_color_toolbar_surface_oxygen_indigo_blue_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_on_toolbar_surface_oxygen_indigo_blue_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_nav_oxygen_indigo_blue_dark">@color/oxygen_dark_nav_bar</color>
+    <color name="theme_color_nav_bar_surface_oxygen_indigo_blue_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_on_nav_bar_surface_oxygen_indigo_blue_dark">@color/oxygen_dark_text_secondary</color>
+    <color name="theme_color_text_oxygen_indigo_blue_dark">@color/oxygen_dark_text_primary</color>
+    <color name="theme_color_text_secondary_oxygen_indigo_blue_dark">@color/oxygen_dark_text_secondary</color>
+    <color name="theme_color_text_disabled_oxygen_indigo_blue_dark">@color/oxygen_dark_text_disabled</color>
+    <color name="theme_color_background_oxygen_indigo_blue_dark">@color/oxygen_dark_background</color>
+    <color name="theme_color_window_background_oxygen_indigo_blue_dark">@color/oxygen_dark_background</color>
+    <color name="theme_color_chip_oxygen_indigo_blue_dark">@color/oxygen_dark_chip</color>
+    <color name="theme_color_on_chip_oxygen_indigo_blue_dark">@color/oxygen_dark_on_chip</color>
+    <color name="theme_color_unselected_oxygen_indigo_blue_dark">@color/oxygen_dark_unselected</color>
+    <color name="theme_color_floor_card_oxygen_indigo_blue_dark">@color/oxygen_dark_floor_card</color>
+    <color name="theme_color_card_oxygen_indigo_blue_dark">@color/oxygen_dark_card</color>
+    <color name="theme_color_divider_oxygen_indigo_blue_dark">@color/oxygen_dark_divider</color>
+    <color name="theme_color_shadow_oxygen_indigo_blue_dark">#00000000</color>
+    <color name="theme_color_indicator_oxygen_indigo_blue_dark">@color/preset_oxygen_indigo_blue_dark</color>
+    <color name="theme_color_placeholder_oxygen_indigo_blue_dark">@color/oxygen_dark_placeholder</color>
+
+    <!-- A 屏黑（amoled_dark）补齐 getColorByAttr 实际请求的语义色，避免回退到默认令牌导致深色观感不一致 -->
+    <color name="theme_color_new_primary_amoled_dark">@color/tieba</color>
+    <color name="theme_color_toolbar_item_amoled_dark">#FFEEEEEE</color>
+
 </resources>

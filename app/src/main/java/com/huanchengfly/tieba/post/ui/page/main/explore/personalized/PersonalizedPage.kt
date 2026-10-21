@@ -29,7 +29,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Refresh
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
@@ -237,7 +237,7 @@ fun PersonalizedPage(
                 )
             }
 
-            PullRefreshIndicator(
+            ClassicPullRefreshIndicator(
                 refreshing = isRefreshing,
                 state = pullRefreshState,
                 modifier = Modifier.align(Alignment.TopCenter),

@@ -1,9 +1,6 @@
 package com.huanchengfly.tieba.post.ui.page.main
 
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.PredictiveBackHandler
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.graphics.ExperimentalAnimationGraphicsApi
 import androidx.compose.animation.graphics.res.animatedVectorResource
@@ -23,7 +20,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -41,8 +37,6 @@ import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowHeightSizeClass
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowWidthSizeClass
 import com.huanchengfly.tieba.post.ui.page.ProvideNavigator
-import com.huanchengfly.tieba.post.ui.widgets.compose.AnimTokens
-import com.huanchengfly.tieba.post.ui.widgets.compose.isPredictiveBackEnabled
 import com.huanchengfly.tieba.post.ui.page.main.explore.ExplorePage
 import com.huanchengfly.tieba.post.ui.page.main.home.HomePage
 import com.huanchengfly.tieba.post.ui.page.main.notifications.NotificationsPage
@@ -58,9 +52,7 @@ import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @Composable
 private fun NavigationWrapper(
@@ -251,7 +243,6 @@ fun MainPage(
             GlobalEvent.Refresh(navigationItems[it].id)
         )
     }
-    val backProgress = remember { Animatable(0f) }
     ProvideNavigator(navigator = navigator) {
         NavigationWrapper(
             currentPosition = pagerState.currentPage,
@@ -282,17 +273,7 @@ fun MainPage(
                     contentPadding = paddingValues,
                     state = pagerState,
                     key = { navigationItems[it].id },
-                    modifier = Modifier
-                        .fillMaxSize()
-                        // 预测返回手势期间：源页签连续让位（位移+缩放+淡出），取消原位恢复
-                        .graphicsLayer {
-                            val p = backProgress.value.coerceIn(0f, 1f)
-                            translationX = size.width * 0.18f * p
-                            val scale = 1f - 0.06f * p
-                            scaleX = scale
-                            scaleY = scale
-                            alpha = 1f - 0.35f * p
-                        },
+                    modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.Top,
                     userScrollEnabled = false
                 ) {
@@ -304,31 +285,6 @@ fun MainPage(
     BackHandler(enabled = pagerState.currentPage != 0) {
         coroutineScope.launch {
             pagerState.scrollToPage(0)
-        }
-    }
-    // 预测返回（Android 14+）：非首页页签返回。
-    // 手势进度连续驱动源页签的位移/缩放/透明度（取消时原位恢复，不产生跳变），
-    // 完成后只提交一次切页。底栏与系统栏在全程保持稳定。
-    // 说明：Navigation 2.7.6 不提供返回栈级预览（升级需 Kotlin 2.1 工具链迁移，
-    // 已验证并记录于 sweet-dependency-config.yaml 注释），因此首页内容在手势中
-    // 不做实时重绘，避免重复加载；该限制已记入 return-matrix.md。
-    PredictiveBackHandler(
-        enabled = isPredictiveBackEnabled() && pagerState.currentPage != 0
-    ) { flow ->
-        try {
-            flow.collect { event ->
-                backProgress.snapTo(event.progress)
-            }
-            coroutineScope.launch {
-                pagerState.scrollToPage(0)
-            }
-        } finally {
-            withContext(NonCancellable) {
-                backProgress.animateTo(
-                    targetValue = 0f,
-                    animationSpec = tween(durationMillis = AnimTokens.DURATION_SHORT)
-                )
-            }
         }
     }
 }

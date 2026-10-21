@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -26,7 +25,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
@@ -50,7 +48,6 @@ import com.huanchengfly.tieba.post.arch.pageViewModel
 import com.huanchengfly.tieba.post.models.database.Account
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ReportNavigationBarSurface
-import com.huanchengfly.tieba.post.ui.common.theme.compose.ReportStatusBarSurface
 import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.AboutPageDestination
@@ -61,11 +58,13 @@ import com.huanchengfly.tieba.post.ui.page.destinations.ThreadStorePageDestinati
 import com.huanchengfly.tieba.post.ui.page.destinations.UserProfilePageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.WebViewPageDestination
 import com.huanchengfly.tieba.post.ui.widgets.compose.Avatar
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.ConfirmDialog
 import com.huanchengfly.tieba.post.ui.widgets.compose.HorizontalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.ListMenuItem
 import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
 import com.huanchengfly.tieba.post.ui.widgets.compose.Switch
+import com.huanchengfly.tieba.post.ui.widgets.compose.TitleCentredToolbar
 import com.huanchengfly.tieba.post.ui.widgets.compose.VerticalDivider
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
 import com.huanchengfly.tieba.post.utils.CuidUtils
@@ -239,8 +238,6 @@ fun UserPage(
         )
     )
 ) {
-    // 个人中心无彩色顶栏：状态栏/导航栏后方是浅色内容面，使用深色系统栏图标
-    ReportStatusBarSurface(surface = ExtendedTheme.colors.background)
     ReportNavigationBarSurface(surface = ExtendedTheme.colors.background)
     val context = LocalContext.current
     val navigator = LocalNavigator.current
@@ -268,10 +265,13 @@ fun UserPage(
     }
 
     Scaffold(
-        backgroundColor = Color.Transparent,
-        modifier = Modifier
-            .statusBarsPadding()
-            .fillMaxSize()
+        backgroundColor = ExtendedTheme.colors.background,
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TitleCentredToolbar(
+                title = { Text(text = stringResource(id = R.string.title_my)) }
+            )
+        },
     ) { contentPaddings ->
         val pullRefreshState = rememberPullRefreshState(
             refreshing = isLoading,
@@ -400,7 +400,7 @@ fun UserPage(
                 )
             }
 
-            PullRefreshIndicator(
+            ClassicPullRefreshIndicator(
                 refreshing = isLoading,
                 state = pullRefreshState,
                 modifier = Modifier.align(Alignment.TopCenter),

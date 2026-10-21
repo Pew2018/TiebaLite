@@ -17,6 +17,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.github.panpf.sketch.fetch.newFileUri
 import com.github.panpf.sketch.request.DisplayRequest
@@ -40,17 +42,90 @@ import com.huanchengfly.tieba.post.ui.common.theme.ThemePresets
 import com.huanchengfly.tieba.post.ui.common.theme.utils.ThemeUtils
 import com.huanchengfly.tieba.post.ui.widgets.theme.TintSwipeRefreshLayout
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.Locale
 
 object ThemeUtil {
     val themeState: MutableState<String> by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
         mutableStateOf(
-            if (App.isInitialized) migrateLegacyTheme(
-                dataStore.getString(KEY_THEME, THEME_DEFAULT),
-                KEY_THEME
-            )
-            else THEME_DEFAULT
+            if (App.isInitialized) selfHealTheme() else THEME_DEFAULT
         )
+    }
+
+    /**
+     * 主题 ID 是否为“已知有效”的值：预设（含浅色 / 深色变体）、自定义、经典深色（A 屏黑）、
+     * 半透明主题，以及少量保留的旧版样式入口。
+     *
+     * 凡是无法识别为已知主题的值（例如被截断的写入、损坏的 DataStore、不存在的预设），
+     * 一律视为不安全，交由启动自愈逻辑回退，避免坏主题 ID 被持久化后每次启动都崩溃。
+     */
+    fun isKnownTheme(theme: String?): Boolean {
+        if (theme.isNullOrBlank()) return false
+        return ThemePresets.isPreset(theme)
+                || theme == THEME_DEFAULT
+                || theme == THEME_CUSTOM
+                || theme == THEME_AMOLED_DARK
+                || theme == THEME_TRANSLUCENT || theme == THEME_TRANSLUCENT_LIGHT || theme == THEME_TRANSLUCENT_DARK
+                || theme in listOf(
+            THEME_BLACK, THEME_BLUE, THEME_PURPLE, THEME_PINK, THEME_RED, THEME_BLUE_DARK, THEME_GREY_DARK
+        )
+    }
+
+    /**
+     * 主动自愈入口：在应用启动早期调用。若当前主题不安全，则回退到默认（或最近一次已知有效主题），
+     * 并仅写入主题相关 key，绝不触碰账号、草稿、收藏等其他用户数据。
+     */
+    fun selfHealTheme(): String {
+        var result = THEME_DEFAULT
+        runBlocking {
+            dataStore.edit { preferences ->
+                val themeKey = stringPreferencesKey(KEY_THEME)
+                val lastGoodKey = stringPreferencesKey(KEY_LAST_KNOWN_GOOD_THEME)
+                val pendingKey = stringPreferencesKey(KEY_PENDING_THEME)
+                val current = mapLegacyTheme(preferences[themeKey] ?: THEME_DEFAULT)
+                val lastGood = mapLegacyTheme(preferences[lastGoodKey] ?: THEME_DEFAULT)
+                    .takeIf(::isKnownTheme) ?: THEME_DEFAULT
+
+                // A pending value means the previous process never reached a successfully rendered
+                // frame with that theme. Roll back only theme keys; user content remains untouched.
+                result = if (preferences[pendingKey] != null) {
+                    lastGood
+                } else {
+                    current.takeIf(::isKnownTheme) ?: lastGood
+                }
+                preferences[themeKey] = result
+                preferences[lastGoodKey] = result
+                preferences.remove(pendingKey)
+            }
+        }
+        return result
+    }
+
+    /** Marks a selected theme safe only after the UI has rendered successfully. */
+    fun markThemeApplied(theme: String) {
+        if (!isKnownTheme(theme)) return
+        runBlocking {
+            dataStore.edit { preferences ->
+                val pendingKey = stringPreferencesKey(KEY_PENDING_THEME)
+                if (preferences[pendingKey] == theme) {
+                    preferences[stringPreferencesKey(KEY_LAST_KNOWN_GOOD_THEME)] = theme
+                    preferences.remove(pendingKey)
+                }
+            }
+        }
+    }
+    /** Revision changes when custom roles are saved even if the id remains `custom`. */
+    val customThemeRevision: MutableState<Int> = mutableStateOf(0)
+
+    fun notifyCustomThemeChanged() {
+        customThemeRevision.value += 1
+        // Native Views resolve attributes on demand; Compose needs an observable invalidation.
+        themeState.value = THEME_CUSTOM
+    }
+
+    /** Re-resolve shared theme roles after a toolbar or dark-surface preference changes. */
+    fun notifyThemeSettingsChanged() {
+        customThemeRevision.value += 1
     }
 
     /**
@@ -62,7 +137,7 @@ object ThemeUtil {
     /**
      * 旧版主题值 -> 新预设的一次性迁移。
      * 已安装升级用户存储的 tieba/blue/black/pink/red/purple/blue_dark/grey_dark 等值
-     * 会被映射到最近的 OxygenOS 预设并写回，避免升级后主题失效或崩溃。
+     * 会被映射到最近的 经典预设并写回，避免升级后主题失效或崩溃。
      *
      * 重要：迁移结果只写回来源 key（[key]），不得在读取 dark_theme/old_theme 时
      * 改写活动主题（KEY_THEME）。
@@ -80,6 +155,9 @@ object ThemeUtil {
     const val KEY_THEME = "theme"
     const val KEY_DARK_THEME = "dark_theme"
     const val KEY_OLD_THEME = "old_theme"
+    /** 记录最近一次“已知有效”的主题，作为损坏/未知主题恢复时的兜底。 */
+    const val KEY_LAST_KNOWN_GOOD_THEME = "last_known_good_theme"
+    const val KEY_PENDING_THEME = "pending_theme"
     const val KEY_USE_DYNAMIC_THEME = "useDynamicColorTheme"
     const val KEY_SWITCH_REASON = "switch_reason"
     const val KEY_TRANSLUCENT_PRIMARY_COLOR = "translucent_primary_color"
@@ -89,7 +167,7 @@ object ThemeUtil {
     const val KEY_USE_DYNAMIC_COLOR_THEME = "useDynamicColorTheme"
     const val KEY_MAIN_TOOLBAR_STYLE = "main_toolbar_style"
 
-    /** 主功能页面顶栏风格（设置类页面固定 OxygenOS 深灰，不随此偏好变化） */
+    /** Legacy toolbar-style keys are retained for migration; top bars now follow the selected theme. */
     const val MAIN_TOOLBAR_APP_BLUE = "app_blue"
     const val MAIN_TOOLBAR_TEAL = "teal"
     const val MAIN_TOOLBAR_PURPLE = "purple"
@@ -104,7 +182,7 @@ object ThemeUtil {
         MAIN_TOOLBAR_FOLLOW_SEED,
     )
 
-    /** 当前主功能顶栏风格（持久化，默认经典一加应用蓝） */
+    /** 当前主功能顶栏风格（持久化，默认经典蓝） */
     fun mainToolbarStyle(): String = dataStore.getString(KEY_MAIN_TOOLBAR_STYLE, MAIN_TOOLBAR_APP_BLUE)
 
     fun setMainToolbarStyle(style: String) {
@@ -112,13 +190,29 @@ object ThemeUtil {
     }
 
     /**
-     * 主功能页面顶栏色。默认经典一加应用蓝 #0071CD（状态栏由其压暗得到 #0067BC 一档），
+     * 主功能页面顶栏色。默认经典蓝 #0071CD（状态栏由其压暗得到 #0067BC 一档），
      * 另提供青绿/紫/中性深灰/跟随种子派生，均经过前景对比度核查。
      */
     @ColorInt
     fun mainToolbarColor(theme: String): Int {
         if (isTranslucentTheme(theme)) return android.graphics.Color.TRANSPARENT
+        if (theme == THEME_AMOLED_DARK) return Color.BLACK
+        if (!INSTANCE.appPreferences.toolbarPrimaryColor) {
+            return INSTANCE.appPreferences.customTopBarColor?.let { value ->
+                runCatching { Color.parseColor(value) }.getOrNull()
+            } ?: if (isNightMode(theme)) 0xFF212121.toInt() else 0xFF212121.toInt()
+        }
         val night = isNightMode(theme)
+        if (theme == THEME_CUSTOM) {
+            return INSTANCE.appPreferences.customPrimaryColor?.let { value ->
+                runCatching { Color.parseColor(value) }.getOrNull()
+            } ?: 0xFF0071CD.toInt()
+        }
+        if (ThemePresets.isPreset(theme)) {
+            if (night) return 0xFF212121.toInt()
+            val seed = ThemePresets.presetOf(theme)!!.seedColor
+            return seed
+        }
         return when (mainToolbarStyle()) {
             MAIN_TOOLBAR_TEAL -> if (night) 0xFF016B61.toInt() else 0xFF01998C.toInt()
             MAIN_TOOLBAR_PURPLE -> if (night) 0xFF37368F.toInt() else 0xFF3F3DA2.toInt()
@@ -133,27 +227,36 @@ object ThemeUtil {
         }
     }
 
-    /** 主功能页面状态栏色（比顶栏略深一档，还原 2017 年 OxygenOS 的上下层次） */
+    /** 主功能页面状态栏色（比顶栏略深一档，还原 2017 年 经典 Material Design 的上下层次） */
     @ColorInt
     fun mainStatusBarColor(theme: String): Int =
-        com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-            .darkenInt(mainToolbarColor(theme), 0.08f)
+        if (theme == THEME_AMOLED_DARK) Color.BLACK else
+            com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                .darkenInt(mainToolbarColor(theme), 0.08f)
 
-    /** 设置类页面顶栏色：OxygenOS 深灰 */
+    /** 设置类页面顶栏色：经典深色 */
     @ColorInt
     fun settingsToolbarColor(theme: String): Int =
-        if (isNightMode(theme)) 0xFF1E1E1E.toInt() else 0xFF212121.toInt()
+        mainToolbarColor(theme)
 
     @ColorInt
     fun settingsStatusBarColor(theme: String): Int =
-        com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-            .darkenInt(settingsToolbarColor(theme), 0.08f)
+        mainStatusBarColor(theme)
 
     /** 顶栏前景（标题/图标）：按对比度自动选择白字或深字 */
     @ColorInt
     fun onToolbarColor(@ColorInt toolbarColor: Int): Int =
         com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
             .readableOnInt(toolbarColor)
+
+    /** Preset colour top bars intentionally keep the classic white title/icon treatment. */
+    @ColorInt
+    fun onToolbarColor(theme: String, @ColorInt toolbarColor: Int = mainToolbarColor(theme)): Int =
+        if (ThemePresets.isPreset(theme) && INSTANCE.appPreferences.toolbarPrimaryColor) {
+            Color.WHITE
+        } else {
+            onToolbarColor(toolbarColor)
+        }
 
     const val THEME_TRANSLUCENT = "translucent"
     const val THEME_TRANSLUCENT_LIGHT = "translucent_light"
@@ -169,7 +272,7 @@ object ThemeUtil {
     const val THEME_GREY_DARK = "grey_dark"
     const val THEME_AMOLED_DARK = "amoled_dark"
 
-    // OxygenOS 7.1.1 经典风格预设（与 ThemePresets.kt 单一数据源对应）
+    // 经典 Material Design 风格预设（与 ThemePresets.kt 单一数据源对应）
     const val THEME_OXYGEN_BLUE = "oxygen_blue"
     const val THEME_OXYGEN_GOLDEN = "oxygen_golden"
     const val THEME_OXYGEN_LEMON_YELLOW = "oxygen_lemon_yellow"
@@ -178,6 +281,9 @@ object ThemeUtil {
     const val THEME_OXYGEN_SKY_BLUE = "oxygen_sky_blue"
     const val THEME_OXYGEN_VIGOUR_RED = "oxygen_vigour_red"
     const val THEME_OXYGEN_FASHION_PINK = "oxygen_fashion_pink"
+    const val THEME_OXYGEN_DEEP_SEA_BLUE = "oxygen_deep_sea_blue"
+    const val THEME_OXYGEN_JADE_GREEN = "oxygen_jade_green"
+    const val THEME_OXYGEN_INDIGO_BLUE = "oxygen_indigo_blue"
     const val THEME_MATERIAL_BLUE = "material_blue"
     const val THEME_MATERIAL_TEAL = "material_teal"
     const val THEME_MATERIAL_GREEN = "material_green"
@@ -198,6 +304,9 @@ object ThemeUtil {
     const val THEME_OXYGEN_SKY_BLUE_DARK = "oxygen_sky_blue_dark"
     const val THEME_OXYGEN_VIGOUR_RED_DARK = "oxygen_vigour_red_dark"
     const val THEME_OXYGEN_FASHION_PINK_DARK = "oxygen_fashion_pink_dark"
+    const val THEME_OXYGEN_DEEP_SEA_BLUE_DARK = "oxygen_deep_sea_blue_dark"
+    const val THEME_OXYGEN_JADE_GREEN_DARK = "oxygen_jade_green_dark"
+    const val THEME_OXYGEN_INDIGO_BLUE_DARK = "oxygen_indigo_blue_dark"
     const val THEME_MATERIAL_BLUE_DARK = "material_blue_dark"
     const val THEME_MATERIAL_TEAL_DARK = "material_teal_dark"
     const val THEME_MATERIAL_GREEN_DARK = "material_green_dark"
@@ -255,27 +364,35 @@ object ThemeUtil {
     }
 
     fun switchTheme(newTheme: String, recordOldTheme: Boolean = true) {
-        if (recordOldTheme) {
-            val oldTheme = getRawTheme()
-            if (!isNightMode(oldTheme)) {
-                dataStore.putString(KEY_OLD_THEME, oldTheme)
+        // 写入前校验主题 ID：未知 / 损坏的主题不允许写入，避免坏主题被持久化后启动锁死
+        if (!isKnownTheme(newTheme)) return
+        val oldTheme = getRawTheme()
+        if (oldTheme == newTheme) return
+        // Persist the current value as the recovery point and the new value as pending in one
+        // transaction. An interrupted write can therefore never leave a half-updated boot state.
+        runBlocking {
+            dataStore.edit { preferences ->
+                if (recordOldTheme && !isNightMode(oldTheme)) {
+                    preferences[stringPreferencesKey(KEY_OLD_THEME)] = oldTheme
+                }
+                if (isKnownTheme(oldTheme)) {
+                    preferences[stringPreferencesKey(KEY_LAST_KNOWN_GOOD_THEME)] = oldTheme
+                }
+                preferences[stringPreferencesKey(KEY_THEME)] = newTheme
+                preferences[stringPreferencesKey(KEY_PENDING_THEME)] = newTheme
             }
         }
-        dataStore.putString(KEY_THEME, newTheme)
         themeState.value = newTheme
     }
 
-    fun switchDynamicTheme() {
-        val currentUseDynamicTheme = dataStore.getBoolean(KEY_USE_DYNAMIC_THEME, false)
-        dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, !currentUseDynamicTheme)
-    }
+    /** Dynamic system colours are deliberately unsupported; clear legacy preference on access. */
+    fun switchDynamicTheme() = dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, false)
 
-    fun setUseDynamicTheme(useDynamicTheme: Boolean) {
-        dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, useDynamicTheme)
-    }
+    fun setUseDynamicTheme(useDynamicTheme: Boolean) = dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, false)
 
     fun isUsingDynamicTheme(): Boolean {
-        return context.appPreferences.useDynamicColorTheme
+        if (dataStore.getBoolean(KEY_USE_DYNAMIC_THEME, false)) dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, false)
+        return false
     }
 
     fun switchNightMode() {
@@ -380,7 +497,7 @@ object ThemeUtil {
         if (ThemePresets.isPreset(theme)) {
             // 预设：状态栏文字明暗由主功能顶栏实际颜色的对比度决定
             // （深色/彩色顶栏 → 浅色文字；浅色顶栏 → 深色文字）
-            return onToolbarColor(mainToolbarColor(theme)) != 0xFFFFFFFF.toInt()
+            return onToolbarColor(theme) != Color.WHITE
         }
         return if (theme == THEME_CUSTOM) {
             INSTANCE.appPreferences.customStatusBarFontDark
@@ -544,6 +661,9 @@ object ThemeUtil {
             THEME_OXYGEN_SKY_BLUE, -> R.style.TiebaLite_Preset_Oxygen_Sky_Blue
             THEME_OXYGEN_VIGOUR_RED, -> R.style.TiebaLite_Preset_Oxygen_Vigour_Red
             THEME_OXYGEN_FASHION_PINK, -> R.style.TiebaLite_Preset_Oxygen_Fashion_Pink
+            THEME_OXYGEN_DEEP_SEA_BLUE, -> R.style.TiebaLite_Preset_Oxygen_Deep_Sea_Blue
+            THEME_OXYGEN_JADE_GREEN, -> R.style.TiebaLite_Preset_Oxygen_Jade_Green
+            THEME_OXYGEN_INDIGO_BLUE, -> R.style.TiebaLite_Preset_Oxygen_Indigo_Blue
             THEME_OXYGEN_BLUE_DARK, -> R.style.TiebaLite_Preset_Oxygen_Blue_Dark
             THEME_OXYGEN_GOLDEN_DARK, -> R.style.TiebaLite_Preset_Oxygen_Golden_Dark
             THEME_OXYGEN_LEMON_YELLOW_DARK, -> R.style.TiebaLite_Preset_Oxygen_Lemon_Yellow_Dark
@@ -552,6 +672,9 @@ object ThemeUtil {
             THEME_OXYGEN_SKY_BLUE_DARK, -> R.style.TiebaLite_Preset_Oxygen_Sky_Blue_Dark
             THEME_OXYGEN_VIGOUR_RED_DARK, -> R.style.TiebaLite_Preset_Oxygen_Vigour_Red_Dark
             THEME_OXYGEN_FASHION_PINK_DARK, -> R.style.TiebaLite_Preset_Oxygen_Fashion_Pink_Dark
+            THEME_OXYGEN_DEEP_SEA_BLUE_DARK, -> R.style.TiebaLite_Preset_Oxygen_Deep_Sea_Blue_Dark
+            THEME_OXYGEN_JADE_GREEN_DARK, -> R.style.TiebaLite_Preset_Oxygen_Jade_Green_Dark
+            THEME_OXYGEN_INDIGO_BLUE_DARK, -> R.style.TiebaLite_Preset_Oxygen_Indigo_Blue_Dark
             THEME_MATERIAL_BLUE, -> R.style.TiebaLite_Preset_Material_Blue
             THEME_MATERIAL_TEAL, -> R.style.TiebaLite_Preset_Material_Teal
             THEME_MATERIAL_GREEN, -> R.style.TiebaLite_Preset_Material_Green
@@ -578,7 +701,6 @@ object ThemeUtil {
             THEME_MATERIAL_LIGHT_GREEN_DARK, -> R.style.TiebaLite_Preset_Material_Light_Green_Dark
             THEME_TRANSLUCENT, THEME_TRANSLUCENT_LIGHT -> R.style.TiebaLite_Translucent_Light
             THEME_TRANSLUCENT_DARK -> R.style.TiebaLite_Translucent_Dark
-            THEME_DEFAULT -> R.style.TiebaLite_Tieba
             THEME_BLACK -> R.style.TiebaLite_Black
             THEME_PURPLE -> R.style.TiebaLite_Purple
             THEME_PINK -> R.style.TiebaLite_Pink
