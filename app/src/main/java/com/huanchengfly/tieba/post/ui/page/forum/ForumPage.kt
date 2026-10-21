@@ -112,6 +112,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.FeedCardPlaceholder
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.MenuScope
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshLayout
 import com.huanchengfly.tieba.post.ui.widgets.compose.ScrollableTabRow
@@ -525,7 +526,10 @@ fun ForumPage(
             MyScaffold(
                 scaffoldState = scaffoldState,
                 backgroundColor = Color.Transparent,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    // 预测返回（B03）：搜索/帖内进入贴吧后，左滑返回到上一级页面
+                    .predictiveBack { navigator.navigateUp() },
                 topBar = {
                     ForumToolbar(
                         forumName = forumName,

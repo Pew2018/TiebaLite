@@ -94,6 +94,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.ErrorScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoadHorizontalPager
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
+import com.huanchengfly.tieba.post.ui.widgets.compose.predictiveBack
 import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.ProvideContentColor
 import com.huanchengfly.tieba.post.ui.widgets.compose.PullToRefreshLayout
@@ -161,7 +162,10 @@ fun UserProfilePage(
 
     ProvideNavigator(navigator = navigator) {
         StateScreen(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                // 预测返回（B03）：搜索/帖内进入用户资料后，左滑返回到上一级页面
+                .predictiveBack { navigator.navigateUp() },
             isEmpty = isEmpty,
             isError = isError,
             isLoading = isRefreshing,

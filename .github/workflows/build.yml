@@ -45,20 +45,23 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew assembleRelease
 
-      - name: Read Output Metadata
-        id: read_output_metadata
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./app/build/outputs/apk/release/output-metadata.json
-          trim: true
+      - name: Parse version metadata
+        id: version
+        run: |
+          python3 - <<'PYEOF'
+          import json, os
+          with open('./app/build/outputs/apk/release/output-metadata.json') as f:
+              data = json.load(f)
+          el = data['elements'][0]
+          with open(os.environ['GITHUB_OUTPUT'], 'a') as out:
+              out.write(f"version_code={el['versionCode']}\n")
+              out.write(f"version_name={el['versionName']}\n")
+          PYEOF
 
       - name: Upload Release Package
-        env:
-          version_code: ${{ fromJSON(steps.read_output_metadata.outputs.content).elements[0].versionCode }}
-          version_name: ${{ fromJSON(steps.read_output_metadata.outputs.content).elements[0].versionName }}
         uses: actions/upload-artifact@v4
         with:
-          name: "release-${{ env.version_name }}(${{ env.version_code }})"
+          name: "release-${{ steps.version.outputs.version_name }}(${{ steps.version.outputs.version_code }})"
           path: ./app/build/outputs/apk/release
 
       - name: Upload Mapping
