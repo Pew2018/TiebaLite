@@ -548,11 +548,11 @@
     <string name="schematic_text">主要文字</string>
     <string name="schematic_accent_fill">实心强调（按钮/FAB/进度）</string>
     <string name="schematic_accent_muted">弱强调（选中背景/标签）</string>
-    <string name="title_dark_surface_mode">深色外观</string>
+    <string name="title_dark_surface_mode">深色样式</string>
     <string name="dark_surface_normal">经典深色</string>
     <string name="dark_surface_normal_summary">使用中性深灰页面、顶栏和系统栏</string>
-    <string name="dark_surface_amoled">A 屏黑</string>
-    <string name="dark_surface_amoled_summary">页面、顶栏和系统栏使用纯黑色</string>
+    <string name="dark_surface_amoled">纯黑 AMOLED</string>
+    <string name="dark_surface_amoled_summary">夜间模式下使用纯黑色背景</string>
     <string name="title_custom_color_section">自定义颜色</string>
     <string name="title_top_bar_follow_theme">顶栏跟随主题色</string>
     <string name="summary_top_bar_follow_theme">影响首页、贴吧、帖子、消息、搜索和设置等标准页面</string>

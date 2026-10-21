@@ -321,6 +321,25 @@ class App : Application(), SketchFactory {
     fun getColorByAttr(context: Context, attrId: Int, theme: String): Int {
         if (!isInitialized) return context.getColorCompat(getDefaultColorResId(attrId))
             val resources = context.resources
+            if ((theme == ThemeUtil.THEME_AMOLED_DARK ||
+                 (ThemePresets.isPresetDark(theme) && ThemeUtil.selectedPaletteTheme() == ThemeUtil.THEME_CUSTOM)) &&
+                (attrId == R.attr.colorPrimary || attrId == R.attr.colorNewPrimary ||
+                 attrId == R.attr.colorAccent || attrId == R.attr.colorOnAccent)) {
+                val palette = ThemeUtil.selectedPaletteTheme()
+                val seedTheme = ThemePresets.presetOf(palette)?.darkId ?: palette
+                val seed = if (attrId == R.attr.colorOnAccent) {
+                    getColorByAttr(context, R.attr.colorAccent, seedTheme)
+                } else {
+                    getColorByAttr(context, attrId, seedTheme)
+                }
+                return if (attrId == R.attr.colorOnAccent) {
+                    com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath.readableOnInt(seed)
+                } else {
+                    com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                        .readableAccentTextInt(seed, Color.BLACK, 3.0)
+                }
+            }
+
             // 经典 Material Design 预设：优先解析 theme_color_<attr>_<theme> 命名资源，保证全部预设
             // 在 Compose 与 View 两条链路上取到同一套语义色。资源缺失时由 resolveColorSafe 回退默认令牌。
             if (ThemePresets.isPreset(theme)) {
@@ -452,10 +471,11 @@ class App : Application(), SketchFactory {
                     } else context.getColorCompat(R.color.theme_color_background_light)
                 }
                 R.attr.colorWindowBackground -> {
+                    if (theme == ThemeUtil.THEME_AMOLED_DARK) return Color.BLACK
                     return if (ThemeUtil.isTranslucentTheme(theme)) {
                         context.resolveColorSafe("theme_color_window_background_$theme", attrId)
-                    } else if (ThemeUtil.isNightMode()) {
-                        context.resolveColorSafe("theme_color_background_$theme", attrId)
+                    } else if (ThemeUtil.isNightMode(theme)) {
+                        context.resolveColorSafe("theme_color_window_background_$theme", attrId)
                     } else {
                         context.getColorCompat(R.color.theme_color_background_light)
                     }
@@ -476,6 +496,7 @@ class App : Application(), SketchFactory {
                     } else context.getColorCompat(R.color.theme_color_unselected_day)
                 }
                 R.attr.colorNavBar -> {
+                    if (theme == ThemeUtil.THEME_AMOLED_DARK) return Color.BLACK
                     if (ThemeUtil.isTranslucentTheme(theme)) {
                         return context.getColorCompat(R.color.transparent)
                     }
@@ -519,20 +540,17 @@ class App : Application(), SketchFactory {
                     // 选中态：顶栏为深色时用纯白；顶栏为浅色时用主题强调文字色
                     val toolbarColor = ThemeUtil.mainToolbarColor(theme)
                     val onToolbar = ThemeUtil.onToolbarColor(theme, toolbarColor)
-                    return if (onToolbar == 0xFFFFFFFF.toInt()) {
-                        0xFFFFFFFF.toInt()
-                    } else {
-                        getColorByAttr(context, R.attr.colorAccent, theme)
-                    }
+                    return onToolbar
                 }
 
                 R.attr.colorToolbarItemSecondary -> {
-                    return if (
-                        ThemeUtil.isNightMode(theme) ||
-                        ThemeUtil.isTranslucentTheme(theme)
-                    ) {
-                        context.resolveColorSafe("theme_color_toolbar_item_secondary_$theme", attrId)
-                    } else context.getColorCompat(if (ThemeUtil.isStatusBarFontDark()) R.color.theme_color_toolbar_item_secondary_white else R.color.theme_color_toolbar_item_secondary_light)
+                    if (ThemeUtil.isTranslucentTheme(theme)) {
+                        return context.resolveColorSafe("theme_color_toolbar_item_secondary_$theme", attrId)
+                    }
+                    val foreground = ThemeUtil.onToolbarColor(theme)
+                    return Color.argb(
+                        178, Color.red(foreground), Color.green(foreground), Color.blue(foreground)
+                    )
                 }
 
                 R.attr.colorIndicator -> {

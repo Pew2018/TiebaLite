@@ -1,6 +1,7 @@
 package com.huanchengfly.tieba.post.ui.common.theme.compose
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.material.Colors
 import androidx.compose.material.ContentAlpha
 import androidx.compose.material.MaterialTheme
@@ -17,6 +18,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import com.huanchengfly.tieba.post.App
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.utils.ThemeUtil
@@ -455,7 +457,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
                 nowTheme
             )
         ),
-        bottomBar = bottomBarColor,
+        bottomBar = if (nowTheme == ThemeUtil.THEME_AMOLED_DARK) Color.Black else bottomBarColor,
         bottomBarSurface = Color(
             App.ThemeDelegate.getColorByAttr(
                 context,
@@ -512,7 +514,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
                 nowTheme
             )
         ),
-        windowBackground = Color(
+        windowBackground = if (nowTheme == ThemeUtil.THEME_AMOLED_DARK) Color.Black else Color(
             App.ThemeDelegate.getColorByAttr(
                 context,
                 R.attr.colorWindowBackground,
@@ -605,6 +607,8 @@ fun TiebaLiteTheme(
     val context = LocalContext.current
     val theme by remember { ThemeUtil.themeState }
     val customRevision by remember { ThemeUtil.customThemeRevision }
+    val systemNight = (LocalConfiguration.current.uiMode and
+        Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     val isDarkColorPalette by remember {
         derivedStateOf {
             ThemeUtil.isNightMode(theme)
@@ -617,6 +621,14 @@ fun TiebaLiteTheme(
     // Reading the revision makes consecutive edits while already on custom recompose immediately.
     @Suppress("UNUSED_VARIABLE") val customThemeRevision = customRevision
     val extendedColors = getThemeColorForTheme(theme)
+
+    // Follow-system drives only the day/night dimension, never palette or dark surface style.
+    LaunchedEffect(systemNight, customRevision) {
+        if (context.appPreferences.followSystemNight &&
+            ThemeUtil.isNightMode(ThemeUtil.getRawTheme()) != systemNight) {
+            ThemeUtil.switchNightMode()
+        }
+    }
 
     LaunchedEffect(theme) {
         // Do not bless a newly selected theme until Compose has produced a real frame.

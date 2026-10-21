@@ -130,6 +130,16 @@ class ThemeResourceContractTest {
     }
 
     @Test
+    fun amoledWindowAndNavigationSurfacesAreTrulyBlack() {
+        for (token in listOf("theme_color_window_background_amoled_dark",
+            "theme_color_background_amoled_dark", "theme_color_nav_amoled_dark")) {
+            val match = Regex("""<color\s+name="$token">([^<]+)</color>""").find(colorsXml)
+            assertTrue("缺少 AMOLED 表面资源 $token", match != null)
+            assertEquals("$token 必须纯黑", "#FF000000", match!!.groupValues[1].trim())
+        }
+    }
+
+    @Test
     fun problemThemesAreFullyCovered() {
         val problem = listOf(
             "oxygen_deep_sea_blue", "oxygen_jade_green", "oxygen_indigo_blue",

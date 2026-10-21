@@ -124,7 +124,7 @@
     <color name="theme_color_window_background_dark">#FF10171F</color>
     <color name="theme_color_window_background_blue_dark">#17212B</color>
     <color name="theme_color_window_background_grey_dark">#FF202020</color>
-    <color name="theme_color_window_background_amoled_dark">#FF1E1E1E</color>
+    <color name="theme_color_window_background_amoled_dark">#FF000000</color>
     <color name="theme_color_window_background_translucent">
         @color/theme_color_window_background_grey_dark
     </color>
@@ -223,7 +223,7 @@
     <color name="theme_color_nav_dark">#FF15202B</color>
     <color name="theme_color_nav_blue_dark">#1B2733</color>
     <color name="theme_color_nav_grey_dark">#FF303030</color>
-    <color name="theme_color_nav_amoled_dark">#FF171717</color>
+    <color name="theme_color_nav_amoled_dark">#FF000000</color>
 
     <color name="theme_color_unselected_day">@color/oxygen_unselected</color>
     <color name="theme_color_unselected_translucent">#43FFFFFF</color>

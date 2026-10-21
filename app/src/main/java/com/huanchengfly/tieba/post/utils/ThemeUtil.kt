@@ -200,7 +200,7 @@ object ThemeUtil {
         if (!INSTANCE.appPreferences.toolbarPrimaryColor) {
             return INSTANCE.appPreferences.customTopBarColor?.let { value ->
                 runCatching { Color.parseColor(value) }.getOrNull()
-            } ?: if (isNightMode(theme)) 0xFF212121.toInt() else 0xFF212121.toInt()
+            } ?: 0xFF212121.toInt()
         }
         val night = isNightMode(theme)
         if (theme == THEME_CUSTOM) {
@@ -237,11 +237,11 @@ object ThemeUtil {
     /** 设置类页面顶栏色：经典深色 */
     @ColorInt
     fun settingsToolbarColor(theme: String): Int =
-        mainToolbarColor(theme)
+        if (theme == THEME_AMOLED_DARK) Color.BLACK else 0xFF212121.toInt()
 
     @ColorInt
     fun settingsStatusBarColor(theme: String): Int =
-        mainStatusBarColor(theme)
+        if (theme == THEME_AMOLED_DARK) Color.BLACK else 0xFF1E1E1E.toInt()
 
     /** 顶栏前景（标题/图标）：按对比度自动选择白字或深字 */
     @ColorInt
@@ -249,14 +249,13 @@ object ThemeUtil {
         com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
             .readableOnInt(toolbarColor)
 
-    /** Preset colour top bars intentionally keep the classic white title/icon treatment. */
+    /** Keep the original deep-sea blue/white treatment; pale colours use readable dark ink. */
     @ColorInt
     fun onToolbarColor(theme: String, @ColorInt toolbarColor: Int = mainToolbarColor(theme)): Int =
-        if (ThemePresets.isPreset(theme) && INSTANCE.appPreferences.toolbarPrimaryColor) {
-            Color.WHITE
-        } else {
-            onToolbarColor(toolbarColor)
-        }
+        if (theme == THEME_OXYGEN_DEEP_SEA_BLUE &&
+            INSTANCE.appPreferences.toolbarPrimaryColor &&
+            toolbarColor == 0xFF0071CD.toInt()) Color.WHITE
+        else onToolbarColor(toolbarColor)
 
     const val THEME_TRANSLUCENT = "translucent"
     const val THEME_TRANSLUCENT_LIGHT = "translucent_light"
@@ -354,32 +353,84 @@ object ThemeUtil {
     }
 
     private fun getOldTheme(): String {
-        val oldTheme =
-            migrateLegacyTheme(
-                dataStore.getString(KEY_OLD_THEME, THEME_DEFAULT),
-                KEY_OLD_THEME
-            ).takeUnless { isNightMode(it) }
-
-        return oldTheme ?: THEME_DEFAULT
+        val oldTheme = migrateLegacyTheme(
+            dataStore.getString(KEY_OLD_THEME, THEME_DEFAULT),
+            KEY_OLD_THEME
+        )
+        return oldTheme.takeIf { isKnownTheme(it) && !isNightMode(it) } ?: THEME_DEFAULT
     }
 
-    fun switchTheme(newTheme: String, recordOldTheme: Boolean = true) {
+    /** The palette is independent of the active light/dark surface (especially AMOLED). */
+    fun selectedPaletteTheme(): String {
+        val current = getRawTheme()
+        if (!isNightMode(current)) return current
+        val saved = getOldTheme()
+        if (saved == THEME_CUSTOM) return saved
+        return ThemePresets.presetOf(current)?.id ?: saved
+    }
+
+    /** Older dark_theme values are retained; their dark preset ID now means classic dark. */
+    fun isAmoledSurface(): Boolean =
+        dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK) == THEME_AMOLED_DARK
+
+    fun resolveNightTheme(lightTheme: String = selectedPaletteTheme()): String {
+        return com.huanchengfly.tieba.post.ui.common.theme.ThemeAppearance.resolveDarkTheme(
+            dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK),
+            ThemePresets.presetOf(lightTheme)?.darkId
+        )
+    }
+
+    /** Persist the style before publishing the new theme, avoiding async preference races. */
+    fun setDarkSurface(amoled: Boolean) {
+        val light = selectedPaletteTheme()
+        val value = if (amoled) THEME_AMOLED_DARK
+            else ThemePresets.presetOf(light)?.darkId ?: "material_blue_grey_dark"
+        runBlocking {
+            dataStore.edit { it[stringPreferencesKey(KEY_DARK_THEME)] = value }
+        }
+        if (isNightMode()) {
+            switchTheme(resolveNightTheme(light), recordOldTheme = false,
+                selectedLightTheme = light)
+        }
+        notifyThemeSettingsChanged()
+    }
+
+    /** Switch one colour family without losing the current night mode or dark surface choice. */
+    fun selectPalette(lightTheme: String) {
+        if (!isKnownTheme(lightTheme) || isNightMode(lightTheme)) return
+        val target = if (isNightMode()) resolveNightTheme(lightTheme) else lightTheme
+        switchTheme(target, recordOldTheme = false, selectedLightTheme = lightTheme)
+        // AMOLED keeps the same effective ID; a revision is required to refresh its accent.
+        if (target == THEME_AMOLED_DARK) notifyThemeSettingsChanged()
+    }
+
+    fun switchTheme(
+        newTheme: String,
+        recordOldTheme: Boolean = true,
+        selectedLightTheme: String? = null,
+    ) {
         // 写入前校验主题 ID：未知 / 损坏的主题不允许写入，避免坏主题被持久化后启动锁死
         if (!isKnownTheme(newTheme)) return
+        if (selectedLightTheme != null &&
+            (!isKnownTheme(selectedLightTheme) || isNightMode(selectedLightTheme))) return
         val oldTheme = getRawTheme()
-        if (oldTheme == newTheme) return
+        if (oldTheme == newTheme && selectedLightTheme == null) return
         // Persist the current value as the recovery point and the new value as pending in one
         // transaction. An interrupted write can therefore never leave a half-updated boot state.
         runBlocking {
             dataStore.edit { preferences ->
-                if (recordOldTheme && !isNightMode(oldTheme)) {
+                if (selectedLightTheme != null) {
+                    preferences[stringPreferencesKey(KEY_OLD_THEME)] = selectedLightTheme
+                } else if (recordOldTheme && !isNightMode(oldTheme)) {
                     preferences[stringPreferencesKey(KEY_OLD_THEME)] = oldTheme
                 }
-                if (isKnownTheme(oldTheme)) {
-                    preferences[stringPreferencesKey(KEY_LAST_KNOWN_GOOD_THEME)] = oldTheme
+                if (oldTheme != newTheme) {
+                    if (isKnownTheme(oldTheme)) {
+                        preferences[stringPreferencesKey(KEY_LAST_KNOWN_GOOD_THEME)] = oldTheme
+                    }
+                    preferences[stringPreferencesKey(KEY_THEME)] = newTheme
+                    preferences[stringPreferencesKey(KEY_PENDING_THEME)] = newTheme
                 }
-                preferences[stringPreferencesKey(KEY_THEME)] = newTheme
-                preferences[stringPreferencesKey(KEY_PENDING_THEME)] = newTheme
             }
         }
         themeState.value = newTheme
@@ -397,24 +448,14 @@ object ThemeUtil {
 
     fun switchNightMode() {
         if (isNightMode()) {
-            switchTheme(getOldTheme(), recordOldTheme = false)
+            switchTheme(selectedPaletteTheme(), recordOldTheme = false)
         } else {
-            switchTheme(
-                migrateLegacyTheme(
-                    dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK),
-                    KEY_DARK_THEME
-                )
-            )
+            switchTheme(resolveNightTheme(), recordOldTheme = true)
         }
     }
 
     fun switchToNightMode(context: Activity, recreate: Boolean) {
-        switchTheme(
-            migrateLegacyTheme(
-                dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK),
-                KEY_DARK_THEME
-            )
-        )
+        switchTheme(resolveNightTheme())
         if (recreate) {
             refreshUI(context)
         }
@@ -422,7 +463,7 @@ object ThemeUtil {
 
     @JvmOverloads
     fun switchFromNightMode(context: Activity, recreate: Boolean = true) {
-        switchTheme(getOldTheme(), recordOldTheme = false)
+        switchTheme(selectedPaletteTheme(), recordOldTheme = false)
         if (recreate) {
             refreshUI(context)
         }
@@ -500,7 +541,7 @@ object ThemeUtil {
             return onToolbarColor(theme) != Color.WHITE
         }
         return if (theme == THEME_CUSTOM) {
-            INSTANCE.appPreferences.customStatusBarFontDark
+            onToolbarColor(theme) != Color.WHITE
         } else if (isTranslucentTheme(theme)) {
             theme.contains("dark", ignoreCase = true)
         } else if (!isToolbarPrimaryColor) {

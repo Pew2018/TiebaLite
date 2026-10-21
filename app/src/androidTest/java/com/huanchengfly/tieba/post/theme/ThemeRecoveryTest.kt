@@ -15,6 +15,7 @@ package com.huanchengfly.tieba.post.theme
 import androidx.test.platform.app.InstrumentationRegistry
 import com.huanchengfly.tieba.post.ui.common.theme.ThemePresets
 import com.huanchengfly.tieba.post.utils.ThemeUtil
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -65,6 +66,24 @@ class ThemeRecoveryTest {
         // 所有迁移目标都必须是已知主题，避免迁移到不存在的预设
         for ((_, new) in ThemePresets.legacyMigration) {
             assertTrue("迁移目标 $new 必须是已知主题", ThemeUtil.isKnownTheme(new))
+        }
+    }
+
+    @Test
+    fun extremePaletteContrastRemainsReadable() {
+        val black = android.graphics.Color.BLACK
+        val white = android.graphics.Color.WHITE
+        assertTrue(ThemeColorMath.contrastInt(black, white) >= 21.0)
+        for (seed in listOf(black, white, 0xFFFFFF00.toInt(),
+            0xFF00FF00.toInt(), 0xFF00FFFF.toInt(), 0xFFFF00FF.toInt(),
+            0xFF0071CD.toInt(), 0xFF01998C.toInt(), 0xFF3F3DA2.toInt())) {
+            for (surface in listOf(black, white, 0xFF212121.toInt())) {
+                val text = ThemeColorMath.readableAccentTextInt(seed, surface)
+                assertTrue("contrast too low for ${seed} on ${surface}",
+                    ThemeColorMath.contrastInt(text, surface) >= 4.5)
+                val foreground = ThemeColorMath.readableOnInt(seed)
+                assertTrue(ThemeColorMath.contrastInt(foreground, seed) >= 3.0)
+            }
         }
     }
 

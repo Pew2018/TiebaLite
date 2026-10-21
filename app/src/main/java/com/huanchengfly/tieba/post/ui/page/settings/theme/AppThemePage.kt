@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -21,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
+import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ColorLens
@@ -82,6 +84,10 @@ private fun AppThemeContent(
 ) {
     val context = LocalContext.current
     val currentTheme by remember { ThemeUtil.themeState }
+    val themeRevision by remember { ThemeUtil.customThemeRevision }
+    @Suppress("UNUSED_VARIABLE") val observedRevision = themeRevision
+    val selectedPalette = ThemeUtil.selectedPaletteTheme()
+    val listState = rememberLazyListState()
     val customPrimaryColorDialogState = rememberDialogState()
     val customTopBarDialogState = rememberDialogState()
     var customPrimaryColor by remember {
@@ -133,15 +139,13 @@ private fun AppThemeContent(
                     val primary = CustomThemeDialog.toString(confirmed.toArgb())
                     context.appPreferences.applyCustomThemeColors(
                         primary = primary,
-                        topBar = if (topBarFollowsTheme) primary
-                            else (context.appPreferences.customTopBarColor ?: "#212121"),
-                        topBarContent = String.format("#%06X", 0xFFFFFF and
-                            com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-                                .readableOnInt(confirmed.toArgb())),
+                        // Changing the seed never overwrites an independent toolbar colour.
+                        topBar = context.appPreferences.customTopBarColor ?: "#212121",
+                        topBarContent = context.appPreferences.customTopBarContentColor ?: "#FFFFFF",
                         accent = primary,
                     )
                     customPrimaryColor = confirmed
-                    ThemeUtil.switchTheme(ThemeUtil.THEME_CUSTOM)
+                    ThemeUtil.selectPalette(ThemeUtil.THEME_CUSTOM)
                 }
             )
         }
@@ -242,6 +246,7 @@ private fun AppThemeContent(
         },
     ) { paddingValues ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
@@ -257,10 +262,8 @@ private fun AppThemeContent(
                 ) { _, preset ->
                     ThemePresetRow(
                         preset = preset,
-                        selected = ThemePresets.presetOf(currentTheme)?.id == preset.id,
-                        onClick = {
-                            ThemeUtil.switchTheme(if (ThemeUtil.isNightMode(currentTheme)) preset.darkId else preset.id)
-                        }
+                        selected = ThemePresets.presetOf(selectedPalette)?.id == preset.id,
+                        onClick = { ThemeUtil.selectPalette(preset.id) }
                     )
                 }
             }
@@ -274,14 +277,10 @@ private fun AppThemeContent(
                     summary = stringResource(id = R.string.dark_surface_normal_summary),
                     selected = selectedDarkTheme != ThemeUtil.THEME_AMOLED_DARK,
                     onClick = {
-                        val presetDark = ThemePresets.presetOf(currentTheme)?.darkId
+                        val presetDark = ThemePresets.presetOf(selectedPalette)?.darkId
                             ?: "material_blue_grey_dark"
                         selectedDarkTheme = presetDark
-                        context.appPreferences.darkTheme = presetDark
-                        if (ThemeUtil.isNightMode(currentTheme)) {
-                            ThemeUtil.switchTheme(presetDark, recordOldTheme = false)
-                        }
-                        ThemeUtil.notifyThemeSettingsChanged()
+                        ThemeUtil.setDarkSurface(amoled = false)
                     }
                 )
             }
@@ -292,11 +291,7 @@ private fun AppThemeContent(
                     selected = selectedDarkTheme == ThemeUtil.THEME_AMOLED_DARK,
                     onClick = {
                         selectedDarkTheme = ThemeUtil.THEME_AMOLED_DARK
-                        context.appPreferences.darkTheme = ThemeUtil.THEME_AMOLED_DARK
-                        if (ThemeUtil.isNightMode(currentTheme)) {
-                            ThemeUtil.switchTheme(ThemeUtil.THEME_AMOLED_DARK, recordOldTheme = false)
-                        }
-                        ThemeUtil.notifyThemeSettingsChanged()
+                        ThemeUtil.setDarkSurface(amoled = true)
                     }
                 )
             }
@@ -322,6 +317,7 @@ private fun AppThemeContent(
                         title = stringResource(id = R.string.title_custom_top_bar_color),
                         summary = stringResource(id = R.string.summary_custom_top_bar_color),
                         selected = false,
+                        showRadio = false,
                         leading = {
                             Box(
                                 modifier = Modifier
@@ -340,7 +336,7 @@ private fun AppThemeContent(
             item(key = "entry_custom") {
                 ThemeEntryRow(
                     title = stringResource(id = R.string.title_custom_accent_color),
-                    selected = false,
+                    selected = selectedPalette == ThemeUtil.THEME_CUSTOM,
                     summary = stringResource(id = R.string.summary_custom_theme),
                     leading = {
                         LeadingIcon {
@@ -459,6 +455,7 @@ private fun ThemeEntryRow(
     onClick: () -> Unit,
     summary: String? = null,
     enabled: Boolean = true,
+    showRadio: Boolean = true,
     leading: (@Composable () -> Unit)? = null,
 ) {
     Row(
@@ -485,7 +482,13 @@ private fun ThemeEntryRow(
                 )
             }
         }
-        RadioButton(selected = selected, onClick = null, enabled = enabled)
+        if (showRadio) RadioButton(
+            selected = selected, onClick = null, enabled = enabled,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = ExtendedTheme.colors.accentText,
+                unselectedColor = ExtendedTheme.colors.textSecondary
+            )
+        )
     }
 }
 
@@ -521,6 +524,12 @@ private fun ThemePresetRow(
             modifier = Modifier.weight(1f),
             color = ExtendedTheme.colors.text
         )
-        RadioButton(selected = selected, onClick = null)
+        RadioButton(
+            selected = selected, onClick = null,
+            colors = RadioButtonDefaults.colors(
+                selectedColor = ExtendedTheme.colors.accentText,
+                unselectedColor = ExtendedTheme.colors.textSecondary
+            )
+        )
     }
 }
