@@ -16,14 +16,14 @@
 | R-2.3  | 附录 2.3    | 标题栏三类型；状态栏比顶栏略深                                                                                       | `Toolbar.kt`（状态栏 spacer=角色状态栏色）、`ThemeUtil.mainStatusBarColor`                                                                   | 深浅主题 + 角色截图               | 已实现待验证                                                |
 | R-3.1  | 附录 3.1    | 首页双/单列保留；48dp 搜索入口；长按菜单锚定                                                                             | `home/HomePage.kt`、`Menu.kt`                                                                                                     | 首页走查                      | 待处理                                                   |
 | R-3.2  | 附录 3.2    | 贴吧详情细进度、锚定菜单、单选排序轻状态                                                                                  | `forum/**`、`FeedCard.kt`                                                                                                         | 贴吧页走查                     | 待处理                                                   |
-| R-3.3  | 附录 3.3    | 帖子页头像层级、楼中楼 2–4dp、输入栏小圆角、底部面板紧凑、倒序轻量强调                                                                | `thread/ThreadPage.kt`、`reply/ReplyPage.kt`、`subposts/SubPostsPage.kt`                                                           | 帖子页走查                     | 部分实现待验证（面板紧凑化见 PENDING）                               |
+| R-3.3  | 附录 3.3    | 帖子页头像层级、楼中楼 2–4dp、输入栏小圆角、底部面板紧凑、倒序轻量强调                                                                | `thread/ThreadPage.kt`、`reply/ReplyPage.kt`、`subposts/SubPostsPage.kt`                                                           | 帖子页走查                     | 部分实现待设备验证（底部操作面板已收紧，需截图复核）                               |
 | R-3.4  | 附录 3.4    | 消息页标题+48dp Tabs 分层、2dp 线连续、空/加载/失败态                                                                   | `notifications/**`、`Tabs.kt`                                                                                                     | 消息页走查                     | 部分实现待验证（Tabs 已改；空态见 PENDING）                          |
 | R-3.5  | 附录 3.5    | 个人中心平面统计区 + 列表                                                                                        | `user/UserPage.kt`（本轮去统计大卡片）                                                                                                     | 个人页截图                     | 已实现待验证                                                |
 | R-3.6  | 附录 3.6    | 收藏/历史共用条目、日期次色、时间分组小标题                                                                                | `threadstore/**`、`history/**`                                                                                                    | 收藏/记录走查                   | 待处理                                                   |
 | R-3.7  | 附录 3.7    | 主题页普通入口 + 预设分组 + 单选 + 即时预览                                                                            | `settings/theme/AppThemePage.kt`（本轮重写）                                                                                           | 主题页走查                     | 已实现待验证                                                |
-| R-3.8  | 附录 3.8    | 设置中心采用经典 Material Design；破坏性操作 AlertDialog                                                                     | `settings/**`（角色+分割线）、`Dialogs.kt`                                                                                               | 设置页走查                     | 部分实现待设备验证（图标精简见 PENDING）                                |
+| R-3.8  | 附录 3.8    | 设置中心采用经典 Material Design；破坏性操作 AlertDialog                                                                     | `settings/**`（角色+分割线）、`Dialogs.kt`                                                                                               | 设置页走查                     | 部分实现待设备验证（签到/更多设置子页图标已精简）                                |
 | R-3.9  | 附录 3.9    | 居中选项 Dialog 310dp + 细 Slider                                                                          | `Dialogs.kt`、`AnyPopDialog`、`AppFontSizeActivity`、`RulerSeekBar`                                                                 | 弹窗/字体页走查                  | 部分实现待验证（Dialog 按钮已改；AnyPopDialog 形态见 PENDING）         |
-| R-3.10 | 附录 3.10   | 习惯/签到/关于/缓存统一设置行；禁用态真禁用；关于图标 80–96dp                                                                  | `settings/{habit,oksign,about,more}/**`（批2 关于页图标 96dp）                                                                           | 各设置页走查                    | 部分实现待验证（关于页图标 96dp 已做；禁用态/其他待验）                       |
+| R-3.10 | 附录 3.10   | 习惯/签到/关于/缓存统一设置行；禁用态真禁用；关于图标 80–96dp                                                                  | `settings/{habit,oksign,about,more}/**`（批2 关于页图标 96dp）                                                                           | 各设置页走查                    | 部分实现待设备验证（关于图标已调整；签到时间和自定义标签页默认依赖状态已修复）                       |
 | R-3.11 | 附录 3.11   | 搜索子系统：经典 SearchView、轻历史、三类结果共享顶栏/Tabs、保状态                                                             | `search/**`                                                                                                                      | 搜索路径走查（含 B03）             | 部分实现待验证                                               |
 | R-4.1  | 附录 4.1    | 三插值器，禁弹簧/回弹                                                                                           | `AnimTokens` + 既有 tween                                                                                                          | 录屏核对                      | 部分实现待验证                                               |
 | R-4.2  | 附录 4.2    | 13 项动画时长表纳入统一令牌                                                                                       | `AnimTokens`（当前 3 档）                                                                                                             | 逐项核对                      | 部分实现待验证                                               |
@@ -51,15 +51,13 @@
 
 ## 二、PENDING（本轮未完成，明确遗留）
 
-> 本轮（批2/批3 + 本续批）已完成：Toolbar 标题左对齐 20sp Medium（#1）、图片四状态失败重试+淡入（#4）、关于页图标 96dp（#6）、搜索历史药丸标签轻量化（#7）、B03 的 ForumPage/UserProfilePage 页面级预测返回接入。
+> 本轮（批2/批3 + 本续批）已完成：Toolbar 标题左对齐 20sp Medium（#1）、图片四状态失败重试+淡入（#4）、关于页图标 96dp（#6）、搜索历史药丸标签轻量化（#7）、B03 页面级预测返回接入。GitHub 集中修复补充：帖子操作面板轻量化、设置子页去冗余图标、真实禁用态默认值、无图标行正确对齐；以上仍待设备验证。
 
-1. 底部操作面板紧凑化（ThreadMenu：圆角/手柄/大块灰按钮/整块选中态）。
-2. 长按菜单/PopupMenu 进出动画（锚定已在 Menu.kt 落地，缺 scale/alpha 进出动画）。
-3. 设置项装饰性图标精简、禁用态真禁用（签到页等）。
-4. 动效全量表（R-4.2）与插值器落到具体控件（当前仅 AnimTokens 三档时长 + 三条曲线，未逐项绑定控件）。
-5. 字体大小页 Slider 细轨道化（View 体系 RulerSeekBar，需谨慎接入 ThemeUtil 主题色，留作待处理）。
-6. 需求 R-3.1/3.2/3.6/3.10 整页走查（首页/贴吧/收藏历史/设置子页）——需设备。
-7. 搜索结果子页（SearchForumPage/SearchThreadPage/SearchUserPage）自身返回搜索输入态的预测返回（当前依赖 NavHost 普通返回，受 Navigation 2.7.6 限制）。
+1. 长按菜单/PopupMenu 进出动画（锚定已在 Menu.kt 落地；Material DropdownMenu 内置过渡仍需录屏对照）。
+2. 动效全量表（R-4.2）与插值器落到具体控件（当前仅 AnimTokens 三档时长 + 三条曲线，未逐项绑定控件）。
+3. 字体大小页 Slider 细轨道化（View 体系 RulerSeekBar，需谨慎接入 ThemeUtil 主题色）。
+4. 需求 R-3.1/3.2/3.6/3.10 整页走查（首页/贴吧/收藏历史/设置子页）——需设备。
+5. 搜索结果子页（SearchForumPage/SearchThreadPage/SearchUserPage）自身返回搜索输入态的预测返回（当前依赖 NavHost 普通返回，受 Navigation 2.7.6 限制）。
 
 ## 三、本轮用户三类反馈的解决方式
 
@@ -68,3 +66,12 @@
 | 选主题后部分交互控件仍黑色、颜色覆盖错误             | T03 用途色体系 + 消费者接入（Switch/Tabs/Buttons/Dialogs/GroupHeader/进度）；顶栏角色分离；Material2 显式配对                                                                                                                                                                                                 |
 | 预测返回只有部分路径有效                     | B01 采用页面级 `Modifier.predictiveBack`（activity-compose 1.8.2 `PredictiveBackHandler`）+ `MainActivityV2` 根级兜底覆盖 MainPage/SearchPage/ThreadPage/ReplyPage/SubPostsPage/WebViewPage；**导航级 NavHost 预测返回因 Destinations 1.11.x 需 Kotlin 2.1 元数据、与本项目 Kotlin 1.9.22 不兼容而未升级，未实现**；页面级已在支持页生效 |
 | 搜索进入吧/帖/用户后缺完整预测返回；底栏二/三项回首页动画异常 | B03 依赖导航级预览；B02 MainPage 连续滚动预览（真实首页为目标、取消完整恢复、不进中间页）                                                                                                                                                                                                                               |
+
+## 四、GitHub 集中修复（远程单次提交）
+
+- 不读取或覆盖 Mac 本地未提交改动；以提交 `d549b257` 为基线。
+- `PrefsListItem`：无图标项目不再保留空图标槽，恢复 16dp 内容左边距；带图标行及账号头像保持不变。
+- `PrefsDsl`：依赖开关允许显式指定尚未持久化时的默认值；自动签到默认关闭时禁止编辑签到时间；WebView 默认开启时禁止启用 Custom Tabs。
+- `OKSignSettingsPage` 和 `MoreSettingsPage`：去掉 10 个装饰性前导图标，不调整开关持久化 key、点击动作和业务逻辑。
+- `ThreadPage`：仅精简帖内底部操作面板的圆角、手柄、选项高度和选中态表面色；原交互操作及数据状态不变。
+- 本轮仅静态审查和 Actions Release 构建可验证；真机视觉、切换时序、冷启动和功能回归仍需实机测试。

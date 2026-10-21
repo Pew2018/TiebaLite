@@ -345,10 +345,10 @@ private fun ToggleButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: @Composable (() -> Unit)? = null,
-    backgroundColor: Color = ExtendedTheme.colors.chip,
+    backgroundColor: Color = Color.Transparent,
     contentColor: Color = ExtendedTheme.colors.text,
-    selectedBackgroundColor: Color = ExtendedTheme.colors.selectedBg,
-    selectedContentColor: Color = ExtendedTheme.colors.onSelectedBg,
+    selectedBackgroundColor: Color = ExtendedTheme.colors.accentMuted,
+    selectedContentColor: Color = ExtendedTheme.colors.onAccentMuted,
 ) {
     val animatedColor by animateColorAsState(
         if (checked) selectedContentColor else contentColor,
@@ -367,7 +367,7 @@ private fun ToggleButton(
         color = animatedBackgroundColor,
         contentColor = animatedColor,
     ) {
-        Box(contentAlignment = Alignment.Center, modifier = Modifier.heightIn(min = 52.dp)) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.heightIn(min = 48.dp)) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -1188,7 +1188,7 @@ fun ThreadPage(
             ) { paddingValues ->
                 ModalBottomSheetLayout(
                     sheetState = bottomSheetState,
-                    sheetShape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
+                    sheetShape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp),
                     sheetBackgroundColor = ExtendedTheme.colors.windowBackground,
                     sheetContent = {
                         ThreadMenu(
@@ -2146,13 +2146,13 @@ private fun ThreadMenu(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Spacer(
             modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .height(2.dp)
-                .fillMaxWidth(0.12f)
+                .padding(top = 8.dp)
+                .width(36.dp)
+                .height(4.dp)
                 .clip(RoundedCornerShape(100))
                 .background(ExtendedTheme.colors.chip)
         )

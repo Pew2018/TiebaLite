@@ -111,17 +111,17 @@ internal class PrefsItem(
 )
 
 @Composable
-fun depend(key: String): Boolean {
+fun depend(key: String, defaultValue: Boolean = true): Boolean {
     return LocalPrefsDataStore.current.collectPreferenceAsState(
         key = booleanPreferencesKey(key),
-        defaultValue = true
+        defaultValue = defaultValue
     ).value
 }
 
 @Composable
-fun dependNot(key: String): Boolean {
+fun dependNot(key: String, defaultValue: Boolean = false): Boolean {
     return !LocalPrefsDataStore.current.collectPreferenceAsState(
         key = booleanPreferencesKey(key),
-        defaultValue = false
+        defaultValue = defaultValue
     ).value
 }

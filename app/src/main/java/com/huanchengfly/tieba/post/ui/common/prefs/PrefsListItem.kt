@@ -67,7 +67,8 @@ fun PrefsListItem(
     AnyLine.CustomListItem(
         modifier = modifier,
         minimalHeight,
-        styledIcon,
+        // Iconless preferences should begin at the standard 16dp content inset.
+        if (icon != null) styledIcon else null,
         styledSecondaryText,
         styledTrailing,
         styledText

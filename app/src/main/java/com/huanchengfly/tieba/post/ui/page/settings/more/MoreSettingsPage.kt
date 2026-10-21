@@ -5,10 +5,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.BugReport
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material.icons.outlined.OfflineBolt
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -19,10 +15,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.huanchengfly.tieba.post.BuildConfig
@@ -35,12 +29,9 @@ import com.huanchengfly.tieba.post.ui.common.prefs.dependNot
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.SwitchPref
 import com.huanchengfly.tieba.post.ui.common.prefs.widgets.TextPref
 import com.huanchengfly.tieba.post.ui.page.destinations.AboutPageDestination
-import com.huanchengfly.tieba.post.ui.page.settings.LeadingIcon
-import com.huanchengfly.tieba.post.ui.widgets.compose.AvatarIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.BackNavigationIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.LocalSnackbarHostState
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
-import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
 import com.huanchengfly.tieba.post.ui.widgets.compose.TitleCentredToolbar
 import com.huanchengfly.tieba.post.utils.ImageCacheUtil
 import com.huanchengfly.tieba.post.utils.appPreferences
@@ -93,15 +84,6 @@ fun MoreSettingsPage(
             if (context.appPreferences.showExperimentalFeatures) {
                 prefsItem {
                     SwitchPref(
-                        leadingIcon = {
-                            LeadingIcon {
-                                AvatarIcon(
-                                    icon = Icons.Outlined.BugReport,
-                                    size = Sizes.Small,
-                                    contentDescription = null,
-                                )
-                            }
-                        },
                         key = "checkCIUpdate",
                         title = stringResource(id = R.string.title_check_ci_update),
                         defaultChecked = false,
@@ -111,15 +93,6 @@ fun MoreSettingsPage(
             }
             prefsItem {
                 SwitchPref(
-                    leadingIcon = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = ImageVector.vectorResource(id = R.drawable.ic_chrome),
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
                     key = "use_webview",
                     title = stringResource(id = R.string.title_use_webview),
                     defaultChecked = true,
@@ -131,16 +104,7 @@ fun MoreSettingsPage(
             }
             prefsItem {
                 SwitchPref(
-                    leadingIcon = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = ImageVector.vectorResource(id = R.drawable.ic_today),
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    enabled = dependNot(key = "use_webview"),
+                    enabled = dependNot(key = "use_webview", defaultValue = true),
                     key = "use_custom_tabs",
                     title = stringResource(id = R.string.title_use_custom_tabs),
                     defaultChecked = true,
@@ -152,15 +116,6 @@ fun MoreSettingsPage(
             }
             prefsItem {
                 TextPref(
-                    leadingIcon = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = Icons.Outlined.OfflineBolt,
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
                     enabled = true,
                     title = stringResource(id = R.string.title_clear_picture_cache),
                     onClick = {
@@ -175,15 +130,6 @@ fun MoreSettingsPage(
             }
             prefsItem {
                 TextPref(
-                    leadingIcon = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = Icons.Outlined.Info,
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
                     enabled = true,
                     title = stringResource(id = R.string.title_about),
                     onClick = {
