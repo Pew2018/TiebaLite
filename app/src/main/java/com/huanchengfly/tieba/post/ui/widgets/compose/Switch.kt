@@ -99,7 +99,8 @@ private fun BoxScope.SwitchImpl(
     thumbValue: State<Float>,
     interactionSource: InteractionSource
 ) {
-    val elevation = 1.dp
+    // The slightly lifted thumb is characteristic of the classic Android switch.
+    val elevation = 2.dp
     val targetTrackColor by colors.trackColor(enabled, checked)
     val trackColor by animateColorAsState(
         targetValue = targetTrackColor,
@@ -132,12 +133,7 @@ private fun BoxScope.SwitchImpl(
         Modifier
             .align(Alignment.CenterStart)
             .offset { IntOffset(thumbValue.value.roundToInt(), 0) }
-//            .indication(
-//                interactionSource = interactionSource,
-//                indication = rememberRipple(bounded = false, radius = ThumbRippleRadius)
-//            )
             .requiredSize(ThumbDiameter)
-//            .shadow(elevation, CircleShape, clip = false)
             .shadow(elevation, CircleShape, clip = false)
             .background(resolvedThumbColor, CircleShape)
     )
@@ -210,7 +206,7 @@ object SwitchDefaults {
         checkedThumbColor: Color = ExtendedTheme.colors.switchOn,
         checkedTrackColor: Color = ExtendedTheme.colors.switchOn,
         checkedTrackAlpha: Float = 0.45f,
-        uncheckedThumbColor: Color = Color.White,
+        uncheckedThumbColor: Color = Color(0xFFEEEEEE),
         uncheckedTrackColor: Color = ExtendedTheme.colors.switchOff,
         uncheckedTrackAlpha: Float = 1f,
         disabledCheckedThumbColor: Color = checkedThumbColor

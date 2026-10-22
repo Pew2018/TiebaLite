@@ -278,7 +278,7 @@ private fun getLightDynamicColor(tonalPalette: TonalPalette): ExtendedColors {
         selectedBg = tonalPalette.secondary90,
         onSelectedBg = tonalPalette.secondary30,
         switchOn = tonalPalette.secondary40,
-        switchOff = if (false) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
+        switchOff = Color(0xFFD6D6D6),
         fab = tonalPalette.secondary40,
         selected = tonalPalette.secondary40,
     )
@@ -537,7 +537,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
                 nowTheme
             )
         ),
-        switchOff = if (ThemeUtil.isNightMode(nowTheme)) Color(0xFF5A5A5A) else Color(0xFFC4C4C4),
+        switchOff = if (ThemeUtil.isNightMode(nowTheme)) Color(0xFF5A5A5A) else Color(0xFFD6D6D6),
         fab = Color(seedColor),
         selected = Color(
             App.ThemeDelegate.getColorByAttr(
