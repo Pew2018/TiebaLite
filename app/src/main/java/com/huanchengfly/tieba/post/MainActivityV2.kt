@@ -81,6 +81,8 @@ import com.huanchengfly.tieba.post.components.ClipBoardThreadLink
 import com.huanchengfly.tieba.post.services.NotifyJobService
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.page.NavGraphs
+import com.huanchengfly.tieba.post.ui.page.reply.LocalReplySheetDismissHandlers
+import com.huanchengfly.tieba.post.ui.page.reply.ReplySheetDismissHandlers
 import com.huanchengfly.tieba.post.ui.page.destinations.ForumPageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.ThreadPageDestination
 import com.huanchengfly.tieba.post.ui.utils.DevicePosture
@@ -146,12 +148,15 @@ val LocalDestination = compositionLocalOf<DestinationSpec<*>?> { null }
 @Composable
 fun rememberBottomSheetNavigator(
     animationSpec: AnimationSpec<Float> = SwipeableDefaults.AnimationSpec,
-    skipHalfExpanded: Boolean = false
+    skipHalfExpanded: Boolean = false,
+    confirmValueChange: (ModalBottomSheetValue) -> Boolean = { true },
 ): BottomSheetNavigator {
+    val currentConfirm by androidx.compose.runtime.rememberUpdatedState(confirmValueChange)
     val sheetState = rememberModalBottomSheetState(
         ModalBottomSheetValue.Hidden,
         animationSpec = animationSpec,
-        skipHalfExpanded = skipHalfExpanded
+        skipHalfExpanded = skipHalfExpanded,
+        confirmValueChange = { currentConfirm(it) },
     )
     return remember(sheetState) { BottomSheetNavigator(sheetState) }
 }
@@ -469,7 +474,19 @@ class MainActivityV2 : BaseComposeActivity() {
             TranslucentThemeBackground {
                 val navController = rememberNavController()
                 val engine = TiebaNavHostDefaults.rememberNavHostEngine()
-                val navigator = TiebaNavHostDefaults.rememberBottomSheetNavigator()
+                val replyDismissHandlers = remember { ReplySheetDismissHandlers() }
+                val navigator = TiebaNavHostDefaults.rememberBottomSheetNavigator(
+                    confirmValueChange = { value ->
+                        val closeReply = replyDismissHandlers.close
+                        if (value == ModalBottomSheetValue.Hidden && closeReply != null &&
+                            !replyDismissHandlers.allowHide) {
+                            // Veto the scrim/accessibility dismissal until the reply host's
+                            // actual IME has finished hiding, then navigate away once.
+                            closeReply()
+                            false
+                        } else true
+                    }
+                )
                 val currentDestination by navController.currentDestinationAsState()
 
                 navController.navigatorProvider += navigator
@@ -489,6 +506,7 @@ class MainActivityV2 : BaseComposeActivity() {
                 CompositionLocalProvider(
                     LocalNavController provides navController,
                     LocalDestination provides currentDestination,
+                    LocalReplySheetDismissHandlers provides replyDismissHandlers,
                 ) {
                     ModalBottomSheetLayout(
                         bottomSheetNavigator = navigator,
@@ -608,8 +626,11 @@ private object TiebaNavHostDefaults {
 
     @OptIn(ExperimentalMaterialNavigationApi::class)
     @Composable
-    fun rememberBottomSheetNavigator(): BottomSheetNavigator = rememberBottomSheetNavigator(
-        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
-        skipHalfExpanded = true
+    fun rememberBottomSheetNavigator(
+        confirmValueChange: (ModalBottomSheetValue) -> Boolean = { true },
+    ): BottomSheetNavigator = rememberBottomSheetNavigator(
+        animationSpec = androidx.compose.animation.core.tween(durationMillis = 250),
+        skipHalfExpanded = true,
+        confirmValueChange = confirmValueChange,
     )
 }

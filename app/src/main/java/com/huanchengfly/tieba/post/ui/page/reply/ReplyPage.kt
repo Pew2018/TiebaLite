@@ -127,7 +127,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withTimeoutOrNull
 import org.litepal.LitePal
 import org.litepal.extension.deleteAllAsync
 import org.litepal.extension.findFirstAsync
@@ -162,55 +161,10 @@ fun ReplyDialog(
         onDismissRequest = { finish -> handlers.close?.invoke(finish) ?: finish() },
         onBackDismissRequest = { finish -> handlers.back?.invoke(finish) ?: finish() },
     ) {
-        val keyboardController = LocalSoftwareKeyboardController.current
-        val dialogView = androidx.compose.ui.platform.LocalView.current
-        val dialogWindow = com.huanchengfly.tieba.post.ui.widgets.compose.dialogs.getDialogWindow()
-        val density = LocalDensity.current
-        val imeInsets = WindowInsets.ime
-        val imeAnimationTarget = WindowInsets.imeAnimationTarget
-        val scope = rememberCoroutineScope()
-        val coordinator = remember(state) { ReplyDismissCoordinator() }
-        var pendingFinish by remember(state) { mutableStateOf<(() -> Unit)?>(null) }
-        fun imeVisible(): Boolean {
-            val platformVisible = androidx.core.view.ViewCompat.getRootWindowInsets(dialogView)
-                ?.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime()) == true
-            return platformVisible || imeInsets.getBottom(density) > 0 ||
-                imeAnimationTarget.getBottom(density) > 0
-        }
-        fun requestClose(finishDismiss: () -> Unit, closeDialog: Boolean) {
-            if (closeDialog) pendingFinish = finishDismiss
-            if (!coordinator.request(closeDialog)) return
-            // Use the focused View's actual input connection as well as the dialog controller.
-            dialogWindow?.currentFocus?.let { focused ->
-                hideKeyboard(focused.context, focused)
-                focused.clearFocus()
-            }
-            dialogWindow?.let { window ->
-                androidx.core.view.WindowCompat.getInsetsController(window, dialogView)
-                    .hide(androidx.core.view.WindowInsetsCompat.Type.ime())
-            }
-            keyboardController?.hide()
-            scope.launch {
-                withTimeoutOrNull(1500) {
-                    var settledFrames = 0
-                    while (settledFrames < 2) {
-                        androidx.compose.runtime.withFrameNanos { }
-                        settledFrames = if (imeVisible()) 0 else settledFrames + 1
-                    }
-                }
-                if (coordinator.imeHidden()) pendingFinish?.invoke()
-            }
-        }
-        fun closeAfterIme(finishDismiss: () -> Unit) {
-            requestClose(finishDismiss, closeDialog = true)
-        }
-        fun backAfterIme(finishDismiss: () -> Unit) {
-            requestClose(finishDismiss, closeDialog = !imeVisible())
-        }
-
+        val requestClose = rememberReplyDismissRequest()
         androidx.compose.runtime.SideEffect {
-            handlers.close = ::closeAfterIme
-            handlers.back = ::backAfterIme
+            handlers.close = { finish -> requestClose(true, finish) }
+            handlers.back = { finish -> requestClose(false, finish) }
         }
         Surface(
             modifier = Modifier.fillMaxWidth(),
@@ -800,7 +754,6 @@ internal fun ReplyPageContent(
     }
 }
 
-// TODO: 将软键盘状态相关逻辑抽离出来
 @Destination(style = DestinationStyleBottomSheet::class)
 @Composable
 fun ReplyPage(
@@ -816,9 +769,27 @@ fun ReplyPage(
     tbs: String? = null,
     viewModel: ReplyViewModel = pageViewModel(),
 ) {
+    val sheetHandlers = LocalReplySheetDismissHandlers.current
+    val requestDismiss = rememberReplyDismissRequest()
+    val latestRequest by androidx.compose.runtime.rememberUpdatedState(requestDismiss)
+    fun finishDismiss() {
+        sheetHandlers?.allowHide = true
+        navigator.navigateUp()
+    }
+    DisposableEffect(sheetHandlers) {
+        sheetHandlers?.close = { latestRequest(true, ::finishDismiss) }
+        onDispose {
+            sheetHandlers?.close = null
+            sheetHandlers?.allowHide = false
+        }
+    }
+    // Registered before the content so its accessory panels retain back priority.
+    MyBackHandler(enabled = true, currentScreen = ReplyPageDestination) {
+        requestDismiss(false, ::finishDismiss)
+    }
     ReplyPageContent(
         viewModel = viewModel,
-        onBack = { navigator.navigateUp() },
+        onBack = { requestDismiss(true, ::finishDismiss) },
         forumId = forumId,
         forumName = forumName,
         threadId = threadId,
