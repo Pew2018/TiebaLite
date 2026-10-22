@@ -33,7 +33,6 @@ import androidx.compose.material.ProvideTextStyle
 import androidx.compose.material.ScrollableTabRow
 import androidx.compose.material.Surface
 import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
 import androidx.compose.material.TabRowDefaults
 import androidx.compose.material.TabRowDefaults.tabIndicatorOffset
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
