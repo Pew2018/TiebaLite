@@ -164,10 +164,10 @@ internal val ThumbDiameter = 20.dp
 
 private val SwitchWidth = 44.dp
 private val SwitchHeight = 24.dp
-// Place each thumb center over a rounded track end cap using the same coordinate space.
 private val TrackStart = (SwitchWidth - TrackWidth) / 2
-private val ThumbStart = TrackStart + (TrackHeight - ThumbDiameter) / 2
-private val ThumbEnd = ThumbStart + TrackWidth - TrackHeight
+// Align thumb centers with the rounded end-cap centers after the track stroke inset.
+private val ThumbStart = TrackStart + (TrackHeight - ThumbDiameter) / 2 + TrackStrokeWidth / 2
+private val ThumbEnd = ThumbStart + TrackWidth - TrackHeight - TrackStrokeWidth
 
 private val AnimationSpec = TweenSpec<Float>(durationMillis = 180)
 
