@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
 import kotlinx.coroutines.delay
 
 enum class ClassicRefreshPhase { Idle, Pulling, Armed, Refreshing, Settling }
