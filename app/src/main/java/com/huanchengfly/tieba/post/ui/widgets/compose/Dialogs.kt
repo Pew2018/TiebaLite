@@ -28,6 +28,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -333,34 +334,34 @@ fun BaseDialog(
     var isActiveClose by remember {
         mutableStateOf(false)
     }
+    var dismissRequested by remember { mutableStateOf(false) }
+    val currentDismissRequest by rememberUpdatedState(onDismissRequest)
+    val currentBackDismissRequest by rememberUpdatedState(onBackDismissRequest)
+    val finishDismiss = { isActiveClose = true }
+    val requestDismiss: () -> Unit = {
+        if (!dismissRequested && !isActiveClose) {
+            dismissRequested = true
+            currentDismissRequest?.invoke(finishDismiss) ?: finishDismiss()
+        }
+    }
+    val requestBackDismiss: () -> Unit = {
+        if (!dismissRequested && !isActiveClose) {
+            currentBackDismissRequest?.invoke(finishDismiss) ?: requestDismiss()
+        }
+    }
     LaunchedEffect(dialogState.show) {
         if (dialogState.show) {
             showDialog = true
             isActiveClose = false
-        } else {
-            isActiveClose = true
+            dismissRequested = false
+        } else if (showDialog && !isActiveClose) {
+            requestDismiss()
         }
     }
     if (showDialog) {
         val dialogScope = DialogScope(
-            onDismiss = {
-                isActiveClose = true
-            },
+            onDismiss = requestDismiss,
         )
-        val requestDismiss = {
-            if (onDismissRequest != null) {
-                onDismissRequest.invoke { dialogState.show = false }
-            } else {
-                isActiveClose = true
-            }
-        }
-        val requestBackDismiss = {
-            if (onBackDismissRequest != null) {
-                onBackDismissRequest.invoke { dialogState.show = false }
-            } else {
-                requestDismiss()
-            }
-        }
         AnyPopDialog(
             isActiveClose = isActiveClose,
             onDismissRequest = if (cancelable || cancelableOnTouchOutside) requestDismiss else null,

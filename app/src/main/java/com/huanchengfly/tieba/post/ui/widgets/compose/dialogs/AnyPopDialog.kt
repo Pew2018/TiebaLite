@@ -33,9 +33,11 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalView
@@ -96,7 +98,13 @@ private fun DialogFullScreen(
         }
     }
     val handleOutsideDismiss = {
-        if (!isBackPress) onDismissRequest?.invoke()
+        if (!isBackPress) {
+            if (onDismissRequest != null) onDismissRequest.invoke()
+            else {
+                isBackPress = true
+                isAnimateLayout = false
+            }
+        }
     }
 
     Dialog(
@@ -171,14 +179,16 @@ private fun DialogFullScreen(
                         DirectionState.LEFT -> fadeIn() + slideInHorizontally(initialOffsetX = { -it })
                         DirectionState.RIGHT -> fadeIn() + slideInHorizontally(initialOffsetX = { it })
                         DirectionState.CENTER -> fadeIn() + scaleIn(initialScale = 0.8F)
-                        else -> fadeIn() + slideInVertically(initialOffsetY = { it })
+                        else -> fadeIn(tween(properties.durationMillis)) +
+                            slideInVertically(tween(properties.durationMillis), initialOffsetY = { it })
                     },
                     exit = when (properties.direction) {
                         DirectionState.TOP -> fadeOut() + slideOutVertically(targetOffsetY = { -it })
                         DirectionState.LEFT -> fadeOut() + slideOutHorizontally(targetOffsetX = { -it })
                         DirectionState.RIGHT -> fadeOut() + slideOutHorizontally(targetOffsetX = { it })
                         DirectionState.CENTER -> fadeOut() + scaleOut(targetScale = 0.8F)
-                        else -> fadeOut() + slideOutVertically(targetOffsetY = { it })
+                        else -> fadeOut(tween(properties.durationMillis)) +
+                            slideOutVertically(tween(properties.durationMillis), targetOffsetY = { it })
                     }
                 ) {
                     content()
@@ -287,10 +297,11 @@ private fun Modifier.clickOutSideModifier(
     onTap: () -> Unit,
 ) = this.then(
     if (dismissOnClickOutside) {
-        Modifier.pointerInput(Unit) {
-            detectTapGestures(onTap = {
-                onTap()
-            })
+        Modifier.composed {
+            val currentOnTap by rememberUpdatedState(onTap)
+            Modifier.pointerInput(Unit) {
+                detectTapGestures(onTap = { currentOnTap() })
+            }
         }
     } else Modifier
 )

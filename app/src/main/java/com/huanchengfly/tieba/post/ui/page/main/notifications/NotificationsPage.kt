@@ -84,6 +84,8 @@ fun NotificationsPage(
                     ) {
                         pages.forEachIndexed { index, pair ->
                             Tab(
+                                selectedContentColor = ExtendedTheme.colors.onTopBar,
+                                unselectedContentColor = ExtendedTheme.colors.onTopBarSecondary,
                                 text = { Text(text = pair.first) },
                                 selected = pagerState.currentPage == index,
                                 onClick = {
@@ -159,6 +161,8 @@ fun NotificationsPage(
                 ) {
                     pages.forEachIndexed { index, pair -> 
                         Tab(
+                            selectedContentColor = ExtendedTheme.colors.onTopBar,
+                            unselectedContentColor = ExtendedTheme.colors.onTopBarSecondary,
                             text = { Text(text = pair.first) },
                             selected = pagerState.currentPage == index,
                             onClick = {

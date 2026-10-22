@@ -128,7 +128,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.sample
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.coroutines.flow.first
 import org.litepal.LitePal
 import org.litepal.extension.deleteAllAsync
 import org.litepal.extension.findFirstAsync
@@ -160,8 +159,8 @@ fun ReplyDialog(
     BaseDialog(
         dialogState = state,
         imePadding = false,
-        onDismissRequest = { finish -> handlers.close?.invoke(finish) },
-        onBackDismissRequest = { finish -> handlers.back?.invoke(finish) },
+        onDismissRequest = { finish -> handlers.close?.invoke(finish) ?: finish() },
+        onBackDismissRequest = { finish -> handlers.back?.invoke(finish) ?: finish() },
     ) {
         val keyboardController = LocalSoftwareKeyboardController.current
         val dialogView = androidx.compose.ui.platform.LocalView.current
@@ -170,45 +169,43 @@ fun ReplyDialog(
         val imeInsets = WindowInsets.ime
         val imeAnimationTarget = WindowInsets.imeAnimationTarget
         val scope = rememberCoroutineScope()
-        var dismissPending by remember(state) { mutableStateOf(false) }
-        fun closeAfterIme(finishDismiss: () -> Unit) {
-            if (dismissPending) return
-            dismissPending = true
+        val coordinator = remember(state) { ReplyDismissCoordinator() }
+        var pendingFinish by remember(state) { mutableStateOf<(() -> Unit)?>(null) }
+        fun imeVisible(): Boolean {
+            val platformVisible = androidx.core.view.ViewCompat.getRootWindowInsets(dialogView)
+                ?.isVisible(androidx.core.view.WindowInsetsCompat.Type.ime()) == true
+            return platformVisible || imeInsets.getBottom(density) > 0 ||
+                imeAnimationTarget.getBottom(density) > 0
+        }
+        fun requestClose(finishDismiss: () -> Unit, closeDialog: Boolean) {
+            if (closeDialog) pendingFinish = finishDismiss
+            if (!coordinator.request(closeDialog)) return
+            // Use the focused View's actual input connection as well as the dialog controller.
+            dialogWindow?.currentFocus?.let { focused ->
+                hideKeyboard(focused.context, focused)
+                focused.clearFocus()
+            }
             dialogWindow?.let { window ->
                 androidx.core.view.WindowCompat.getInsetsController(window, dialogView)
                     .hide(androidx.core.view.WindowInsetsCompat.Type.ime())
             }
             keyboardController?.hide()
             scope.launch {
-                withTimeoutOrNull(900) {
-                    snapshotFlow {
-                        imeInsets.getBottom(density) == 0 && imeAnimationTarget.getBottom(density) == 0
-                    }.filter { it }.first()
+                withTimeoutOrNull(1500) {
+                    var settledFrames = 0
+                    while (settledFrames < 2) {
+                        androidx.compose.runtime.withFrameNanos { }
+                        settledFrames = if (imeVisible()) 0 else settledFrames + 1
+                    }
                 }
-                finishDismiss()
+                if (coordinator.imeHidden()) pendingFinish?.invoke()
             }
         }
+        fun closeAfterIme(finishDismiss: () -> Unit) {
+            requestClose(finishDismiss, closeDialog = true)
+        }
         fun backAfterIme(finishDismiss: () -> Unit) {
-            if (dismissPending) return
-            if (imeInsets.getBottom(density) > 0 || imeAnimationTarget.getBottom(density) > 0) {
-                dismissPending = true
-                dialogWindow?.let { window ->
-                    androidx.core.view.WindowCompat.getInsetsController(window, dialogView)
-                        .hide(androidx.core.view.WindowInsetsCompat.Type.ime())
-                }
-                keyboardController?.hide()
-                scope.launch {
-                    withTimeoutOrNull(900) {
-                        snapshotFlow {
-                            imeInsets.getBottom(density) == 0 && imeAnimationTarget.getBottom(density) == 0
-                        }.filter { it }.first()
-                    }
-                    // System back consumes this press when it hid the IME; a later back closes.
-                    dismissPending = false
-                }
-            } else {
-                closeAfterIme(finishDismiss)
-            }
+            requestClose(finishDismiss, closeDialog = !imeVisible())
         }
 
         androidx.compose.runtime.SideEffect {
@@ -223,7 +220,7 @@ fun ReplyDialog(
         ) {
             ReplyPageContent(
                 viewModel = pageViewModel(),
-                onBack = { closeAfterIme { dismiss() } },
+                onBack = { dismiss() },
                 forumId = args.forumId,
                 forumName = args.forumName,
                 threadId = args.threadId,

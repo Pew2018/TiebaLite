@@ -79,6 +79,8 @@ private fun ColumnScope.ExplorePageTab(
     ) {
         pages.fastForEachIndexed { index, item ->
             Tab(
+                selectedContentColor = ExtendedTheme.colors.onTopBar,
+                unselectedContentColor = ExtendedTheme.colors.onTopBarSecondary,
                 text = { item.name(pagerState.currentPage == index) },
                 selected = pagerState.currentPage == index,
                 onClick = {

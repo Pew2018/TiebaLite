@@ -37,8 +37,11 @@ class SystemBarController {
     }
 
     /** 浅色表面 → 深色图标；深色表面 → 浅色图标 */
-    fun darkIconsFor(surface: Color): Boolean =
-        AndroidColor.luminance(surface.toArgb()) > 0.5
+    fun darkIconsFor(surface: Color): Boolean {
+        val background = surface.toArgb()
+        return ThemeColorMath.contrastInt(background, AndroidColor.BLACK) >=
+            ThemeColorMath.contrastInt(background, AndroidColor.WHITE)
+    }
 }
 
 val LocalSystemBarController = staticCompositionLocalOf<SystemBarController?> { null }
