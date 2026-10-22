@@ -211,25 +211,17 @@ object ThemeUtil {
                 runCatching { Color.parseColor(value) }.getOrNull()
             } ?: if (theme == THEME_AMOLED_DARK) Color.BLACK else 0xFF212121.toInt()
         }
-        if (theme == THEME_AMOLED_DARK) {
-            // AMOLED controls the page surface, while the toolbar still follows the
-            // selected palette. Users who want a black toolbar can set it explicitly.
-            val palette = selectedPaletteTheme()
-            if (palette == THEME_CUSTOM) {
-                return INSTANCE.appPreferences.customPrimaryColor?.let { value ->
-                    runCatching { Color.parseColor(value) }.getOrNull()
-                } ?: 0xFF0071CD.toInt()
-            }
-            return ThemePresets.presetOf(palette)?.seedColor ?: 0xFF0071CD.toInt()
-        }
+        // Both classic-dark and AMOLED are surface choices. Their toolbar seed always
+        // comes from the saved light palette, including a custom palette's fallback dark ID.
+        val palette = if (isNightMode(theme)) selectedPaletteTheme() else theme
         val night = isNightMode(theme)
-        if (theme == THEME_CUSTOM) {
+        if (palette == THEME_CUSTOM) {
             return INSTANCE.appPreferences.customPrimaryColor?.let { value ->
                 runCatching { Color.parseColor(value) }.getOrNull()
             } ?: 0xFF0071CD.toInt()
         }
-        if (ThemePresets.isPreset(theme)) {
-            val seed = ThemePresets.presetOf(theme)!!.seedColor
+        if (ThemePresets.isPreset(palette)) {
+            val seed = ThemePresets.presetOf(palette)!!.seedColor
             return seed
         }
         return when (mainToolbarStyle()) {

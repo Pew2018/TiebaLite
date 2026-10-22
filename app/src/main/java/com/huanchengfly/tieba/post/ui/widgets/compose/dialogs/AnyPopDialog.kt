@@ -152,6 +152,8 @@ private fun DialogFullScreen(
                     isAnimateLayout = true
                 }
             }
+            // Register before children so accessory-panel BackHandlers get first refusal.
+            BackHandler(enabled = properties.dismissOnBackPress, onBack = handleBackPress)
             Box(
                 modifier = Modifier.fillMaxSize(),
                 contentAlignment = when (properties.direction) {
@@ -194,7 +196,6 @@ private fun DialogFullScreen(
                     content()
                 }
             }
-            BackHandler(enabled = properties.dismissOnBackPress, onBack = handleBackPress)
         }
     )
 }
