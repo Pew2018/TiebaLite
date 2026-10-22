@@ -249,8 +249,8 @@ fun TitleCentredToolbar(
     insets: Boolean = true,
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
-    content: (@Composable ColumnScope.() -> Unit)? = null,
     expandedTitle: String? = null,
+    content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     TitleCentredToolbar(
         title = {
@@ -272,8 +272,8 @@ fun TitleCentredToolbar(
     insets: Boolean = true,
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
-    content: (@Composable ColumnScope.() -> Unit)? = null,
     expandedTitle: String? = null,
+    content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val roleColors = rememberRoleColors()
     TopAppBarContainer(
@@ -327,8 +327,8 @@ fun Toolbar(
     title: String,
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
-    content: (@Composable ColumnScope.() -> Unit)? = null,
     expandedTitle: String? = null,
+    content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     Toolbar(
         title = {
@@ -348,8 +348,8 @@ fun Toolbar(
     actions: @Composable RowScope.() -> Unit = {},
     backgroundColor: Color = ExtendedTheme.colors.topBar,
     contentColor: Color = ExtendedTheme.colors.onTopBar,
-    content: (@Composable ColumnScope.() -> Unit)? = null,
     expandedTitle: String? = null,
+    content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val roleColors = rememberRoleColors()
     val collapse = LocalToolbarCollapseFraction.current
