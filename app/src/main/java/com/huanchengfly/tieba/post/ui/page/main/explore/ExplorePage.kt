@@ -67,7 +67,8 @@ private fun ColumnScope.ExplorePageTab(
         indicator = { tabPositions ->
             PagerTabIndicator(
                 pagerState = pagerState,
-                tabPositions = tabPositions
+                tabPositions = tabPositions,
+                indicatorColor = ExtendedTheme.colors.onTopBar,
             )
         },
         divider = {},
@@ -148,11 +149,9 @@ fun ExplorePage() {
 
     MyScaffold(
         backgroundColor = Color.Transparent,
-        collapsibleToolbar = true,
         topBar = {
             Toolbar(
                 title = stringResource(id = R.string.title_explore),
-                expandedTitle = stringResource(id = R.string.title_explore),
                 navigationIcon = accountNavIconIfCompact(),
                 actions = {
                     ActionItem(

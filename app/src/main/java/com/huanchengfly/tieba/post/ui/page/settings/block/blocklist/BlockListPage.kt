@@ -137,12 +137,13 @@ fun BlockListPage(
                         indicator = { tabPositions ->
                             PagerTabIndicator(
                                 pagerState = pagerState,
-                                tabPositions = tabPositions
+                                tabPositions = tabPositions,
+                                indicatorColor = ExtendedTheme.colors.onSettingsTopBar,
                             )
                         },
                         divider = {},
                         backgroundColor = Color.Transparent,
-                        contentColor = ExtendedTheme.colors.onTopBar,
+                        contentColor = ExtendedTheme.colors.onSettingsTopBar,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Tab(

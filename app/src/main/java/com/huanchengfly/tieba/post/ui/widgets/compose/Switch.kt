@@ -1,6 +1,7 @@
 package com.huanchengfly.tieba.post.ui.widgets.compose
 
 import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -53,7 +54,7 @@ fun Switch(
                 enabled = enabled,
                 role = Role.Switch,
                 interactionSource = interactionSource,
-                indication = null
+                indication = rememberRipple(bounded = false, radius = 24.dp)
             )
         } else {
             Modifier
@@ -64,7 +65,11 @@ fun Switch(
             .then(toggleableModifier)
             .swipeable(
                 state = swipeableState,
-                anchors = mapOf(minBound to false, maxBound to true),
+                anchors = if (isRtl) {
+                    mapOf(minBound to true, maxBound to false)
+                } else {
+                    mapOf(minBound to false, maxBound to true)
+                },
                 thresholds = { _, _ -> FractionalThreshold(0.5f) },
                 orientation = Orientation.Horizontal,
                 enabled = enabled && onCheckedChange != null,
@@ -94,7 +99,12 @@ private fun BoxScope.SwitchImpl(
     interactionSource: InteractionSource
 ) {
     val elevation = 1.dp
-    val trackColor by colors.trackColor(enabled, checked)
+    val targetTrackColor by colors.trackColor(enabled, checked)
+    val trackColor by animateColorAsState(
+        targetValue = targetTrackColor,
+        animationSpec = TweenSpec(durationMillis = 160),
+        label = "classicSwitchTrackColor"
+    )
     Canvas(Modifier.align(Alignment.Center).fillMaxSize()) {
         drawTrack(
             trackColor = trackColor,
@@ -103,7 +113,12 @@ private fun BoxScope.SwitchImpl(
             strokeWidth = TrackStrokeWidth.toPx(),
         )
     }
-    val thumbColor by colors.thumbColor(enabled, checked)
+    val targetThumbColor by colors.thumbColor(enabled, checked)
+    val thumbColor by animateColorAsState(
+        targetValue = targetThumbColor,
+        animationSpec = TweenSpec(durationMillis = 160),
+        label = "classicSwitchThumbColor"
+    )
     val elevationOverlay = LocalElevationOverlay.current
     val absoluteElevation = LocalAbsoluteElevation.current + elevation
     val resolvedThumbColor =
@@ -134,10 +149,11 @@ private fun DrawScope.drawTrack(
     strokeWidth: Float,
     fill: Boolean = false,
 ) {
+    val trackLeft = (size.width - trackWidth) / 2 + strokeWidth / 2
     val topY = center.y - trackHeight / 2 + strokeWidth / 2
     drawRoundRect(
         color = trackColor,
-        topLeft = Offset(strokeWidth / 2, topY),
+        topLeft = Offset(trackLeft, topY),
         size = Size(width = trackWidth - strokeWidth, height = trackHeight - strokeWidth),
         cornerRadius = CornerRadius(trackHeight / 2),
         style = if (fill) Fill else Stroke(width = strokeWidth, cap = StrokeCap.Round)
@@ -151,8 +167,10 @@ internal val ThumbDiameter = 20.dp
 
 private val SwitchWidth = 44.dp
 private val SwitchHeight = 24.dp
-private val ThumbStart = (SwitchWidth - TrackWidth) / 2
-private val ThumbEnd = SwitchWidth - ThumbStart - ThumbDiameter
+// Place each thumb center over a rounded track end cap using the same coordinate space.
+private val TrackStart = (SwitchWidth - TrackWidth) / 2
+private val ThumbStart = TrackStart + (TrackHeight - ThumbDiameter) / 2
+private val ThumbEnd = ThumbStart + TrackWidth - TrackHeight
 
 private val AnimationSpec = TweenSpec<Float>(durationMillis = 180)
 

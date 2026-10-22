@@ -396,6 +396,7 @@ private enum class TabSlots {
 fun PagerTabIndicator(
     pagerState: PagerState,
     tabPositions: List<TabPosition>,
+    indicatorColor: Color = ExtendedTheme.colors.progressColor,
 ) {
     if (tabPositions.isNotEmpty()) {
         val currentPage = minOf(tabPositions.lastIndex, pagerState.currentPage)
@@ -422,7 +423,7 @@ fun PagerTabIndicator(
                 .offset(x = indicatorOffset)
                 .width(indicatorWidth)
                 .height(2.dp)
-                .background(color = ExtendedTheme.colors.progressColor)
+                .background(color = indicatorColor)
         )
     }
 }

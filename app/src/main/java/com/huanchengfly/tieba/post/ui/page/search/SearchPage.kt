@@ -414,7 +414,8 @@ private fun ColumnScope.SearchTabRow(
         indicator = { tabPositions ->
             PagerTabIndicator(
                 pagerState = pagerState,
-                tabPositions = tabPositions
+                tabPositions = tabPositions,
+                indicatorColor = ExtendedTheme.colors.onTopBar,
             )
         },
         divider = {},

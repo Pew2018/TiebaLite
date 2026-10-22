@@ -28,7 +28,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
@@ -98,7 +97,6 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.ui.widgets.compose.TextButton
 import com.huanchengfly.tieba.post.ui.widgets.compose.TipScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.Toolbar
-import com.huanchengfly.tieba.post.ui.widgets.compose.LocalToolbarCollapseConnection
 import com.huanchengfly.tieba.post.ui.widgets.compose.accountNavIconIfCompact
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberMenuState
@@ -134,7 +132,7 @@ private fun ForumItemPlaceholder(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp)
+            .heightIn(min = 60.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         if (showAvatar) {
@@ -180,7 +178,7 @@ private fun ForumItemPlaceholder(
             Text(
                 text = "0",
                 color = ExtendedTheme.colors.onChip,
-                fontSize = 11.sp,
+                fontSize = 12.sp,
                 fontWeight = FontWeight.Normal,
                 modifier = Modifier.align(Center)
             )
@@ -239,11 +237,14 @@ private fun ForumItemContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 56.dp)
+            .heightIn(min = 60.dp)
             .padding(horizontal = 16.dp, vertical = 8.dp),
     ) {
         if (showAvatar) {
-            Row {
+            Row(
+                verticalAlignment = CenterVertically,
+                modifier = Modifier.align(CenterVertically),
+            ) {
                 Avatar(data = item.avatar, size = 40.dp, contentDescription = null)
                 Spacer(modifier = Modifier.width(14.dp))
             }
@@ -276,7 +277,7 @@ private fun ForumItemContent(
                 Text(
                     text = "Lv.${item.levelId}",
                     color = ExtendedTheme.colors.onChip,
-                    fontSize = 11.sp,
+                    fontSize = 12.sp,
                     fontWeight = FontWeight.Normal,
                     modifier = Modifier.align(CenterVertically)
                 )
@@ -405,12 +406,9 @@ fun HomePage(
 
     MyScaffold(
         backgroundColor = Color.Transparent,
-        collapsibleToolbar = true,
-        collapseOnRoot = false,
         topBar = {
             Toolbar(
                 title = stringResource(id = R.string.title_main),
-                expandedTitle = stringResource(id = R.string.title_main),
                 navigationIcon = accountNavIconIfCompact(),
                 actions = {
                     ActionItem(
@@ -444,7 +442,6 @@ fun HomePage(
         Box(
             modifier = Modifier
                 .pullRefresh(pullRefreshState.state)
-            .then(LocalToolbarCollapseConnection.current?.let { Modifier.nestedScroll(it) } ?: Modifier)
                 .padding(contentPaddings)
         ) {
             Column {

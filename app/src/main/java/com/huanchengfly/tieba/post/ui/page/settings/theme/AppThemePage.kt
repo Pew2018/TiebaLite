@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Icon
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
@@ -348,7 +350,7 @@ private fun AppThemeContent(
                 .padding(paddingValues)
         ) {
             item(key = "theme_preview") {
-                ThemePreviewRow(theme = currentTheme)
+                ThemePreviewRow()
             }
             // Keep the palette near the top so the main theme choice is immediately visible.
             ThemeGroup.entries.forEach { group ->
@@ -526,30 +528,115 @@ private fun AppThemeContent(
 }
 
 @Composable
-private fun ThemePreviewRow(theme: String) {
-    val background = Color(ThemeUtil.mainToolbarColor(theme))
-    val foreground = Color(ThemeUtil.onToolbarColor(theme, ThemeUtil.mainToolbarColor(theme)))
-    Row(
+private fun ThemePreviewRow() {
+    val background = ExtendedTheme.colors.settingsTopBar
+    val foreground = ExtendedTheme.colors.onSettingsTopBar
+    val surface = MaterialTheme.colors.surface
+    val accent = ExtendedTheme.colors.primary
+    Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .height(56.dp)
-            .background(background)
-            .padding(horizontal = 16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .background(surface)
     ) {
-        Text(
-            text = stringResource(id = R.string.app_name),
-            color = foreground,
-            style = MaterialTheme.typography.subtitle1,
-            fontWeight = FontWeight.Medium,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .background(background)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = stringResource(id = R.string.app_name),
+                color = foreground,
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                imageVector = Icons.Rounded.Search,
+                contentDescription = null,
+                tint = foreground,
+                modifier = Modifier.size(24.dp),
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(38.dp)
+                .background(background),
+        ) {
+            PreviewTab(text = stringResource(id = R.string.title_theme), selected = true, foreground = foreground)
+            PreviewTab(text = stringResource(id = R.string.title_settings), selected = false, foreground = foreground)
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .padding(horizontal = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.ColorLens,
+                contentDescription = null,
+                tint = accent,
+                modifier = Modifier.size(24.dp),
+            )
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                Text(
+                    text = stringResource(id = R.string.title_theme),
+                    color = ExtendedTheme.colors.text,
+                    style = MaterialTheme.typography.body1,
+                )
+                Text(
+                    text = stringResource(id = R.string.theme_preview_subtitle),
+                    color = ExtendedTheme.colors.textSecondary,
+                    style = MaterialTheme.typography.caption,
+                )
+            }
+            RadioButton(
+                selected = true,
+                onClick = null,
+                colors = RadioButtonDefaults.colors(selectedColor = accent),
+            )
+        }
+    }
+}
+
+@Composable
+private fun RowScope.PreviewTab(
+    text: String,
+    selected: Boolean,
+    foreground: Color,
+) {
+    Column(
+        modifier = Modifier
+            .weight(1f)
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
             modifier = Modifier.weight(1f),
-        )
-        androidx.compose.material.Icon(
-            imageVector = Icons.Rounded.Search,
-            contentDescription = null,
-            tint = foreground,
-            modifier = Modifier.size(24.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = text,
+                color = foreground.copy(alpha = if (selected) 1f else 0.72f),
+                style = MaterialTheme.typography.caption,
+                fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
+            )
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(2.dp)
+                .background(if (selected) foreground else Color.Transparent)
         )
     }
 }
