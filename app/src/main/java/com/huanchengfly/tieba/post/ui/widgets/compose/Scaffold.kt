@@ -19,10 +19,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -68,11 +78,45 @@ fun MyScaffold(
     drawerScrimColor: Color = DrawerDefaults.scrimColor,
     backgroundColor: Color = MaterialTheme.colors.background,
     contentColor: Color = contentColorFor(backgroundColor),
+    collapsibleToolbar: Boolean = false,
+    collapseOnRoot: Boolean = true,
     content: @Composable (PaddingValues) -> Unit
 ) {
+    val density = LocalDensity.current
+    val maxCollapsePx = with(density) { 96.dp.toPx() }
+    val collapseOffset = remember(collapsibleToolbar) { mutableStateOf(0f) }
+    val nestedConnection = remember(collapsibleToolbar, maxCollapsePx) {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                if (!collapsibleToolbar || available.y >= 0f) return Offset.Zero
+                val before = collapseOffset.value
+                val after = (before - available.y).coerceIn(0f, maxCollapsePx)
+                collapseOffset.value = after
+                return Offset(0f, -(after - before))
+            }
+
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource,
+            ): Offset {
+                if (!collapsibleToolbar || available.y <= 0f) return Offset.Zero
+                val before = collapseOffset.value
+                val after = (before - available.y).coerceAtLeast(0f)
+                collapseOffset.value = after
+                return Offset(0f, after - before)
+            }
+        }
+    }
+    val collapseFraction = if (collapsibleToolbar) {
+        toolbarCollapseFraction(collapseOffset.value, maxCollapsePx)
+    } else 0f
+    val scaffoldModifier = if (collapsibleToolbar && collapseOnRoot) modifier.nestedScroll(nestedConnection) else modifier
     CompositionLocalProvider(LocalSnackbarHostState provides scaffoldState.snackbarHostState) {
+        CompositionLocalProvider(LocalToolbarCollapseFraction provides collapseFraction) {
+        CompositionLocalProvider(LocalToolbarCollapseConnection provides nestedConnection.takeIf { collapsibleToolbar }) {
         Scaffold(
-            modifier,
+            scaffoldModifier,
             scaffoldState,
             topBar,
             bottomBar,
@@ -91,5 +135,7 @@ fun MyScaffold(
             contentColor,
             content
         )
+        }
+        }
     }
 }

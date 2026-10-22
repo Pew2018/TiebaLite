@@ -7,6 +7,14 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ClassicRefreshCycleTest {
+    @Test fun toolbarCollapseProgressIsContinuousAndClamped() {
+        assertEquals(0f, toolbarCollapseFraction(0f, 96f), 0f)
+        assertEquals(0.5f, toolbarCollapseFraction(48f, 96f), 0f)
+        assertEquals(1f, toolbarCollapseFraction(120f, 96f), 0f)
+        assertEquals(0f, toolbarCollapseFraction(-12f, 96f), 0f)
+        assertEquals(0f, toolbarCollapseFraction(12f, 0f), 0f)
+    }
+
     @Test fun classicToolbarPreservesWhiteInkAcrossBrightAndDarkPalettes() {
         listOf(0xFF009688, 0xFF03A9F4, 0xFFFFEB3B, 0xFFE91E63, 0xFF212121,
             0xFF000000, 0xFFFFFFFF, 0xFF9C27B0, 0xFF0071CD).forEach { seed ->

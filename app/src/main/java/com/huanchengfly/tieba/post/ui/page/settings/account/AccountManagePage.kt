@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -46,6 +45,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.AvatarIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.BackNavigationIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
 import com.huanchengfly.tieba.post.ui.widgets.compose.TitleCentredToolbar
+import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.AccountUtil.AllAccounts
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
@@ -64,10 +64,12 @@ fun AccountManagePage(
     // 设置类页面角色：顶栏/状态栏使用 经典深色
     CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
 
-    Scaffold(
+    MyScaffold(
         backgroundColor = Color.Transparent,
+        collapsibleToolbar = true,
         topBar = {
             TitleCentredToolbar(
+                expandedTitle = stringResource(id = R.string.title_account_manage),
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_account_manage),

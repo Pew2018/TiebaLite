@@ -46,8 +46,10 @@ fun BlockSettingsPage(
     val context = LocalContext.current
     MyScaffold(
         backgroundColor = Color.Transparent,
+        collapsibleToolbar = true,
         topBar = {
             TitleCentredToolbar(
+                expandedTitle = stringResource(id = R.string.title_block_settings),
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_block_settings),

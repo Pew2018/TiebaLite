@@ -40,6 +40,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
@@ -48,6 +49,7 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.google.accompanist.drawablepainter.rememberDrawablePainter
 import com.huanchengfly.tieba.post.R
@@ -64,6 +66,12 @@ import com.huanchengfly.tieba.post.ui.page.destinations.LoginPageDestination
 import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
 import com.huanchengfly.tieba.post.utils.StringUtil
+
+val LocalToolbarCollapseFraction = androidx.compose.runtime.staticCompositionLocalOf { 0f }
+val LocalToolbarCollapseConnection = androidx.compose.runtime.staticCompositionLocalOf<androidx.compose.ui.input.nestedscroll.NestedScrollConnection?> { null }
+
+internal fun toolbarCollapseFraction(offsetPx: Float, maxOffsetPx: Float): Float =
+    if (maxOffsetPx <= 0f) 0f else (offsetPx / maxOffsetPx).coerceIn(0f, 1f)
 
 @Composable
 fun rememberRoleColors(): RoleColors {
@@ -242,6 +250,7 @@ fun TitleCentredToolbar(
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     content: (@Composable ColumnScope.() -> Unit)? = null,
+    expandedTitle: String? = null,
 ) {
     TitleCentredToolbar(
         title = {
@@ -249,6 +258,7 @@ fun TitleCentredToolbar(
         },
         modifier = modifier,
         insets = insets,
+        expandedTitle = expandedTitle,
         navigationIcon = navigationIcon,
         actions = actions,
         content = content
@@ -263,6 +273,7 @@ fun TitleCentredToolbar(
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     content: (@Composable ColumnScope.() -> Unit)? = null,
+    expandedTitle: String? = null,
 ) {
     val roleColors = rememberRoleColors()
     TopAppBarContainer(
@@ -288,9 +299,14 @@ fun TitleCentredToolbar(
                                 .weight(1f),
                             contentAlignment = Alignment.CenterStart
                         ) {
-                            ProvideTextStyle(value = MaterialTheme.typography.h6) {
-                                ProvideContentColor(color = roleColors.onTopBar) {
-                                    title()
+                            val collapse = LocalToolbarCollapseFraction.current
+                            Box(modifier = Modifier.graphicsLayer {
+                                alpha = if (expandedTitle == null) 1f else collapse
+                            }) {
+                                ProvideTextStyle(value = MaterialTheme.typography.h6) {
+                                    ProvideContentColor(color = roleColors.onTopBar) {
+                                        title()
+                                    }
                                 }
                             }
                         }
@@ -301,6 +317,7 @@ fun TitleCentredToolbar(
         },
         modifier = modifier,
         insets = insets,
+        expandedTitle = expandedTitle,
         content = content
     )
 }
@@ -311,11 +328,13 @@ fun Toolbar(
     navigationIcon: (@Composable () -> Unit)? = null,
     actions: @Composable RowScope.() -> Unit = {},
     content: (@Composable ColumnScope.() -> Unit)? = null,
+    expandedTitle: String? = null,
 ) {
     Toolbar(
         title = {
             Text(text = title)
         },
+        expandedTitle = expandedTitle,
         navigationIcon = navigationIcon,
         actions = actions,
         content = content
@@ -330,8 +349,10 @@ fun Toolbar(
     backgroundColor: Color = ExtendedTheme.colors.topBar,
     contentColor: Color = ExtendedTheme.colors.onTopBar,
     content: (@Composable ColumnScope.() -> Unit)? = null,
+    expandedTitle: String? = null,
 ) {
     val roleColors = rememberRoleColors()
+    val collapse = LocalToolbarCollapseFraction.current
     val resolvedBackground = backgroundColor.takeIf { it != ExtendedTheme.colors.topBar } ?: roleColors.topBar
     val resolvedContent = contentColor.takeIf { it != ExtendedTheme.colors.onTopBar } ?: roleColors.onTopBar
     TopAppBarContainer(
@@ -340,7 +361,11 @@ fun Toolbar(
                 modifier = Modifier.height(56.dp),
                 title = {
                     ProvideTextStyle(value = MaterialTheme.typography.h6) {
-                        ProvideContentColor(color = resolvedContent, content = title)
+                        Box(modifier = Modifier.graphicsLayer {
+                            alpha = if (expandedTitle == null) 1f else collapse
+                        }) {
+                            ProvideContentColor(color = resolvedContent, content = title)
+                        }
                     }
                 },
                 actions = {
@@ -358,6 +383,7 @@ fun Toolbar(
                 elevation = 0.dp
             )
         },
+        expandedTitle = expandedTitle,
         content = content
     )
 }
@@ -370,6 +396,7 @@ fun TopAppBarContainer(
     modifier: Modifier = Modifier,
     insets: Boolean = true,
     content: (@Composable ColumnScope.() -> Unit)? = null,
+    expandedTitle: String? = null,
 ) {
     val statusBarModifier = if (insets) {
         Modifier.windowInsetsTopHeight(WindowInsets.statusBars)
@@ -378,6 +405,7 @@ fun TopAppBarContainer(
     }
     val coroutineScope = rememberCoroutineScope()
     val roleColors = rememberRoleColors()
+    val collapse = LocalToolbarCollapseFraction.current
     // 系统栏图标明暗由实际绘制在状态栏后方的表面决定
     ReportStatusBarSurface(surface = roleColors.statusBar)
     Column(modifier) {
@@ -400,6 +428,26 @@ fun TopAppBarContainer(
                 ),
             content = topBar
         )
+        if (expandedTitle != null) {
+            val expandedHeight = 96.dp * (1f - collapse)
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(expandedHeight)
+                    .background(roleColors.topBar)
+                    .graphicsLayer { alpha = 1f - collapse }
+                    .padding(start = 20.dp, end = 20.dp, bottom = 12.dp),
+                contentAlignment = Alignment.BottomStart,
+            ) {
+                Text(
+                    text = expandedTitle,
+                    color = roleColors.onTopBar,
+                    fontSize = (32f - 12f * collapse).sp,
+                    fontWeight = FontWeight.Medium,
+                    maxLines = 1,
+                )
+            }
+        }
         content?.let {
             Column(
                 modifier = Modifier

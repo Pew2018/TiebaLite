@@ -12,6 +12,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -40,10 +41,8 @@ fun Switch(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     colors: SwitchColors = SwitchDefaults.colors(),
 ) {
-    val strokeWidth = with(LocalDensity.current) { TrackStrokeWidth.toPx() }
-    val gap = with(LocalDensity.current) { Gap.toPx() }
-    val minBound = strokeWidth + gap
-    val maxBound = minBound + with(LocalDensity.current) { ThumbPathLength.toPx() }
+    val minBound = with(LocalDensity.current) { ThumbStart.toPx() }
+    val maxBound = with(LocalDensity.current) { ThumbEnd.toPx() }
     val swipeableState = rememberSwipeableStateFor(checked, onCheckedChange ?: {}, AnimationSpec)
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val toggleableModifier =
@@ -94,22 +93,7 @@ private fun BoxScope.SwitchImpl(
     thumbValue: State<Float>,
     interactionSource: InteractionSource
 ) {
-    val interactions = remember { mutableStateListOf<Interaction>() }
-
-    LaunchedEffect(interactionSource) {
-        interactionSource.interactions.collect { interaction ->
-            when (interaction) {
-                is PressInteraction.Press -> interactions.add(interaction)
-                is PressInteraction.Release -> interactions.remove(interaction.press)
-                is PressInteraction.Cancel -> interactions.remove(interaction.press)
-                is DragInteraction.Start -> interactions.add(interaction)
-                is DragInteraction.Stop -> interactions.remove(interaction.start)
-                is DragInteraction.Cancel -> interactions.remove(interaction.start)
-            }
-        }
-    }
-
-    val elevation = 0.dp
+    val elevation = 1.dp
     val trackColor by colors.trackColor(enabled, checked)
     Canvas(Modifier.align(Alignment.Center).fillMaxSize()) {
         drawTrack(trackColor, TrackWidth.toPx(), TrackStrokeWidth.toPx())
@@ -133,6 +117,7 @@ private fun BoxScope.SwitchImpl(
 //            )
             .requiredSize(ThumbDiameter)
 //            .shadow(elevation, CircleShape, clip = false)
+            .shadow(elevation, CircleShape, clip = false)
             .background(resolvedThumbColor, CircleShape)
     )
 }
@@ -149,16 +134,16 @@ private fun DrawScope.drawTrack(trackColor: Color, trackWidth: Float, strokeWidt
     )
 }
 
-internal val TrackWidth = 36.dp
+internal val TrackWidth = 34.dp
 internal val TrackStrokeWidth = 2.dp
-internal val ThumbDiameter = 14.dp
+internal val ThumbDiameter = 20.dp
 
-private val SwitchWidth = TrackWidth
-private val SwitchHeight = 20.dp
-private val Gap = (SwitchHeight - TrackStrokeWidth - ThumbDiameter) / 2
-private val ThumbPathLength = TrackWidth - ThumbDiameter - TrackStrokeWidth * 2 - Gap * 2
+private val SwitchWidth = 44.dp
+private val SwitchHeight = 24.dp
+private val ThumbStart = (SwitchWidth - TrackWidth) / 2
+private val ThumbEnd = SwitchWidth - ThumbStart - ThumbDiameter
 
-private val AnimationSpec = TweenSpec<Float>(durationMillis = 120)
+private val AnimationSpec = TweenSpec<Float>(durationMillis = 180)
 
 @Stable
 interface SwitchColors {

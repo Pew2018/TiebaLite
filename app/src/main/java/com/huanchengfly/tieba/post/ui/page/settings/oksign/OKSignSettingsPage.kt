@@ -54,9 +54,11 @@ fun OKSignSettingsPage(
 
     val coroutineScope = rememberCoroutineScope()
     MyScaffold(
+        collapsibleToolbar = true,
         backgroundColor = Color.Transparent,
         topBar = {
             TitleCentredToolbar(
+                expandedTitle = stringResource(id = R.string.title_oksign),
                 title = stringResource(id = R.string.title_oksign),
                 navigationIcon = {
                     BackNavigationIcon(onBackPressed = { navigator.navigateUp() })

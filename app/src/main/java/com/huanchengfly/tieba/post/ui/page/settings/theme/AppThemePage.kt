@@ -27,6 +27,7 @@ import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ColorLens
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -324,6 +325,7 @@ private fun AppThemeContent(
 
     MyScaffold(
         backgroundColor = Color.Transparent,
+        collapsibleToolbar = true,
         topBar = {
             TitleCentredToolbar(
                 title = {
@@ -332,6 +334,7 @@ private fun AppThemeContent(
                         fontWeight = FontWeight.Medium, style = MaterialTheme.typography.h6
                     )
                 },
+                expandedTitle = stringResource(id = R.string.title_theme),
                 navigationIcon = {
                     BackNavigationIcon(onBackPressed = { navigator.navigateUp() })
                 }
@@ -344,6 +347,25 @@ private fun AppThemeContent(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            item(key = "theme_preview") {
+                ThemePreviewRow(theme = currentTheme)
+            }
+            // Keep the palette near the top so the main theme choice is immediately visible.
+            ThemeGroup.entries.forEach { group ->
+                item(key = "header_preset_${group.name}") {
+                    SectionHeader(text = stringResource(id = group.titleRes))
+                }
+                itemsIndexed(
+                    items = ThemePresets.presets.filter { it.group == group },
+                    key = { _, preset -> preset.id }
+                ) { _, preset ->
+                    ThemePresetRow(
+                        preset = preset,
+                        selected = ThemePresets.presetOf(selectedPalette)?.id == preset.id,
+                        onClick = { ThemeUtil.selectPalette(preset.id) }
+                    )
+                }
+            }
             item(key = "header_display_mode") {
                 SectionHeader(text = stringResource(id = R.string.title_display_mode))
             }
@@ -409,25 +431,6 @@ private fun AppThemeContent(
                     }
                 )
             }
-
-
-            // 预设采用普通 56dp 单选行；选中态由稳定主题 ID 唯一决定。
-            ThemeGroup.entries.forEach { group ->
-                item(key = "header_preset_${group.name}") {
-                    SectionHeader(text = stringResource(id = group.titleRes))
-                }
-                itemsIndexed(
-                    items = ThemePresets.presets.filter { it.group == group },
-                    key = { _, preset -> preset.id }
-                ) { _, preset ->
-                    ThemePresetRow(
-                        preset = preset,
-                        selected = ThemePresets.presetOf(selectedPalette)?.id == preset.id,
-                        onClick = { ThemeUtil.selectPalette(preset.id) }
-                    )
-                }
-            }
-
             item(key = "header_custom") {
                 SectionHeader(text = stringResource(id = R.string.title_custom_color_section))
             }
@@ -519,6 +522,35 @@ private fun AppThemeContent(
                 Spacer(modifier = Modifier.size(16.dp))
             }
         }
+    }
+}
+
+@Composable
+private fun ThemePreviewRow(theme: String) {
+    val background = Color(ThemeUtil.mainToolbarColor(theme))
+    val foreground = Color(ThemeUtil.onToolbarColor(theme, ThemeUtil.mainToolbarColor(theme)))
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .height(56.dp)
+            .background(background)
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = stringResource(id = R.string.app_name),
+            color = foreground,
+            style = MaterialTheme.typography.subtitle1,
+            fontWeight = FontWeight.Medium,
+            modifier = Modifier.weight(1f),
+        )
+        androidx.compose.material.Icon(
+            imageVector = Icons.Rounded.Search,
+            contentDescription = null,
+            tint = foreground,
+            modifier = Modifier.size(24.dp),
+        )
     }
 }
 

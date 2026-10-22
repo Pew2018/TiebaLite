@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -43,6 +42,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.AvatarIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.BackNavigationIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.Sizes
 import com.huanchengfly.tieba.post.ui.widgets.compose.TitleCentredToolbar
+import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
 import com.huanchengfly.tieba.post.utils.StringUtil
 import com.ramcosta.composedestinations.annotation.Destination
@@ -113,10 +113,12 @@ fun SettingsPage(
     CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
 
     ProvideNavigator(navigator = navigator) {
-        Scaffold(
+        MyScaffold(
             backgroundColor = Color.Transparent,
+            collapsibleToolbar = true,
             topBar = {
                 TitleCentredToolbar(
+                    expandedTitle = stringResource(id = R.string.title_settings),
                     title = {
                         Text(
                             text = stringResource(id = R.string.title_settings),

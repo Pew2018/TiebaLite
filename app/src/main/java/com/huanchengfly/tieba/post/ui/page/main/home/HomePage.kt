@@ -28,13 +28,13 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
@@ -65,7 +65,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.airbnb.lottie.compose.LottieAnimation
@@ -99,6 +98,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.ui.widgets.compose.TextButton
 import com.huanchengfly.tieba.post.ui.widgets.compose.TipScreen
 import com.huanchengfly.tieba.post.ui.widgets.compose.Toolbar
+import com.huanchengfly.tieba.post.ui.widgets.compose.LocalToolbarCollapseConnection
 import com.huanchengfly.tieba.post.ui.widgets.compose.accountNavIconIfCompact
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberDialogState
 import com.huanchengfly.tieba.post.ui.widgets.compose.rememberMenuState
@@ -114,60 +114,6 @@ private fun getGridCells(context: Context, listSingle: Boolean = context.appPref
         GridCells.Fixed(1)
     } else {
         GridCells.Adaptive(180.dp)
-    }
-}
-
-@Preview("SearchBoxPreview")
-@Composable
-fun SearchBoxPreview() {
-    SearchBox(
-        backgroundColor = Color(0xFFF8F8F8),
-        contentColor = Color(0xFFBFBFBF),
-        onClick =  {}
-    )
-}
-
-@Composable
-fun SearchBox(
-    modifier: Modifier = Modifier,
-    backgroundColor: Color = ExtendedTheme.colors.topBarSurface,
-    contentColor: Color = ExtendedTheme.colors.onTopBarSurface,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .background(ExtendedTheme.colors.topBar)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Surface(
-            color = backgroundColor,
-            contentColor = contentColor,
-            shape = RoundedCornerShape(2.dp),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clickable(onClick = onClick)
-        ) {
-            Row(
-                verticalAlignment = CenterVertically,
-                modifier = Modifier
-                    .padding(horizontal = 12.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Search,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .align(CenterVertically)
-                        .size(24.dp),
-                )
-                Spacer(modifier = Modifier.width(16.dp))
-                Text(
-                    text = stringResource(id = R.string.hint_search),
-                    modifier = Modifier.align(CenterVertically),
-                    fontSize = 14.sp
-                )
-            }
-        }
     }
 }
 
@@ -459,11 +405,20 @@ fun HomePage(
 
     MyScaffold(
         backgroundColor = Color.Transparent,
+        collapsibleToolbar = true,
+        collapseOnRoot = false,
         topBar = {
             Toolbar(
                 title = stringResource(id = R.string.title_main),
+                expandedTitle = stringResource(id = R.string.title_main),
                 navigationIcon = accountNavIconIfCompact(),
                 actions = {
+                    ActionItem(
+                        icon = Icons.Rounded.Search,
+                        contentDescription = stringResource(id = R.string.title_search)
+                    ) {
+                        navigator.navigate(SearchPageDestination)
+                    }
                     ActionItem(
                         icon = ImageVector.vectorResource(id = R.drawable.ic_oksign),
                         contentDescription = stringResource(id = R.string.title_oksign)
@@ -489,12 +444,10 @@ fun HomePage(
         Box(
             modifier = Modifier
                 .pullRefresh(pullRefreshState.state)
+            .then(LocalToolbarCollapseConnection.current?.let { Modifier.nestedScroll(it) } ?: Modifier)
                 .padding(contentPaddings)
         ) {
             Column {
-                SearchBox(modifier = Modifier.padding(bottom = 4.dp)) {
-                    navigator.navigate(SearchPageDestination)
-                }
                 StateScreen(
                     isEmpty = isEmpty,
                     isError = isError,

@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -40,6 +39,7 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoadHorizontalPager
 import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
 import com.huanchengfly.tieba.post.ui.widgets.compose.TabRow
 import com.huanchengfly.tieba.post.ui.widgets.compose.Toolbar
+import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.ui.widgets.compose.accountNavIconIfCompact
 import com.huanchengfly.tieba.post.utils.AccountUtil.LocalAccount
 import kotlinx.collections.immutable.ImmutableList
@@ -146,11 +146,13 @@ fun ExplorePage() {
         coroutineScope.emitGlobalEvent(GlobalEvent.Refresh(pages[pagerState.currentPage].id))
     }
 
-    Scaffold(
+    MyScaffold(
         backgroundColor = Color.Transparent,
+        collapsibleToolbar = true,
         topBar = {
             Toolbar(
                 title = stringResource(id = R.string.title_explore),
+                expandedTitle = stringResource(id = R.string.title_explore),
                 navigationIcon = accountNavIconIfCompact(),
                 actions = {
                     ActionItem(
