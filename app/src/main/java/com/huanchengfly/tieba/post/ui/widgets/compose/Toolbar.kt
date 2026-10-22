@@ -395,8 +395,8 @@ fun TopAppBarContainer(
     topBar: @Composable ColumnScope.() -> Unit,
     modifier: Modifier = Modifier,
     insets: Boolean = true,
-    content: (@Composable ColumnScope.() -> Unit)? = null,
     expandedTitle: String? = null,
+    content: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val statusBarModifier = if (insets) {
         Modifier.windowInsetsTopHeight(WindowInsets.statusBars)
