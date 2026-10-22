@@ -425,7 +425,7 @@ class MainActivityV2 : BaseComposeActivity() {
         }
     }
 
-    @OptIn(ExperimentalMaterialNavigationApi::class)
+    @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
     @Composable
     override fun Content() {
         val okSignAlertDialogState = rememberDialogState()
@@ -624,7 +624,7 @@ private object TiebaNavHostDefaults {
         ),
     )
 
-    @OptIn(ExperimentalMaterialNavigationApi::class)
+    @OptIn(ExperimentalMaterialNavigationApi::class, ExperimentalMaterialApi::class)
     @Composable
     fun rememberBottomSheetNavigator(
         confirmValueChange: (ModalBottomSheetValue) -> Boolean = { true },
