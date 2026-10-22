@@ -54,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -79,6 +80,7 @@ import com.huanchengfly.tieba.post.goToActivity
 import com.huanchengfly.tieba.post.models.database.Block
 import com.huanchengfly.tieba.post.toastShort
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
 import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
 import com.huanchengfly.tieba.post.ui.common.windowsizeclass.WindowWidthSizeClass
 import com.huanchengfly.tieba.post.ui.page.ProvideNavigator
@@ -794,10 +796,17 @@ private fun UserProfileDetail(
             if (showBtn) {
                 Button(
                     onClick = onBtnClick,
-                    colors = if (user.get { has_concerned } == 0 || isSelf) {
-                        ButtonDefaults.buttonColors()
-                    } else {
-                        ButtonDefaults.outlinedButtonColors()
+                    colors = when {
+                        isSelf -> ButtonDefaults.buttonColors(
+                            backgroundColor = Color(
+                                ThemeColorMath.classicToolbarBackgroundInt(
+                                    ExtendedTheme.colors.accentFill.toArgb()
+                                )
+                            ),
+                            contentColor = Color.White,
+                        )
+                        user.get { has_concerned } == 0 -> ButtonDefaults.buttonColors()
+                        else -> ButtonDefaults.outlinedButtonColors()
                     },
                     border = if (user.get { has_concerned } == 0 || isSelf) {
                         null

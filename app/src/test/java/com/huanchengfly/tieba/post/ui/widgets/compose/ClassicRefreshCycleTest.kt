@@ -17,7 +17,8 @@ class ClassicRefreshCycleTest {
 
     @Test fun classicToolbarPreservesWhiteInkAcrossBrightAndDarkPalettes() {
         listOf(0xFF009688, 0xFF03A9F4, 0xFFFFEB3B, 0xFFE91E63, 0xFF212121,
-            0xFF000000, 0xFFFFFFFF, 0xFF9C27B0, 0xFF0071CD).forEach { seed ->
+            0xFF000000, 0xFFFFFFFF, 0xFF9C27B0, 0xFF0071CD,
+            0xFF8BC34A).forEach { seed ->
             val background = ThemeColorMath.classicToolbarBackgroundInt(seed.toInt())
             assertTrue(ThemeColorMath.contrastInt(background, 0xFFFFFFFF.toInt()) >= 4.5)
             assertEquals(0xFFFFFFFF.toInt(), ThemeColorMath.toolbarForegroundInt(background))

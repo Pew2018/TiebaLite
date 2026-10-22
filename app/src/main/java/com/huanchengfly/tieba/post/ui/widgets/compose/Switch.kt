@@ -206,7 +206,7 @@ object SwitchDefaults {
         checkedThumbColor: Color = ExtendedTheme.colors.switchOn,
         checkedTrackColor: Color = ExtendedTheme.colors.switchOn,
         checkedTrackAlpha: Float = 0.45f,
-        uncheckedThumbColor: Color = Color(0xFFEEEEEE),
+        uncheckedThumbColor: Color = Color(0xFFE6E6E6),
         uncheckedTrackColor: Color = ExtendedTheme.colors.switchOff,
         uncheckedTrackAlpha: Float = 1f,
         disabledCheckedThumbColor: Color = checkedThumbColor

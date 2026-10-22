@@ -1,12 +1,9 @@
 package com.huanchengfly.tieba.post.ui.page.history.list
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -33,7 +30,6 @@ import com.huanchengfly.tieba.post.ui.page.destinations.ForumPageDestination
 import com.huanchengfly.tieba.post.ui.page.destinations.ThreadPageDestination
 import com.huanchengfly.tieba.post.ui.page.thread.ThreadPageFrom
 import com.huanchengfly.tieba.post.ui.widgets.compose.Avatar
-import com.huanchengfly.tieba.post.ui.widgets.compose.Chip
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoad
 import com.huanchengfly.tieba.post.ui.widgets.compose.LoadMoreLayout
 import com.huanchengfly.tieba.post.ui.widgets.compose.LocalSnackbarHostState
@@ -45,7 +41,6 @@ import com.huanchengfly.tieba.post.ui.widgets.compose.rememberMenuState
 import com.huanchengfly.tieba.post.utils.DateTimeUtils
 import com.huanchengfly.tieba.post.utils.HistoryUtil
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun HistoryListPage(
     type: Int,
@@ -111,19 +106,6 @@ fun HistoryListPage(
                 state = lazyListState
             ) {
                 if (todayHistoryData.isNotEmpty()) {
-                    stickyHeader(key = "TodayHistoryHeader") {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(ExtendedTheme.colors.background)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Chip(
-                                text = stringResource(id = R.string.title_history_today),
-                                invertColor = true
-                            )
-                        }
-                    }
                     items(
                         items = todayHistoryData,
                         key = { it.id }
@@ -157,16 +139,6 @@ fun HistoryListPage(
                     }
                 }
                 if (beforeHistoryData.isNotEmpty()) {
-                    stickyHeader(key = "BeforeHistoryHeader") {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(ExtendedTheme.colors.background)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Chip(text = stringResource(id = R.string.title_history_before))
-                        }
-                    }
                     items(
                         items = beforeHistoryData,
                         key = { it.id }
