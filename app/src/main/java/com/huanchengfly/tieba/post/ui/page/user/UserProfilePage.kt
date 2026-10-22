@@ -754,6 +754,7 @@ private fun ToolbarUserTitle(
     user: ImmutableHolder<User>,
     modifier: Modifier = Modifier,
 ) {
+    val toolbarForeground = ExtendedTheme.colors.onTopBar
     UserHeader(
         avatar = {
             Avatar(
@@ -768,8 +769,10 @@ private fun ToolbarUserTitle(
                     LocalContext.current,
                     user.get { name },
                     user.get { nameShow },
-                    LocalContentColor.current
-                )
+                    toolbarForeground
+                ),
+                color = toolbarForeground,
+                style = MaterialTheme.typography.h6,
             )
         },
         modifier = modifier

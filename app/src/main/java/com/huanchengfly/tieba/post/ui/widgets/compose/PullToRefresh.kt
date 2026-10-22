@@ -16,6 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.common.theme.compose.pullRefreshIndicator
+import com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+import com.huanchengfly.tieba.post.ui.common.theme.compose.toArgbInt
 import kotlinx.coroutines.delay
 
 enum class ClassicRefreshPhase { Idle, Pulling, Armed, Refreshing, Settling }
@@ -137,7 +139,11 @@ fun ClassicPullRefreshIndicator(
         state = state,
         modifier = modifier,
         backgroundColor = backgroundColor,
-        contentColor = contentColor,
+        contentColor = if (ThemeColorMath.contrastInt(backgroundColor.toArgbInt(), contentColor.toArgbInt()) >= 3.0) {
+            contentColor
+        } else {
+            Color(ThemeColorMath.readableOnInt(backgroundColor.toArgbInt()))
+        },
         scale = false,
     )
 }

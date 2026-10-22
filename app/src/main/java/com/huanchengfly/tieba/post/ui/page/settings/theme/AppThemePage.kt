@@ -206,13 +206,7 @@ private fun AppThemeContent(
                     val normalized = normalizedHexRgb(customTopBarHex) ?: return@DialogPositiveButton
                     val color = android.graphics.Color.parseColor(normalized)
                     context.appPreferences.customTopBarColor = normalized
-                    if (context.appPreferences.customTopBarContentAuto) {
-                        context.appPreferences.customTopBarContentColor = String.format(
-                            "#%06X",
-                            0xFFFFFF and com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-                                .readableOnInt(color)
-                        )
-                    }
+                    // Changing the background must not overwrite the user's saved manual ink.
                     customTopBarHex = normalized
                     ThemeUtil.notifyThemeSettingsChanged()
                 }

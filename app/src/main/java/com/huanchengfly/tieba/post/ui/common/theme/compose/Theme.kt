@@ -550,8 +550,8 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
         settingsTopBar = Color(ThemeUtil.settingsToolbarColor(nowTheme)),
         settingsStatusBar = Color(ThemeUtil.settingsStatusBarColor(nowTheme)),
         onSettingsTopBar = Color(ThemeUtil.onToolbarColor(nowTheme, ThemeUtil.settingsToolbarColor(nowTheme))),
-        onSettingsTopBarSecondary = Color(ThemeUtil.onToolbarColor(nowTheme, ThemeUtil.settingsToolbarColor(nowTheme)))
-            .copy(alpha = 0.7f),
+        onSettingsTopBarSecondary = Color(ThemeColorMath.toolbarSecondaryInt(
+            ThemeUtil.settingsToolbarColor(nowTheme), ThemeUtil.onToolbarColor(nowTheme))),
         // 用途色：从种子派生，全部经过对比度核查
         accentFill = Color(seedColor),
         onAccentFill = Color(ThemeColorMath.readableOnInt(seedArgb)),
@@ -577,11 +577,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
         if (value.isNullOrBlank()) fallback else Color(android.graphics.Color.parseColor(value))
     }.getOrDefault(fallback)
     val primary = customColor(context.appPreferences.customPrimaryColor, defaults.primary)
-    val topBar = if (context.appPreferences.toolbarPrimaryColor) {
-        primary
-    } else {
-        customColor(context.appPreferences.customTopBarColor, defaults.topBar)
-    }
+    val topBar = Color(ThemeUtil.mainToolbarColor(nowTheme))
     // Keep the manual foreground preference independent from the background-source preference.
     // The legacy View path already follows this rule; Compose must resolve the same final role.
     val onTopBar = Color(ThemeUtil.onToolbarColor(nowTheme, topBar.toArgbInt()))
@@ -590,7 +586,7 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
     return defaults.copy(
         primary = primary, accent = accent, topBar = topBar,
         statusBar = Color(ThemeColorMath.darkenInt(topBar.toArgbInt(), 0.08f)),
-        onTopBar = onTopBar, onTopBarSecondary = onTopBar.copy(alpha = 0.72f),
+        onTopBar = onTopBar, onTopBarSecondary = Color(ThemeColorMath.toolbarSecondaryInt(topBar.toArgbInt(), onTopBar.toArgbInt())),
         onTopBarActive = onTopBar, switchOn = accent, fab = accent, selected = accent,
         accentFill = accent, onAccentFill = Color(ThemeColorMath.readableOnInt(accentArgb)),
         accentText = Color(ThemeColorMath.readableAccentTextInt(accentArgb, backgroundColorArgb)),

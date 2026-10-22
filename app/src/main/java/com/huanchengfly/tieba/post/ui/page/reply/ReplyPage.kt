@@ -154,29 +154,30 @@ fun ReplyDialog(
     args: ReplyArgs,
     state: DialogState = rememberDialogState(),
 ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
-    val density = LocalDensity.current
-    val imeInsets = WindowInsets.ime
-    val imeAnimationTarget = WindowInsets.imeAnimationTarget
-    val scope = rememberCoroutineScope()
-    var dismissPending by remember(state) { mutableStateOf(false) }
-    fun closeAfterIme(finishDismiss: () -> Unit) {
-        if (dismissPending) return
-        dismissPending = true
-        keyboardController?.hide()
-        scope.launch {
-            withTimeoutOrNull(900) {
-                snapshotFlow {
-                    imeInsets.getBottom(density) == 0 && imeAnimationTarget.getBottom(density) == 0
-                }.filter { it }.first()
-            }
-            finishDismiss()
-        }
-    }
-    fun backAfterIme(finishDismiss: () -> Unit) {
-        if (dismissPending) return
-        if (imeInsets.getBottom(density) > 0 || imeAnimationTarget.getBottom(density) > 0) {
+    // The activity's IME insets can already be zero while this separate Dialog owns the IME.
+    // Bind handlers from INSIDE the dialog composition, using its window and keyboard owner.
+    val handlers = remember(state) { ReplyDismissHandlers() }
+    BaseDialog(
+        dialogState = state,
+        imePadding = false,
+        onDismissRequest = { finish -> handlers.close?.invoke(finish) },
+        onBackDismissRequest = { finish -> handlers.back?.invoke(finish) },
+    ) {
+        val keyboardController = LocalSoftwareKeyboardController.current
+        val dialogView = androidx.compose.ui.platform.LocalView.current
+        val dialogWindow = com.huanchengfly.tieba.post.ui.widgets.compose.dialogs.getDialogWindow()
+        val density = LocalDensity.current
+        val imeInsets = WindowInsets.ime
+        val imeAnimationTarget = WindowInsets.imeAnimationTarget
+        val scope = rememberCoroutineScope()
+        var dismissPending by remember(state) { mutableStateOf(false) }
+        fun closeAfterIme(finishDismiss: () -> Unit) {
+            if (dismissPending) return
             dismissPending = true
+            dialogWindow?.let { window ->
+                androidx.core.view.WindowCompat.getInsetsController(window, dialogView)
+                    .hide(androidx.core.view.WindowInsetsCompat.Type.ime())
+            }
             keyboardController?.hide()
             scope.launch {
                 withTimeoutOrNull(900) {
@@ -184,19 +185,36 @@ fun ReplyDialog(
                         imeInsets.getBottom(density) == 0 && imeAnimationTarget.getBottom(density) == 0
                     }.filter { it }.first()
                 }
-                // System back consumes this press when it hid the IME; a later back closes.
-                dismissPending = false
+                finishDismiss()
             }
-        } else {
-            closeAfterIme(finishDismiss)
         }
-    }
-    BaseDialog(
-        dialogState = state,
-        imePadding = false,
-        onDismissRequest = ::closeAfterIme,
-        onBackDismissRequest = ::backAfterIme,
-    ) {
+        fun backAfterIme(finishDismiss: () -> Unit) {
+            if (dismissPending) return
+            if (imeInsets.getBottom(density) > 0 || imeAnimationTarget.getBottom(density) > 0) {
+                dismissPending = true
+                dialogWindow?.let { window ->
+                    androidx.core.view.WindowCompat.getInsetsController(window, dialogView)
+                        .hide(androidx.core.view.WindowInsetsCompat.Type.ime())
+                }
+                keyboardController?.hide()
+                scope.launch {
+                    withTimeoutOrNull(900) {
+                        snapshotFlow {
+                            imeInsets.getBottom(density) == 0 && imeAnimationTarget.getBottom(density) == 0
+                        }.filter { it }.first()
+                    }
+                    // System back consumes this press when it hid the IME; a later back closes.
+                    dismissPending = false
+                }
+            } else {
+                closeAfterIme(finishDismiss)
+            }
+        }
+
+        androidx.compose.runtime.SideEffect {
+            handlers.close = ::closeAfterIme
+            handlers.back = ::backAfterIme
+        }
         Surface(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(topStart = 3.dp, topEnd = 3.dp),
@@ -219,6 +237,11 @@ fun ReplyDialog(
             )
         }
     }
+}
+
+private class ReplyDismissHandlers {
+    var close: ((() -> Unit) -> Unit)? = null
+    var back: ((() -> Unit) -> Unit)? = null
 }
 
 @OptIn(

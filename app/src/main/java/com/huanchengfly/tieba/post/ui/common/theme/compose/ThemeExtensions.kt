@@ -4,11 +4,8 @@ import androidx.compose.ui.graphics.Color
 import com.huanchengfly.tieba.post.utils.ThemeUtil
 
 val ExtendedColors.pullRefreshIndicator: Color
-    get() = if (ThemeUtil.isTranslucentTheme(theme)) {
-        windowBackground
-    } else {
-        indicator
-    }
+    // The floating disc is a surface, not another copy of the accent-coloured glyph.
+    get() = windowBackground
 
 val ExtendedColors.loadMoreIndicator: Color
     get() = if (ThemeUtil.isTranslucentTheme(theme)) {

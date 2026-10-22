@@ -548,9 +548,8 @@ class App : Application(), SketchFactory {
                         return context.resolveColorSafe("theme_color_toolbar_item_secondary_$theme", attrId)
                     }
                     val foreground = ThemeUtil.onToolbarColor(theme)
-                    return Color.argb(
-                        178, Color.red(foreground), Color.green(foreground), Color.blue(foreground)
-                    )
+                    return com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
+                        .toolbarSecondaryInt(ThemeUtil.mainToolbarColor(theme), foreground)
                 }
 
                 R.attr.colorIndicator -> {

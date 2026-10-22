@@ -564,7 +564,7 @@
     <string name="summary_custom_top_bar_color">独立设置标准页面顶栏背景；前景色可自动适配或手动指定</string>
     <string name="title_top_bar_content_section">顶栏文字与图标</string>
     <string name="title_top_bar_content_auto">自动匹配文字与图标颜色</string>
-    <string name="summary_top_bar_content_auto">自动选择易读颜色；关闭后可手动指定标题和图标颜色</string>
+    <string name="summary_top_bar_content_auto">白色优先；跟随配色时适度加深顶栏以保证易读。固定背景会自动选择合适的深浅文字</string>
     <string name="title_custom_top_bar_content_color">手动设置顶栏前景色</string>
     <string name="summary_custom_top_bar_content_color">当前颜色：%1$s</string>
     <string name="warning_low_toolbar_contrast">对比度为 %1$s:1，普通文字可能不易辨认。可改用更高对比度颜色或恢复自动模式。</string>

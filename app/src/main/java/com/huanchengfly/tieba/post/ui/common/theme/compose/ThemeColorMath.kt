@@ -13,6 +13,34 @@ import androidx.compose.ui.graphics.toArgb
  */
 object ThemeColorMath {
 
+    /** White-first classic toolbar: darken only the derived toolbar, never the saved seed. */
+    fun classicToolbarBackgroundInt(seed: Int): Int {
+        val opaque = compositeOnInt(seed, 0xFFFAFAFA.toInt())
+        if (contrastInt(opaque, 0xFFFFFFFF.toInt()) >= 4.5) return opaque
+        var low = 0f
+        var high = 1f
+        repeat(16) {
+            val mid = (low + high) / 2f
+            if (contrastInt(darkenInt(opaque, mid), 0xFFFFFFFF.toInt()) >= 4.5) high = mid else low = mid
+        }
+        return darkenInt(opaque, high)
+    }
+
+    fun toolbarForegroundInt(background: Int): Int =
+        if (contrastInt(background, 0xFFFFFFFF.toInt()) >= 4.5) 0xFFFFFFFF.toInt()
+        else if (contrastInt(background, 0xFF212121.toInt()) >= 4.5) 0xFF212121.toInt()
+        else 0xFF000000.toInt()
+
+    /** Keep secondary labels readable after alpha compositing; do not blindly use 70% white. */
+    fun toolbarSecondaryInt(background: Int, foreground: Int): Int {
+        if (contrastInt(background, foreground) < 4.5) return foreground // Respect manual ink.
+        for (alpha in 178..255) {
+            val candidate = (alpha shl 24) or (foreground and 0x00FFFFFF)
+            if (contrastInt(background, candidate) >= 4.5) return candidate
+        }
+        return foreground
+    }
+
     /** Resolves a possibly translucent foreground against its actual opaque surface. */
     fun compositeOnInt(foreground: Int, background: Int): Int {
         val alpha = ((foreground ushr 24) and 0xFF) / 255.0

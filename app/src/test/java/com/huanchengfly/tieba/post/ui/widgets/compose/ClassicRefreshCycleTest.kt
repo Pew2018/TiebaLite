@@ -7,6 +7,22 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ClassicRefreshCycleTest {
+    @Test fun classicToolbarPreservesWhiteInkAcrossBrightAndDarkPalettes() {
+        listOf(0xFF009688, 0xFF03A9F4, 0xFFFFEB3B, 0xFFE91E63, 0xFF212121,
+            0xFF000000, 0xFFFFFFFF, 0xFF9C27B0, 0xFF0071CD).forEach { seed ->
+            val background = ThemeColorMath.classicToolbarBackgroundInt(seed.toInt())
+            assertTrue(ThemeColorMath.contrastInt(background, 0xFFFFFFFF.toInt()) >= 4.5)
+            assertEquals(0xFFFFFFFF.toInt(), ThemeColorMath.toolbarForegroundInt(background))
+        }
+    }
+
+    @Test fun fixedBackgroundsKeepReadableInkAtMidtoneBoundary() {
+        for (channel in 0..255) {
+            val background = (0xFF shl 24) or (channel shl 16) or (channel shl 8) or channel
+            assertTrue(ThemeColorMath.contrastInt(background,
+                ThemeColorMath.toolbarForegroundInt(background)) >= 4.5)
+        }
+    }
     @Test fun duplicateGesturesCannotStartSecondRequest() {
         val cycle = ClassicRefreshCycle()
         assertTrue(cycle.begin(false))

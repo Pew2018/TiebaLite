@@ -109,30 +109,8 @@ fun CustomSettingsPage(
                     }
                 )
             }
-            prefsItem {
-                val darkThemeValues = stringArrayResource(id = R.array.dark_theme_values)
-                val darkThemeNames = stringArrayResource(id = R.array.dark_theme_names)
-                ListPref(
-                    key = "dark_theme",
-                    title = stringResource(id = R.string.settings_night_mode),
-                    defaultValue = ThemeUtil.THEME_AMOLED_DARK,
-                    leadingIcon = {
-                        LeadingIcon {
-                            AvatarIcon(
-                                icon = Icons.Outlined.Brightness2,
-                                size = Sizes.Small,
-                                contentDescription = null,
-                            )
-                        }
-                    },
-                    entries = darkThemeValues.associateWith { value ->
-                        darkThemeNames[darkThemeValues.indexOf(
-                            value
-                        )]
-                    },
-                    useSelectedAsSummary = true,
-                )
-            }
+            // Palette is shared by light/dark appearances. Deep grey/AMOLED surfaces are
+            // configured on the theme page; the legacy independent night-palette picker is gone.
             prefsItem {
                 ListPref(
                     key = "app_icon",

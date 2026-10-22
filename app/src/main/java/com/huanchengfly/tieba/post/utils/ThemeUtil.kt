@@ -196,6 +196,15 @@ object ThemeUtil {
      */
     @ColorInt
     fun mainToolbarColor(theme: String): Int {
+        val raw = rawMainToolbarColor(theme)
+        return if (!isTranslucentTheme(theme) && INSTANCE.appPreferences.toolbarPrimaryColor &&
+            INSTANCE.appPreferences.customTopBarContentAuto) {
+            com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath.classicToolbarBackgroundInt(raw)
+        } else raw
+    }
+
+    @ColorInt
+    private fun rawMainToolbarColor(theme: String): Int {
         if (isTranslucentTheme(theme)) return android.graphics.Color.TRANSPARENT
         if (!INSTANCE.appPreferences.toolbarPrimaryColor) {
             return INSTANCE.appPreferences.customTopBarColor?.let { value ->
@@ -254,7 +263,7 @@ object ThemeUtil {
     @ColorInt
     fun onToolbarColor(@ColorInt toolbarColor: Int): Int =
         com.huanchengfly.tieba.post.ui.common.theme.compose.ThemeColorMath
-            .readableOnInt(toolbarColor)
+            .toolbarForegroundInt(toolbarColor)
 
     /** Keep the original deep-sea blue/white treatment; pale colours use readable dark ink. */
     @ColorInt
@@ -263,10 +272,7 @@ object ThemeUtil {
             INSTANCE.appPreferences.customTopBarContentColor
                 ?.let { runCatching { Color.parseColor(it) }.getOrNull() }
                 ?: onToolbarColor(toolbarColor)
-        } else if (theme == THEME_OXYGEN_DEEP_SEA_BLUE &&
-            INSTANCE.appPreferences.toolbarPrimaryColor &&
-            toolbarColor == 0xFF0071CD.toInt()) Color.WHITE
-        else onToolbarColor(toolbarColor)
+        } else onToolbarColor(toolbarColor)
 
     const val THEME_TRANSLUCENT = "translucent"
     const val THEME_TRANSLUCENT_LIGHT = "translucent_light"

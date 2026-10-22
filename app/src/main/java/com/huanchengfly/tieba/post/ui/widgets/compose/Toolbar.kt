@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -267,6 +268,7 @@ fun TitleCentredToolbar(
     TopAppBarContainer(
         topBar = {
             TopAppBar(
+                modifier = Modifier.height(56.dp),
                 backgroundColor = roleColors.topBar,
                 contentColor = roleColors.onTopBar,
                 elevation = 0.dp
@@ -335,6 +337,7 @@ fun Toolbar(
     TopAppBarContainer(
         topBar = {
             TopAppBar(
+                modifier = Modifier.height(56.dp),
                 title = {
                     ProvideTextStyle(value = MaterialTheme.typography.h6) {
                         ProvideContentColor(color = resolvedContent, content = title)
