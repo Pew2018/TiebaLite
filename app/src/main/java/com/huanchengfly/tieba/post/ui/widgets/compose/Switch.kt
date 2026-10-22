@@ -96,7 +96,12 @@ private fun BoxScope.SwitchImpl(
     val elevation = 1.dp
     val trackColor by colors.trackColor(enabled, checked)
     Canvas(Modifier.align(Alignment.Center).fillMaxSize()) {
-        drawTrack(trackColor, TrackWidth.toPx(), TrackStrokeWidth.toPx())
+        drawTrack(
+            trackColor = trackColor,
+            trackWidth = TrackWidth.toPx(),
+            trackHeight = TrackHeight.toPx(),
+            strokeWidth = TrackStrokeWidth.toPx(),
+        )
     }
     val thumbColor by colors.thumbColor(enabled, checked)
     val elevationOverlay = LocalElevationOverlay.current
@@ -122,19 +127,25 @@ private fun BoxScope.SwitchImpl(
     )
 }
 
-private fun DrawScope.drawTrack(trackColor: Color, trackWidth: Float, strokeWidth: Float, fill: Boolean = false) {
-    val strokeRadius = size.height / 2
-    val topY = center.y - size.height / 2 + strokeWidth / 2
+private fun DrawScope.drawTrack(
+    trackColor: Color,
+    trackWidth: Float,
+    trackHeight: Float,
+    strokeWidth: Float,
+    fill: Boolean = false,
+) {
+    val topY = center.y - trackHeight / 2 + strokeWidth / 2
     drawRoundRect(
         color = trackColor,
         topLeft = Offset(strokeWidth / 2, topY),
-        size = Size(width = trackWidth - strokeWidth, height = size.height - strokeWidth),
-        cornerRadius = CornerRadius(strokeRadius),
+        size = Size(width = trackWidth - strokeWidth, height = trackHeight - strokeWidth),
+        cornerRadius = CornerRadius(trackHeight / 2),
         style = if (fill) Fill else Stroke(width = strokeWidth, cap = StrokeCap.Round)
     )
 }
 
 internal val TrackWidth = 34.dp
+internal val TrackHeight = 14.dp
 internal val TrackStrokeWidth = 2.dp
 internal val ThumbDiameter = 20.dp
 

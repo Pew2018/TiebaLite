@@ -352,6 +352,7 @@ fun UserPage(
                     ListMenuItem(
                         icon = ImageVector.vectorResource(id = R.drawable.ic_favorite),
                         text = stringResource(id = R.string.title_my_collect),
+                        iconColor = ExtendedTheme.colors.primary,
                         onClick = {
                             navigator.navigate(ThreadStorePageDestination)
                         }
@@ -360,6 +361,7 @@ fun UserPage(
                 ListMenuItem(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_outline_watch_later_24),
                     text = stringResource(id = R.string.title_history),
+                    iconColor = ExtendedTheme.colors.primary,
                     onClick = {
                         navigator.navigate(HistoryPageDestination)
                     }
@@ -367,11 +369,13 @@ fun UserPage(
                 ListMenuItem(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_brush_24),
                     text = stringResource(id = R.string.title_theme),
+                    iconColor = ExtendedTheme.colors.primary,
                     onClick = { navigator.navigate(AppThemePageDestination) }
                 )
                 ListMenuItem(
                     icon = Icons.Rounded.Brightness4,
                     text = stringResource(id = R.string.title_night_mode),
+                    iconColor = ExtendedTheme.colors.primary,
                     onClick = {
                         if (context.appPreferences.followSystemNight) {
                             switchToNightDialogState.show()
@@ -390,6 +394,7 @@ fun UserPage(
                     ListMenuItem(
                         icon = ImageVector.vectorResource(id = R.drawable.ic_help_outline_black_24),
                         text = stringResource(id = R.string.my_info_service_center),
+                        iconColor = ExtendedTheme.colors.primary,
                         onClick = {
                             navigator.navigate(
                                 WebViewPageDestination(
@@ -405,11 +410,13 @@ fun UserPage(
                 ListMenuItem(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_settings_24),
                     text = stringResource(id = R.string.my_info_settings),
+                    iconColor = ExtendedTheme.colors.primary,
                     onClick = { navigator.navigate(SettingsPageDestination) },
                 )
                 ListMenuItem(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_info_black_24),
                     text = stringResource(id = R.string.my_info_about),
+                    iconColor = ExtendedTheme.colors.primary,
                     onClick = { navigator.navigate(AboutPageDestination) },
                 )
             }
