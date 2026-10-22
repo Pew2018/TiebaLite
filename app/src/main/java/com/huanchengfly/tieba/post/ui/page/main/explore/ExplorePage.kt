@@ -1,13 +1,11 @@
 package com.huanchengfly.tieba.post.ui.page.main.explore
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
@@ -21,23 +19,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.util.fastForEachIndexed
 import com.huanchengfly.tieba.post.R
 import com.huanchengfly.tieba.post.arch.GlobalEvent
 import com.huanchengfly.tieba.post.arch.emitGlobalEvent
 import com.huanchengfly.tieba.post.arch.onGlobalEvent
-import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.SearchPageDestination
 import com.huanchengfly.tieba.post.ui.page.main.explore.concern.ConcernPage
 import com.huanchengfly.tieba.post.ui.page.main.explore.hot.HotPage
 import com.huanchengfly.tieba.post.ui.page.main.explore.personalized.PersonalizedPage
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPageTabs
 import com.huanchengfly.tieba.post.ui.widgets.compose.ActionItem
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoadHorizontalPager
-import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
-import com.huanchengfly.tieba.post.ui.widgets.compose.TabRow
 import com.huanchengfly.tieba.post.ui.widgets.compose.Toolbar
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
 import com.huanchengfly.tieba.post.ui.widgets.compose.accountNavIconIfCompact
@@ -56,45 +50,24 @@ data class ExplorePageItem(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun ColumnScope.ExplorePageTab(
+private fun ExplorePageTab(
     pagerState: PagerState,
     pages: ImmutableList<ExplorePageItem>
 ) {
     val coroutineScope = rememberCoroutineScope()
-
-    TabRow(
-        selectedTabIndex = pagerState.currentPage,
-        indicator = { tabPositions ->
-            PagerTabIndicator(
-                pagerState = pagerState,
-                tabPositions = tabPositions,
-                indicatorColor = ExtendedTheme.colors.onTopBar,
-            )
+    ClassicPageTabs(
+        pagerState = pagerState,
+        onTabClick = { index ->
+            coroutineScope.launch {
+                if (pagerState.currentPage == index) {
+                    emitGlobalEvent(GlobalEvent.Refresh(pages[index].id))
+                } else {
+                    pagerState.animateScrollToPage(index)
+                }
+            }
         },
-        divider = {},
-        backgroundColor = Color.Transparent,
-        contentColor = ExtendedTheme.colors.onTopBar,
-        modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .width(76.dp * pages.size),
-    ) {
-        pages.fastForEachIndexed { index, item ->
-            Tab(
-                selectedContentColor = ExtendedTheme.colors.onTopBar,
-                unselectedContentColor = ExtendedTheme.colors.onTopBarSecondary,
-                text = { item.name(pagerState.currentPage == index) },
-                selected = pagerState.currentPage == index,
-                onClick = {
-                    coroutineScope.launch {
-                        if (pagerState.currentPage == index) {
-                            emitGlobalEvent(GlobalEvent.Refresh(item.id))
-                        } else {
-                            pagerState.animateScrollToPage(index)
-                        }
-                    }
-                },
-            )
-        }
+    ) { index ->
+        pages[index].name(pagerState.currentPage == index)
     }
 }
 
@@ -150,18 +123,19 @@ fun ExplorePage() {
     MyScaffold(
         backgroundColor = Color.Transparent,
         topBar = {
-            Toolbar(
-                title = stringResource(id = R.string.title_explore),
-                navigationIcon = accountNavIconIfCompact(),
-                actions = {
-                    ActionItem(
-                        icon = Icons.Rounded.Search,
-                        contentDescription = stringResource(id = R.string.title_search)
-                    ) {
-                        navigator.navigate(SearchPageDestination)
-                    }
-                },
-            ) {
+            Column {
+                Toolbar(
+                    title = stringResource(id = R.string.title_explore),
+                    navigationIcon = accountNavIconIfCompact(),
+                    actions = {
+                        ActionItem(
+                            icon = Icons.Rounded.Search,
+                            contentDescription = stringResource(id = R.string.title_search)
+                        ) {
+                            navigator.navigate(SearchPageDestination)
+                        }
+                    },
+                )
                 ExplorePageTab(pagerState = pagerState, pages = pages)
             }
         },

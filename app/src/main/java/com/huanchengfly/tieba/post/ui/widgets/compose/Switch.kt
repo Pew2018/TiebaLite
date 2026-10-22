@@ -1,6 +1,7 @@
 package com.huanchengfly.tieba.post.ui.widgets.compose
 
 import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -19,10 +20,8 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -43,8 +42,19 @@ fun Switch(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     colors: SwitchColors = SwitchDefaults.colors(),
 ) {
-    val minBound = with(LocalDensity.current) { ThumbStart.toPx() }
-    val maxBound = with(LocalDensity.current) { ThumbEnd.toPx() }
+    val density = LocalDensity.current
+    val geometry = remember(density) {
+        with(density) {
+            ClassicSwitchGeometry(
+                width = SwitchWidth.toPx(),
+                height = SwitchHeight.toPx(),
+                trackWidth = TrackWidth.toPx(),
+                trackHeight = TrackHeight.toPx(),
+                strokeWidth = TrackStrokeWidth.toPx(),
+                thumbDiameter = ThumbDiameter.toPx(),
+            )
+        }
+    }
     val swipeableState = rememberSwipeableStateFor(checked, onCheckedChange ?: {}, AnimationSpec)
     val isRtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val toggleableModifier =
@@ -63,14 +73,12 @@ fun Switch(
 
     Box(
         modifier
+            .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
             .then(toggleableModifier)
             .swipeable(
                 state = swipeableState,
-                anchors = if (isRtl) {
-                    mapOf(minBound to true, maxBound to false)
-                } else {
-                    mapOf(minBound to false, maxBound to true)
-                },
+                // Relative thumb placement and reversed dragging mirror together in RTL.
+                anchors = mapOf(geometry.thumbStart to false, geometry.thumbEnd to true),
                 thresholds = { _, _ -> FractionalThreshold(0.5f) },
                 orientation = Orientation.Horizontal,
                 enabled = enabled && onCheckedChange != null,
@@ -85,6 +93,7 @@ fun Switch(
             checked = checked,
             enabled = enabled,
             colors = colors,
+            geometry = geometry,
             thumbValue = swipeableState.offset,
             interactionSource = interactionSource
         )
@@ -96,29 +105,33 @@ private fun BoxScope.SwitchImpl(
     checked: Boolean,
     enabled: Boolean,
     colors: SwitchColors,
+    geometry: ClassicSwitchGeometry,
     thumbValue: State<Float>,
     interactionSource: InteractionSource
 ) {
-    // The slightly lifted thumb is characteristic of the classic Android switch.
-    val elevation = 2.dp
+    val pressed by interactionSource.collectIsPressedAsState()
+    val dragged by interactionSource.collectIsDraggedAsState()
+    val elevation by animateDpAsState(
+        targetValue = if (enabled && (pressed || dragged)) 3.dp else 2.dp,
+        animationSpec = TweenSpec(durationMillis = AnimationDurationMillis),
+        label = "classicSwitchElevation",
+    )
     val targetTrackColor by colors.trackColor(enabled, checked)
     val trackColor by animateColorAsState(
         targetValue = targetTrackColor,
-        animationSpec = TweenSpec(durationMillis = 160),
+        animationSpec = TweenSpec(durationMillis = AnimationDurationMillis),
         label = "classicSwitchTrackColor"
     )
     Canvas(Modifier.align(Alignment.Center).fillMaxSize()) {
         drawTrack(
             trackColor = trackColor,
-            trackWidth = TrackWidth.toPx(),
-            trackHeight = TrackHeight.toPx(),
-            strokeWidth = TrackStrokeWidth.toPx(),
+            geometry = geometry,
         )
     }
     val targetThumbColor by colors.thumbColor(enabled, checked)
     val thumbColor by animateColorAsState(
         targetValue = targetThumbColor,
-        animationSpec = TweenSpec(durationMillis = 160),
+        animationSpec = TweenSpec(durationMillis = AnimationDurationMillis),
         label = "classicSwitchThumbColor"
     )
     val elevationOverlay = LocalElevationOverlay.current
@@ -141,35 +154,27 @@ private fun BoxScope.SwitchImpl(
 
 private fun DrawScope.drawTrack(
     trackColor: Color,
-    trackWidth: Float,
-    trackHeight: Float,
-    strokeWidth: Float,
-    fill: Boolean = false,
+    geometry: ClassicSwitchGeometry,
 ) {
-    val trackLeft = (size.width - trackWidth) / 2 + strokeWidth / 2
-    val topY = center.y - trackHeight / 2 + strokeWidth / 2
     drawRoundRect(
         color = trackColor,
-        topLeft = Offset(trackLeft, topY),
-        size = Size(width = trackWidth - strokeWidth, height = trackHeight - strokeWidth),
-        cornerRadius = CornerRadius(trackHeight / 2),
-        style = if (fill) Fill else Stroke(width = strokeWidth, cap = StrokeCap.Round)
+        topLeft = Offset(geometry.trackLeft, geometry.trackTop),
+        size = Size(width = geometry.trackPathWidth, height = geometry.trackPathHeight),
+        cornerRadius = CornerRadius(geometry.trackRadius),
+        style = Stroke(width = geometry.strokeWidth),
     )
 }
 
-internal val TrackWidth = 34.dp
-internal val TrackHeight = 14.dp
+internal val TrackWidth = 36.dp
+internal val TrackHeight = 16.dp
 internal val TrackStrokeWidth = 2.dp
-internal val ThumbDiameter = 20.dp
+internal val ThumbDiameter = 24.dp
 
-private val SwitchWidth = 44.dp
-private val SwitchHeight = 24.dp
-private val TrackStart = (SwitchWidth - TrackWidth) / 2
-// Align thumb centers with the rounded end-cap centers after the track stroke inset.
-private val ThumbStart = TrackStart + (TrackHeight - ThumbDiameter) / 2 + TrackStrokeWidth / 2
-private val ThumbEnd = ThumbStart + TrackWidth - TrackHeight - TrackStrokeWidth
+private val SwitchWidth = 48.dp
+private val SwitchHeight = 28.dp
 
-private val AnimationSpec = TweenSpec<Float>(durationMillis = 180)
+private const val AnimationDurationMillis = 180
+private val AnimationSpec = TweenSpec<Float>(durationMillis = AnimationDurationMillis)
 
 @Stable
 interface SwitchColors {

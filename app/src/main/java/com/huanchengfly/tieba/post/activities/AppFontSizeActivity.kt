@@ -8,7 +8,6 @@ import androidx.appcompat.widget.Toolbar
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import butterknife.BindView
-import com.google.android.material.appbar.CollapsingToolbarLayout
 import com.huanchengfly.tieba.post.*
 import com.huanchengfly.tieba.post.adapters.ChatBubbleStyleAdapter
 import com.huanchengfly.tieba.post.components.MyLinearLayoutManager
@@ -19,9 +18,6 @@ import com.huanchengfly.tieba.post.utils.ThemeUtil
 class AppFontSizeActivity : BaseActivity() {
     @BindView(R.id.toolbar)
     lateinit var toolbar: Toolbar
-
-    @BindView(R.id.collapsing_toolbar)
-    lateinit var collapsingToolbar: CollapsingToolbarLayout
 
     @BindView(R.id.app_font_size_seekbar)
     lateinit var seekBar: RulerSeekBar
@@ -56,7 +52,6 @@ class AppFontSizeActivity : BaseActivity() {
             setDisplayHomeAsUpEnabled(true)
             title = this@AppFontSizeActivity.title
         }
-        collapsingToolbar.title = title
         oldFontSize = appPreferences.fontScale
         chatBubblesRv.apply {
             layoutManager =

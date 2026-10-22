@@ -1,10 +1,10 @@
 package com.huanchengfly.tieba.post.ui.page.main.notifications
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.Scaffold
-import androidx.compose.material.Tab
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Search
@@ -15,18 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import com.huanchengfly.tieba.post.R
-import com.huanchengfly.tieba.post.ui.common.theme.compose.ExtendedTheme
 import com.huanchengfly.tieba.post.ui.page.LocalNavigator
 import com.huanchengfly.tieba.post.ui.page.ProvideNavigator
 import com.huanchengfly.tieba.post.ui.page.destinations.SearchPageDestination
 import com.huanchengfly.tieba.post.ui.page.main.notifications.list.NotificationsListPage
 import com.huanchengfly.tieba.post.ui.page.main.notifications.list.NotificationsType
+import com.huanchengfly.tieba.post.ui.widgets.compose.ClassicPageTabs
 import com.huanchengfly.tieba.post.ui.widgets.compose.ActionItem
 import com.huanchengfly.tieba.post.ui.widgets.compose.BackNavigationIcon
 import com.huanchengfly.tieba.post.ui.widgets.compose.LazyLoadHorizontalPager
 import com.huanchengfly.tieba.post.ui.widgets.compose.MyScaffold
-import com.huanchengfly.tieba.post.ui.widgets.compose.PagerTabIndicator
-import com.huanchengfly.tieba.post.ui.widgets.compose.TabRow
 import com.huanchengfly.tieba.post.ui.widgets.compose.TitleCentredToolbar
 import com.huanchengfly.tieba.post.ui.widgets.compose.Toolbar
 import com.huanchengfly.tieba.post.ui.widgets.compose.accountNavIconIfCompact
@@ -62,40 +60,20 @@ fun NotificationsPage(
         MyScaffold(
             backgroundColor = Color.Transparent,
             topBar = {
-                TitleCentredToolbar(
-                    title = { Text(text = stringResource(id = R.string.title_notifications)) },
-                    navigationIcon = {
-                        BackNavigationIcon {
-                            navigator.navigateUp()
-                        }
-                    }
-                ) {
-                    TabRow(
-                        selectedTabIndex = pagerState.currentPage,
-                        indicator = { tabPositions ->
-                            PagerTabIndicator(
-                                pagerState = pagerState,
-                                tabPositions = tabPositions,
-                                indicatorColor = ExtendedTheme.colors.onTopBar,
-                            )
+                Column {
+                    TitleCentredToolbar(
+                        title = { Text(text = stringResource(id = R.string.title_notifications)) },
+                        navigationIcon = {
+                            BackNavigationIcon { navigator.navigateUp() }
                         },
-                        divider = {},
-                        backgroundColor = Color.Transparent,
-                        contentColor = ExtendedTheme.colors.onTopBar,
-                    ) {
-                        pages.forEachIndexed { index, pair ->
-                            Tab(
-                                selectedContentColor = ExtendedTheme.colors.onTopBar,
-                                unselectedContentColor = ExtendedTheme.colors.onTopBarSecondary,
-                                text = { Text(text = pair.first) },
-                                selected = pagerState.currentPage == index,
-                                onClick = {
-                                    coroutineScope.launch {
-                                        pagerState.animateScrollToPage(index)
-                                    }
-                                },
-                            )
-                        }
+                    )
+                    ClassicPageTabs(
+                        pagerState = pagerState,
+                        onTabClick = { index ->
+                            coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                        },
+                    ) { index ->
+                        Text(text = pages[index].first)
                     }
                 }
             },
@@ -136,44 +114,26 @@ fun NotificationsPage(
     Scaffold(
         backgroundColor = Color.Transparent,
         topBar = {
-            Toolbar(
-                title = stringResource(id = R.string.title_notifications),
-                navigationIcon = accountNavIconIfCompact(),
-                actions = {
-                    ActionItem(
-                        icon = Icons.Rounded.Search,
-                        contentDescription = stringResource(id = R.string.title_search)
-                    ) {
-                        navigator.navigate(SearchPageDestination)
-                    }
-                },
-            ) {
-                TabRow(
-                    selectedTabIndex = pagerState.currentPage,
-                    indicator = { tabPositions ->
-                        PagerTabIndicator(
-                            pagerState = pagerState,
-                            tabPositions = tabPositions,
-                            indicatorColor = ExtendedTheme.colors.onTopBar,
-                        )
+            Column {
+                Toolbar(
+                    title = stringResource(id = R.string.title_notifications),
+                    navigationIcon = accountNavIconIfCompact(),
+                    actions = {
+                        ActionItem(
+                            icon = Icons.Rounded.Search,
+                            contentDescription = stringResource(id = R.string.title_search)
+                        ) {
+                            navigator.navigate(SearchPageDestination)
+                        }
                     },
-                    divider = {},
-                    backgroundColor = Color.Transparent,
-                    contentColor = ExtendedTheme.colors.onTopBar,
-                ) {
-                    pages.forEachIndexed { index, pair -> 
-                        Tab(
-                            selectedContentColor = ExtendedTheme.colors.onTopBar,
-                            unselectedContentColor = ExtendedTheme.colors.onTopBarSecondary,
-                            text = { Text(text = pair.first) },
-                            selected = pagerState.currentPage == index,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(index)
-                                }
-                            },
-                        )
-                    }
+                )
+                ClassicPageTabs(
+                    pagerState = pagerState,
+                    onTabClick = { index ->
+                        coroutineScope.launch { pagerState.animateScrollToPage(index) }
+                    },
+                ) { index ->
+                    Text(text = pages[index].first)
                 }
             }
         },

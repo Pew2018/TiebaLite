@@ -55,10 +55,6 @@
         <item name="textColor">?attr/colorToolbarItem</item>
     </style>
 
-    <style name="Toolbar.Title.Expanded" parent="Toolbar.Title">
-        <item name="android:textSize">32sp</item>
-    </style>
-
     <style name="TextAppearance.ListTitle" parent="Widget.AppCompat.TextView.SpinnerItem">
         <item name="paddingStart">0dp</item>
     </style>

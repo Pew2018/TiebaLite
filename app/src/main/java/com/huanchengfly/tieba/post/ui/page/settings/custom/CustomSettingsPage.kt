@@ -70,11 +70,9 @@ fun CustomSettingsPage(
 
     val context = LocalContext.current
     MyScaffold(
-        collapsibleToolbar = true,
         backgroundColor = Color.Transparent,
         topBar = {
             TitleCentredToolbar(
-                expandedTitle = stringResource(id = R.string.title_settings_custom),
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_settings_custom),

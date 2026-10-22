@@ -115,10 +115,8 @@ fun SettingsPage(
     ProvideNavigator(navigator = navigator) {
         MyScaffold(
             backgroundColor = Color.Transparent,
-            collapsibleToolbar = true,
             topBar = {
                 TitleCentredToolbar(
-                    expandedTitle = stringResource(id = R.string.title_settings),
                     title = {
                         Text(
                             text = stringResource(id = R.string.title_settings),

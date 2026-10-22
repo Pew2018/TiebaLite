@@ -66,10 +66,8 @@ fun AccountManagePage(
 
     MyScaffold(
         backgroundColor = Color.Transparent,
-        collapsibleToolbar = true,
         topBar = {
             TitleCentredToolbar(
-                expandedTitle = stringResource(id = R.string.title_account_manage),
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_account_manage),

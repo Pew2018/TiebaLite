@@ -327,7 +327,6 @@ private fun AppThemeContent(
 
     MyScaffold(
         backgroundColor = Color.Transparent,
-        collapsibleToolbar = true,
         topBar = {
             TitleCentredToolbar(
                 title = {
@@ -336,7 +335,6 @@ private fun AppThemeContent(
                         fontWeight = FontWeight.Medium, style = MaterialTheme.typography.h6
                     )
                 },
-                expandedTitle = stringResource(id = R.string.title_theme),
                 navigationIcon = {
                     BackNavigationIcon(onBackPressed = { navigator.navigateUp() })
                 }

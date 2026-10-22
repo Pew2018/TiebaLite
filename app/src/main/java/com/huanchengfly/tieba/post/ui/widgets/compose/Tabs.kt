@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.platform.debugInspectorInfo
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
@@ -67,6 +68,52 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterIsInstance
 import kotlinx.coroutines.launch
+
+/** Fixed page categories on the content surface, separate from the 56dp toolbar. */
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun ClassicPageTabs(
+    pagerState: PagerState,
+    modifier: Modifier = Modifier,
+    onTabClick: (Int) -> Unit,
+    text: @Composable (index: Int) -> Unit,
+) {
+    val selectedColor = ExtendedTheme.colors.accentText
+    TabRow(
+        selectedTabIndex = pagerState.currentPage,
+        modifier = modifier.fillMaxWidth().height(48.dp),
+        backgroundColor = ExtendedTheme.colors.background,
+        contentColor = selectedColor,
+        indicator = { positions ->
+            PagerTabIndicator(pagerState, positions, indicatorColor = selectedColor)
+        },
+        divider = {
+            TabRowDefaults.Divider(color = ExtendedTheme.colors.divider, thickness = 1.dp)
+        },
+    ) {
+        repeat(pagerState.pageCount) { index ->
+            val selected = pagerState.currentPage == index
+            Tab(
+                selected = selected,
+                onClick = { onTabClick(index) },
+                modifier = Modifier.height(48.dp),
+                selectedContentColor = selectedColor,
+                unselectedContentColor = ExtendedTheme.colors.textSecondary,
+                text = {
+                    ProvideTextStyle(
+                        MaterialTheme.typography.button.copy(
+                            fontSize = 14.sp,
+                            letterSpacing = 0.sp,
+                            fontWeight = if (selected) FontWeight.Medium else FontWeight.Normal,
+                        )
+                    ) {
+                        text(index)
+                    }
+                },
+            )
+        }
+    }
+}
 
 
 /**
