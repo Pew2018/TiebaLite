@@ -63,7 +63,7 @@ data class ExtendedColors(
     val switchOff: Color = Color.Unspecified,
     val fab: Color = Color.Unspecified,
     val selected: Color = Color.Unspecified,
-    // 页面角色：设置类顶栏（经典深色，固定）
+    // 页面角色：设置类顶栏（与当前顶栏语义色保持一致）
     val settingsTopBar: Color = Color.Unspecified,
     val settingsStatusBar: Color = Color.Unspecified,
     val onSettingsTopBar: Color = Color.Unspecified,
@@ -582,7 +582,9 @@ private fun getThemeColorForTheme(theme: String): ExtendedColors {
     } else {
         customColor(context.appPreferences.customTopBarColor, defaults.topBar)
     }
-    val onTopBar = Color(ThemeColorMath.readableOnInt(topBar.toArgbInt()))
+    // Keep the manual foreground preference independent from the background-source preference.
+    // The legacy View path already follows this rule; Compose must resolve the same final role.
+    val onTopBar = Color(ThemeUtil.onToolbarColor(nowTheme, topBar.toArgbInt()))
     val accent = customColor(context.appPreferences.customAccentColor, primary)
     val accentArgb = accent.toArgbInt()
     return defaults.copy(

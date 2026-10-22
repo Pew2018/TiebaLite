@@ -13,6 +13,19 @@ import androidx.compose.ui.graphics.toArgb
  */
 object ThemeColorMath {
 
+    /** Resolves a possibly translucent foreground against its actual opaque surface. */
+    fun compositeOnInt(foreground: Int, background: Int): Int {
+        val alpha = ((foreground ushr 24) and 0xFF) / 255.0
+        if (alpha >= 1.0) return foreground
+        val bg = if (((background ushr 24) and 0xFF) == 0xFF) background else compositeOnInt(background, 0xFFFFFFFF.toInt())
+        fun channel(shift: Int): Int {
+            val fg = (foreground ushr shift) and 0xFF
+            val under = (bg ushr shift) and 0xFF
+            return (fg * alpha + under * (1.0 - alpha)).toInt().coerceIn(0, 255)
+        }
+        return (0xFF shl 24) or (channel(16) shl 16) or (channel(8) shl 8) or channel(0)
+    }
+
     /** #AARRGGBB Int 的相对亮度（WCAG） */
     fun luminanceInt(argb: Int): Double {
         val r = ((argb ushr 16) and 0xFF) / 255.0
@@ -24,8 +37,11 @@ object ThemeColorMath {
     }
 
     fun contrastInt(a: Int, b: Int): Double {
-        val la = luminanceInt(a)
-        val lb = luminanceInt(b)
+        // Contrast is evaluated after alpha compositing, not from transparent source channels.
+        val opaqueA = if (((a ushr 24) and 0xFF) == 0xFF) a else compositeOnInt(a, b)
+        val opaqueB = if (((b ushr 24) and 0xFF) == 0xFF) b else compositeOnInt(b, a)
+        val la = luminanceInt(opaqueA)
+        val lb = luminanceInt(opaqueB)
         val hi = maxOf(la, lb)
         val lo = minOf(la, lb)
         return (hi + 0.05) / (lo + 0.05)

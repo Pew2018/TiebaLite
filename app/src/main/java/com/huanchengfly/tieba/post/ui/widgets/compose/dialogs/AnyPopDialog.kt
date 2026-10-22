@@ -66,6 +66,7 @@ private fun DialogFullScreen(
     isActiveClose: Boolean,
     onDismiss: () -> Unit,
     onDismissRequest: (() -> Unit)?,
+    onBackDismissRequest: (() -> Unit)?,
     properties: AnyPopDialogProperties,
     content: @Composable () -> Unit,
 ) {
@@ -84,13 +85,18 @@ private fun DialogFullScreen(
 
     val handleBackPress = {
         if (!isBackPress) {
-            if (onDismissRequest != null) {
+            if (onBackDismissRequest != null) {
+                onBackDismissRequest.invoke()
+            } else if (onDismissRequest != null) {
                 onDismissRequest.invoke()
             } else {
                 isBackPress = true
                 isAnimateLayout = false
             }
         }
+    }
+    val handleOutsideDismiss = {
+        if (!isBackPress) onDismissRequest?.invoke()
     }
 
     Dialog(
@@ -154,7 +160,7 @@ private fun DialogFullScreen(
                         .background(animColor.value)
                         .clickOutSideModifier(
                             dismissOnClickOutside = properties.dismissOnClickOutside,
-                            onTap = handleBackPress
+                            onTap = handleOutsideDismiss
                         )
                 )
                 AnimatedVisibility(
@@ -195,6 +201,7 @@ private fun DialogFullScreen(
 fun AnyPopDialog(
     onDismiss: () -> Unit,
     onDismissRequest: (() -> Unit)? = null,
+    onBackDismissRequest: (() -> Unit)? = null,
     modifier: Modifier = Modifier,
     isActiveClose: Boolean = false,
     properties: AnyPopDialogProperties = AnyPopDialogProperties(direction = DirectionState.BOTTOM),
@@ -204,6 +211,7 @@ fun AnyPopDialog(
         isActiveClose = isActiveClose,
         onDismiss = onDismiss,
         onDismissRequest = onDismissRequest,
+        onBackDismissRequest = onBackDismissRequest,
         properties = properties
     ) {
         val innerModifier = if (properties.imePadding) {

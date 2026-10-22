@@ -71,4 +71,20 @@ class ClassicRefreshCycleTest {
             )
         }
     }
+
+    @Test fun transparentSecondaryForegroundIsMeasuredAgainstItsActualToolbar() {
+        val toolbar = 0xFF0071CD.toInt()
+        val secondaryWhite = 0xB3FFFFFF.toInt()
+        val composited = ThemeColorMath.compositeOnInt(secondaryWhite, toolbar)
+        assertTrue(ThemeColorMath.contrastInt(composited, toolbar) >= 3.0)
+    }
+
+    @Test fun manualForegroundStillWinsOverTheAutomaticCandidate() {
+        val toolbar = 0xFFFFE082.toInt()
+        val automatic = ThemeColorMath.readableOnInt(toolbar)
+        val manual = 0xFF5D4037.toInt()
+        assertTrue(ThemeColorMath.contrastInt(toolbar, automatic) >= 4.5)
+        assertTrue(ThemeColorMath.contrastInt(toolbar, manual) >= 4.5)
+        assertFalse(manual == automatic)
+    }
 }

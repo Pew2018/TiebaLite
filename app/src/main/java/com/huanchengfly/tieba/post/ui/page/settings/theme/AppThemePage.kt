@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,7 +74,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 fun AppThemePage(
     navigator: DestinationsNavigator,
 ) {
-    // 设置类页面角色：顶栏/状态栏使用 经典深色
+    // 设置类页面共享当前顶栏语义色，保证预览与实际页面一致。
     CompositionLocalProvider(LocalPageRole provides PageRole.SETTINGS) {
         AppThemeContent(navigator = navigator)
     }
@@ -334,7 +335,7 @@ private fun AppThemeContent(
                 title = {
                     Text(
                         text = stringResource(id = R.string.title_theme),
-                        fontWeight = FontWeight.Bold, style = MaterialTheme.typography.h6
+                        fontWeight = FontWeight.Medium, style = MaterialTheme.typography.h6
                     )
                 },
                 navigationIcon = {
@@ -632,9 +633,9 @@ private fun ThemeEntryRow(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .defaultMinSize(minHeight = 56.dp)
             .clickable(enabled = enabled, onClick = onClick)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp, vertical = if (summary == null) 0.dp else 8.dp),
     ) {
         leading?.invoke()
         if (leading != null) Spacer(modifier = Modifier.width(16.dp))

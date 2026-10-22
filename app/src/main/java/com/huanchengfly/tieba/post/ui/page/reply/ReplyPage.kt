@@ -157,25 +157,45 @@ fun ReplyDialog(
     val keyboardController = LocalSoftwareKeyboardController.current
     val density = LocalDensity.current
     val imeInsets = WindowInsets.ime
+    val imeAnimationTarget = WindowInsets.imeAnimationTarget
     val scope = rememberCoroutineScope()
     var dismissPending by remember(state) { mutableStateOf(false) }
+    fun closeAfterIme(finishDismiss: () -> Unit) {
+        if (dismissPending) return
+        dismissPending = true
+        keyboardController?.hide()
+        scope.launch {
+            withTimeoutOrNull(900) {
+                snapshotFlow {
+                    imeInsets.getBottom(density) == 0 && imeAnimationTarget.getBottom(density) == 0
+                }.filter { it }.first()
+            }
+            finishDismiss()
+        }
+    }
+    fun backAfterIme(finishDismiss: () -> Unit) {
+        if (dismissPending) return
+        if (imeInsets.getBottom(density) > 0 || imeAnimationTarget.getBottom(density) > 0) {
+            dismissPending = true
+            keyboardController?.hide()
+            scope.launch {
+                withTimeoutOrNull(900) {
+                    snapshotFlow {
+                        imeInsets.getBottom(density) == 0 && imeAnimationTarget.getBottom(density) == 0
+                    }.filter { it }.first()
+                }
+                // System back consumes this press when it hid the IME; a later back closes.
+                dismissPending = false
+            }
+        } else {
+            closeAfterIme(finishDismiss)
+        }
+    }
     BaseDialog(
         dialogState = state,
         imePadding = false,
-        onDismissRequest = { finishDismiss ->
-            if (!dismissPending) {
-                dismissPending = true
-                keyboardController?.hide()
-                scope.launch {
-                    withTimeoutOrNull(900) {
-                        snapshotFlow { imeInsets.getBottom(density) }
-                            .filter { it == 0 }
-                            .first()
-                    }
-                    finishDismiss()
-                }
-            }
-        },
+        onDismissRequest = ::closeAfterIme,
+        onBackDismissRequest = ::backAfterIme,
     ) {
         Surface(
             modifier = Modifier.fillMaxWidth(),
@@ -185,7 +205,7 @@ fun ReplyDialog(
         ) {
             ReplyPageContent(
                 viewModel = pageViewModel(),
-                onBack = { dismiss() },
+                onBack = { closeAfterIme { dismiss() } },
                 forumId = args.forumId,
                 forumName = args.forumName,
                 threadId = args.threadId,
