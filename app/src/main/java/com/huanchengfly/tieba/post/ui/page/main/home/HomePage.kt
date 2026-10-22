@@ -132,25 +132,30 @@ private fun ForumItemPlaceholder(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 60.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .heightIn(min = if (showAvatar) 64.dp else 60.dp)
+            .padding(horizontal = 16.dp, vertical = if (showAvatar) 4.dp else 8.dp)
     ) {
         if (showAvatar) {
-            Image(
-                painter = rememberDrawablePainter(
-                    drawable = ImageUtil.getPlaceHolder(
-                        LocalContext.current,
-                        0
-                    )
-                ),
-                contentDescription = null,
+            Box(
                 modifier = Modifier
+                    .size(44.dp)
                     .clip(CircleShape)
-                    .size(40.dp)
+                    .background(ExtendedTheme.colors.chip)
                     .align(CenterVertically)
                     .placeholder(visible = true, color = ExtendedTheme.colors.chip),
-            )
-            Spacer(modifier = Modifier.width(14.dp))
+                contentAlignment = Center,
+            ) {
+                Image(
+                    painter = rememberDrawablePainter(
+                        drawable = ImageUtil.getPlaceHolder(LocalContext.current, 0)
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(40.dp),
+                )
+            }
+            Spacer(modifier = Modifier.width(12.dp))
         }
         Text(
             color = ExtendedTheme.colors.text,
@@ -160,7 +165,7 @@ private fun ForumItemPlaceholder(
                 .align(CenterVertically)
                 .placeholder(visible = true, color = ExtendedTheme.colors.chip),
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             maxLines = 1,
         )
         Spacer(modifier = Modifier.width(8.dp))
@@ -169,9 +174,9 @@ private fun ForumItemPlaceholder(
                 .widthIn(min = 42.dp)
                 .background(
                     color = ExtendedTheme.colors.chip,
-                    shape = RoundedCornerShape(3.dp)
+                    shape = RoundedCornerShape(2.dp)
                 )
-                .padding(horizontal = 6.dp, vertical = 4.dp)
+                .padding(horizontal = 7.dp, vertical = 3.dp)
                 .align(CenterVertically)
                 .placeholder(visible = true, color = ExtendedTheme.colors.chip)
         ) {
@@ -237,17 +242,25 @@ private fun ForumItemContent(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .heightIn(min = 60.dp)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .heightIn(min = if (showAvatar) 64.dp else 60.dp)
+            .padding(horizontal = 16.dp, vertical = if (showAvatar) 4.dp else 8.dp),
     ) {
         if (showAvatar) {
-            Row(
-                verticalAlignment = CenterVertically,
-                modifier = Modifier.align(CenterVertically),
+            Box(
+                modifier = Modifier
+                    .size(44.dp)
+                    .clip(CircleShape)
+                    .background(ExtendedTheme.colors.chip)
+                    .align(CenterVertically),
+                contentAlignment = Center,
             ) {
-                Avatar(data = item.avatar, size = 40.dp, contentDescription = null)
-                Spacer(modifier = Modifier.width(14.dp))
+                Avatar(
+                    data = item.avatar,
+                    size = 40.dp,
+                    contentDescription = null,
+                )
             }
+            Spacer(modifier = Modifier.width(12.dp))
         }
         Text(
             color = ExtendedTheme.colors.text,
@@ -256,7 +269,7 @@ private fun ForumItemContent(
                 .weight(1f)
                 .align(CenterVertically),
             fontSize = 16.sp,
-            fontWeight = FontWeight.Medium,
+            fontWeight = FontWeight.Normal,
             overflow = TextOverflow.Ellipsis,
             maxLines = 1,
         )
@@ -266,9 +279,9 @@ private fun ForumItemContent(
                 .widthIn(min = 42.dp)
                 .background(
                     color = ExtendedTheme.colors.chip,
-                    shape = RoundedCornerShape(3.dp)
+                    shape = RoundedCornerShape(2.dp)
                 )
-                .padding(horizontal = 6.dp, vertical = 4.dp)
+                .padding(horizontal = 7.dp, vertical = 3.dp)
                 .align(CenterVertically)
         ) {
             Row(
@@ -289,7 +302,7 @@ private fun ForumItemContent(
                         modifier = Modifier
                             .size(12.dp)
                             .align(CenterVertically),
-                        tint = ExtendedTheme.colors.onChip
+                        tint = ExtendedTheme.colors.primary
                     )
                 }
             }
