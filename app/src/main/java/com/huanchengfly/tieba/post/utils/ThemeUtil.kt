@@ -77,7 +77,7 @@ object ThemeUtil {
     fun selfHealTheme(): String {
         var result = THEME_DEFAULT
         runBlocking {
-            dataStore.edit { preferences ->
+            val snapshot = dataStore.edit { preferences ->
                 val themeKey = stringPreferencesKey(KEY_THEME)
                 val lastGoodKey = stringPreferencesKey(KEY_LAST_KNOWN_GOOD_THEME)
                 val pendingKey = stringPreferencesKey(KEY_PENDING_THEME)
@@ -96,6 +96,9 @@ object ThemeUtil {
                 preferences[lastGoodKey] = result
                 preferences.remove(pendingKey)
             }
+            // The same startup transaction already read all preference keys.
+            // Reuse its committed immutable snapshot for synchronous consumers without new I/O.
+            AppPreferencesUtils.seedStartupSnapshot(snapshot)
         }
         return result
     }
