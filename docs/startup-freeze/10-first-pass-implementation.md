@@ -47,3 +47,10 @@
 2. 真机安装新产物之前记录原有版本、保留数据；升级后多次冷启动、前后台切换、网络断开、主题切换。
 3. 卡死现场采集 ANR main 线程、dumpsys input/window，以及首页刷新开始/结束日志；按 docs/08 和 docs/09 的流程确认残余问题。
 4. 只有同时验证“主页不再永久骨架”和“顶部/底部可以响应”才允许宣布用户问题全部修复。
+
+
+## 补充：修复后的实际验证状态
+
+- 2026-11-04：已在隔离 Kotlin 1.9.0 + kotlinx-coroutines-core 环境中，将 HomeRefreshDeadline 逻辑与四种纯 Kotlin 流场景进行编译执行；正常首值、空 Flow、永远挂起和 SharedFlow 首次订阅四项检查均成功。该检查不等于项目 Gradle 单元测试或 Android APK 编译通过。
+- GitHub Actions：首次修复提交 4903046fa353107f6beafaf44398051afc984c27 后，通过 GitHub workflow-runs 列表没有发现该分支的运行记录。暂不能宣称 Actions 编译或产物成功。
+- 该文档状态记录不改变第一轮源码的修复范围，下一步仍需真实 Android CI 及真机回归。
