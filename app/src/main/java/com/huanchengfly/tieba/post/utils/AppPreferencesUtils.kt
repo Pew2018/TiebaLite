@@ -32,6 +32,13 @@ import kotlin.reflect.KProperty
 
 open class AppPreferencesUtils private constructor(ctx: Context) {
     companion object {
+        @Volatile
+        private var startupSnapshot: Preferences? = null
+
+        fun seedStartupSnapshot(preferences: Preferences) {
+            startupSnapshot = preferences
+        }
+
         private var instance: AppPreferencesUtils? = null
 
         fun getInstance(context: Context): AppPreferencesUtils {
@@ -48,6 +55,8 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
 
     private val preferencesDataStore: DataStore<Preferences>
         get() = context.dataStore
+
+    private fun <T> savedValue(key: Preferences.Key<T>): T? = startupSnapshot?.get(key)
 
     private val coroutineScope: CoroutineScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
@@ -266,6 +275,7 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
                 val finalKey = key ?: property.name
                 if (!initialized) {
                     initialized = true
+                    prefValue = thisRef.savedValue(intPreferencesKey(finalKey)) ?: defaultValue
                     thisRef.coroutineScope.launch {
                         thisRef.preferencesDataStore.data
                             .map { it[intPreferencesKey(finalKey)] }
@@ -303,6 +313,7 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
                 val finalKey = key ?: property.name
                 if (!initialized) {
                     initialized = true
+                    prefValue = thisRef.savedValue(stringPreferencesKey(finalKey)) ?: defaultValue
                     thisRef.coroutineScope.launch {
                         thisRef.preferencesDataStore.data
                             .map { it[stringPreferencesKey(finalKey)] }
@@ -344,6 +355,7 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
                 val finalKey = key ?: property.name
                 if (!initialized) {
                     initialized = true
+                    prefValue = thisRef.savedValue(floatPreferencesKey(finalKey)) ?: defaultValue
                     thisRef.coroutineScope.launch {
                         thisRef.preferencesDataStore.data
                             .map { it[floatPreferencesKey(finalKey)] }
@@ -381,6 +393,7 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
                 val finalKey = key ?: property.name
                 if (!initialized) {
                     initialized = true
+                    prefValue = thisRef.savedValue(longPreferencesKey(finalKey)) ?: defaultValue
                     thisRef.coroutineScope.launch {
                         thisRef.preferencesDataStore.data
                             .map { it[longPreferencesKey(finalKey)] }
@@ -418,6 +431,7 @@ open class AppPreferencesUtils private constructor(ctx: Context) {
                 val finalKey = key ?: property.name
                 if (!initialized) {
                     initialized = true
+                    prefValue = thisRef.savedValue(booleanPreferencesKey(finalKey)) ?: defaultValue
                     thisRef.coroutineScope.launch {
                         thisRef.preferencesDataStore.data
                             .map { it[booleanPreferencesKey(finalKey)] }
