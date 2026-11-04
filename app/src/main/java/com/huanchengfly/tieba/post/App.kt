@@ -11,6 +11,7 @@ import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Process
+import android.util.Log
 import android.webkit.WebSettings
 import android.webkit.WebView
 import androidx.annotation.Keep
@@ -35,6 +36,7 @@ import com.huanchengfly.tieba.post.ui.common.theme.interfaces.ThemeSwitcher
 import com.huanchengfly.tieba.post.ui.common.theme.utils.ThemeUtils
 import com.huanchengfly.tieba.post.utils.AccountUtil
 import com.huanchengfly.tieba.post.utils.AppIconUtil
+import com.huanchengfly.tieba.post.utils.LauncherIcons
 import com.huanchengfly.tieba.post.utils.BlockManager
 import com.huanchengfly.tieba.post.utils.ClientUtils
 import com.huanchengfly.tieba.post.utils.EmoticonManager
@@ -55,12 +57,21 @@ import com.microsoft.appcenter.distribute.UpdateTrack
 import dagger.hilt.android.HiltAndroidApp
 import net.swiftzer.semver.SemVer
 import org.litepal.LitePal
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlin.concurrent.thread
 
 
 @HiltAndroidApp
 class App : Application(), SketchFactory {
     private val mActivityList: MutableList<Activity> = mutableListOf()
+    private val startupScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     @RequiresApi(api = 28)
     private fun setWebViewPath(context: Context) {
@@ -104,7 +115,22 @@ class App : Application(), SketchFactory {
                 Analytics::class.java, Crashes::class.java, Distribute::class.java
             )
         }
-        AppIconUtil.setIcon()
+        // Applying launcher aliases before the first async preference read would reset
+        // a previously chosen icon to the default on every startup.
+        startupScope.launch {
+            try {
+                val saved = dataStore.data.first()
+                AppIconUtil.setIcon(
+                    icon = saved[stringPreferencesKey(AppIconUtil.PREF_KEY_APP_ICON)]
+                        ?: LauncherIcons.DEFAULT_ICON,
+                    isThemed = saved[booleanPreferencesKey("useThemedIcon")] ?: false
+                )
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                Log.w(TAG, "Unable to restore launcher icon", exception)
+            }
+        }
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
         ThemeUtils.init(ThemeDelegate)
         registerActivityLifecycleCallbacks(ClipBoardLinkDetector)
