@@ -86,7 +86,8 @@ class App : Application(), SketchFactory {
         INSTANCE = this
         super.onCreate()
         // Recover an interrupted theme switch before any Activity resolves theme resources.
-        ThemeUtil.selfHealTheme()
+        // Reuse the recovered theme in Compose instead of re-running a blocking transaction.
+        ThemeUtil.themeState.value = ThemeUtil.selfHealTheme()
         ClientUtils.init(this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             setWebViewPath(this)

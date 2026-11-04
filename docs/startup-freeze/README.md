@@ -49,3 +49,9 @@ B. 顶部 / 底部交互同时无效（可能是主线程、输入窗口或覆�
 - [09-deterministic-repro-and-fix-gates.md](09-deterministic-repro-and-fix-gates.md)：可构造的状态机问题、受控协程测试、主题 I/O 压力测试和修复验收门槛。
 
 2026-11-04 结论：现有证据足以推进主线程同步 DataStore、ViewModel 相等性等确定性缺陷的测试和预防性修复，但**不足以确定用户真机本次全局点击无响应的唯一根因，也不足以承诺完全解决故障**。尚缺受影响 APK 构建指纹、完整 Refresh 时间线、ANR 主线程栈与 InputDispatcher 当前窗口证据。本次新增的是调查和验证文档，未进行业务代码修改或真机实验。
+
+## 第一轮代码修复（2026-11-04）
+
+- [10-first-pass-implementation.md](10-first-pass-implementation.md)：本轮主线程偏好初读、首帧后主题确认、ViewModel 身份/首次 intent、首页空流/超时终态的实际源码改动、测试与剩余风险。
+- 该阶段与 01–09 的审计文档并存；保留事故原始证据等级，不以保护性修复替代 ANR/窗口焦点因果验证。
+- Actions 验证以 GitHub 实际执行状态为准。项目仍只允许在 fix/startup-freeze-loading 修改。

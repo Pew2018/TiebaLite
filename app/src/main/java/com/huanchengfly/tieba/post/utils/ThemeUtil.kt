@@ -41,16 +41,15 @@ import com.huanchengfly.tieba.post.putString
 import com.huanchengfly.tieba.post.ui.common.theme.ThemePresets
 import com.huanchengfly.tieba.post.ui.common.theme.utils.ThemeUtils
 import com.huanchengfly.tieba.post.ui.widgets.theme.TintSwipeRefreshLayout
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 object ThemeUtil {
-    val themeState: MutableState<String> by lazy(mode = LazyThreadSafetyMode.SYNCHRONIZED) {
-        mutableStateOf(
-            if (App.isInitialized) selfHealTheme() else THEME_DEFAULT
-        )
-    }
+    // Application.onCreate restores this exactly once before the first Compose frame.
+    val themeState: MutableState<String> = mutableStateOf(THEME_DEFAULT)
 
     /**
      * 主题 ID 是否为“已知有效”的值：预设（含浅色 / 深色变体）、自定义、经典深色（A 屏黑）、
@@ -102,9 +101,10 @@ object ThemeUtil {
     }
 
     /** Marks a selected theme safe only after the UI has rendered successfully. */
-    fun markThemeApplied(theme: String) {
+    suspend fun markThemeApplied(theme: String) {
         if (!isKnownTheme(theme)) return
-        runBlocking {
+        // LaunchedEffect runs on the UI dispatcher; never block it while persisting a frame.
+        withContext(Dispatchers.IO) {
             dataStore.edit { preferences ->
                 val pendingKey = stringPreferencesKey(KEY_PENDING_THEME)
                 if (preferences[pendingKey] == theme) {
@@ -184,7 +184,7 @@ object ThemeUtil {
     )
 
     /** 当前主功能顶栏风格（持久化，默认经典蓝） */
-    fun mainToolbarStyle(): String = dataStore.getString(KEY_MAIN_TOOLBAR_STYLE, MAIN_TOOLBAR_APP_BLUE)
+    fun mainToolbarStyle(): String = INSTANCE.appPreferences.mainToolbarStyle ?: MAIN_TOOLBAR_APP_BLUE
 
     fun setMainToolbarStyle(style: String) {
         dataStore.putString(KEY_MAIN_TOOLBAR_STYLE, style)
@@ -363,7 +363,7 @@ object ThemeUtil {
 
     private fun getOldTheme(): String {
         val oldTheme = migrateLegacyTheme(
-            dataStore.getString(KEY_OLD_THEME, THEME_DEFAULT),
+            INSTANCE.appPreferences.oldTheme ?: THEME_DEFAULT,
             KEY_OLD_THEME
         )
         return oldTheme.takeIf { isKnownTheme(it) && !isNightMode(it) } ?: THEME_DEFAULT
@@ -380,11 +380,11 @@ object ThemeUtil {
 
     /** Older dark_theme values are retained; their dark preset ID now means classic dark. */
     fun isAmoledSurface(): Boolean =
-        dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK) == THEME_AMOLED_DARK
+        INSTANCE.appPreferences.darkTheme == THEME_AMOLED_DARK
 
     fun resolveNightTheme(lightTheme: String = selectedPaletteTheme()): String {
         return com.huanchengfly.tieba.post.ui.common.theme.ThemeAppearance.resolveDarkTheme(
-            dataStore.getString(KEY_DARK_THEME, THEME_AMOLED_DARK),
+            INSTANCE.appPreferences.darkTheme ?: THEME_AMOLED_DARK,
             ThemePresets.presetOf(lightTheme)?.darkId
         )
     }
@@ -451,7 +451,7 @@ object ThemeUtil {
     fun setUseDynamicTheme(useDynamicTheme: Boolean) = dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, false)
 
     fun isUsingDynamicTheme(): Boolean {
-        if (dataStore.getBoolean(KEY_USE_DYNAMIC_THEME, false)) dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, false)
+        if (INSTANCE.appPreferences.useDynamicColorTheme) dataStore.putBoolean(KEY_USE_DYNAMIC_THEME, false)
         return false
     }
 
@@ -577,7 +577,7 @@ object ThemeUtil {
         var nowTheme = theme
         if (isTranslucentTheme(nowTheme)) {
             val colorTheme =
-                dataStore.getInt("translucent_background_theme", TRANSLUCENT_THEME_LIGHT)
+                INSTANCE.appPreferences.translucentBackgroundTheme
             nowTheme = if (colorTheme == TRANSLUCENT_THEME_DARK) {
                 THEME_TRANSLUCENT_DARK
             } else {

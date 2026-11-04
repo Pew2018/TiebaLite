@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.scan
 import kotlinx.coroutines.flow.stateIn
@@ -64,18 +65,10 @@ abstract class BaseViewModel<
     fun send(intent: Intent) {
         Log.i("ViewModel", "send $intent")
         viewModelScope.launch {
+            // A default SharedFlow drops emissions before its first subscriber is ready.
+            _intentFlow.subscriptionCount.first { it > 0 }
             _intentFlow.emit(intent)
         }
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as BaseViewModel<*, *, *, *>
-
-        if (initialized != other.initialized) return false
-
-        return true
-    }
 }

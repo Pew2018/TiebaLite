@@ -94,6 +94,8 @@ class HomeViewModel : BaseViewModel<HomeUiIntent, HomePartialChange, HomeUiState
                         historyForums
                     ) as HomePartialChange.Refresh
                 }
+                // A hung or empty upstream must not leave the home screen on skeletons forever.
+                .firstOrFailWithin(HOME_REFRESH_TIMEOUT_MILLIS)
                 .onStart { emit(HomePartialChange.Refresh.Start) }
                 .catch { emit(HomePartialChange.Refresh.Failure(it)) }
 

@@ -80,15 +80,12 @@ fun <T> rememberPreferenceAsState(
     defaultValue: T
 ): State<T> {
     val dataStore = LocalContext.current.dataStore
-    val state = remember { mutableStateOf(defaultValue) }
+    val state = remember(key, defaultValue) { mutableStateOf(defaultValue) }
 
-    LaunchedEffect(Unit) {
+    // A read-only preference must never write its placeholder value before the first read.
+    LaunchedEffect(dataStore, key, defaultValue) {
         dataStore.data.map { it[key] ?: defaultValue }.distinctUntilChanged()
             .collect { state.value = it }
-    }
-
-    LaunchedEffect(state.value) {
-        dataStore.edit { it[key] = state.value }
     }
 
     return state
