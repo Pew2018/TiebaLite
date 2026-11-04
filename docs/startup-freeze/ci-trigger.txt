@@ -1,4 +1,4 @@
 TiebaLite first-pass build trigger
-request=1
+request=2
 # Change request=0 to request=1 using GitHub web editor.
 # Commit directly to fix/startup-freeze-loading (not a PR).
