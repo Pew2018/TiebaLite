@@ -41,3 +41,11 @@ B. 顶部 / 底部交互同时无效（可能是主线程、输入窗口或覆�
 先在真机卡住期间点击顶部搜索、布局切换、底部通知/我的，并观察 Android 系统返回是否响应；同时保留完整 logcat 和界面卡住时的线程/输入焦点记录。以 01 的分支判定树区分「未发 Refresh / 已发未开始 / 开始但未结束 / 已结束但 UI 不变 / 窗口截获触控」。
 
 只有确认上述阶段后，再在该分支集中提交必要的定点修复与自动化回归测试。
+
+## 证据充分性复核与验证执行方法（追加审计）
+
+- [07-evidence-readiness-and-history.md](07-evidence-readiness-and-history.md)：明确哪些问题可直接开始修复、哪些尚需真机证据；增加偏好初读、主题事务、只读 helper 回写和关键提交历史。
+- [08-observability-and-adb-protocol.md](08-observability-and-adb-protocol.md)：非破坏性 ADB 采集、版本指纹、ANR/窗口焦点裁决与最小脱敏诊断点。
+- [09-deterministic-repro-and-fix-gates.md](09-deterministic-repro-and-fix-gates.md)：可构造的状态机问题、受控协程测试、主题 I/O 压力测试和修复验收门槛。
+
+2026-11-04 结论：现有证据足以推进主线程同步 DataStore、ViewModel 相等性等确定性缺陷的测试和预防性修复，但**不足以确定用户真机本次全局点击无响应的唯一根因，也不足以承诺完全解决故障**。尚缺受影响 APK 构建指纹、完整 Refresh 时间线、ANR 主线程栈与 InputDispatcher 当前窗口证据。本次新增的是调查和验证文档，未进行业务代码修改或真机实验。
