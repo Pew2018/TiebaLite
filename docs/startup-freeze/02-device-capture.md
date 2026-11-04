@@ -51,10 +51,10 @@ adb shell dumpsys window windows > tieba-windows.txt
 adb shell pidof com.huanchengfly.tieba.post
 ~~~
 
-如果确定 App 进程仍存在且无响应，可选采集线程栈。Android 不同版本对 SIGQUIT、ANR traces 的访问有限；请在了解设备权限限制后执行，并保留此前 logcat：
+如果确定 App 进程仍存在且无响应，可选采集线程栈。Android 不同版本对 SIGQUIT、ANR traces 的访问有限，普通未 root 设备可能因权限不足无法向应用进程发送信号；请在了解权限限制后执行，并保留此前 logcat：
 
 ~~~sh
-adb shell "kill -3 $(pidof com.huanchengfly.tieba.post)"
+adb shell 'pid=$(pidof com.huanchengfly.tieba.post); [ -n "$pid" ] && kill -3 "$pid"'
 ~~~
 
 如确实触发 ANR、日志无法给出主线程调用栈，优先使用 adb bugreport 手动取得系统报告（包含大量敏感设备信息，严禁直接公开分享未脱敏原件）。

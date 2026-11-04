@@ -15,6 +15,14 @@
 A. 加载状态无法退出或数据请求没有产出；
 B. 顶部 / 底部交互同时无效（可能是主线程、输入窗口或覆盖层问题）。
 
+## 深入审计补充（2026-11-04）
+
+- [04-deep-source-audit.md](04-deep-source-audit.md)：本轮对真实 fix 分支的主线程 DataStore 阻塞、ViewModel equals/hashCode、首次事件、zip、超时、刷新自救及全局触摸路径的系统性审计。为此轮**最新、最完整的源码证据记录**。
+- [05-root-cause-matrix.md](05-root-cause-matrix.md)：根因候选、可证伪条件、分支裁决与反证，明确“不把静态风险等同于真机已复现”。
+- [06-audit-regression-plan.md](06-audit-regression-plan.md)：可观测性、定向回归测试与后续修复验收清单（本轮未执行）。
+- 上述文件均以 2026-11-04 起始 fix HEAD 940260400f814701689c71e07dd222bbab8f9301 及未改动的应用源码 f91059cbffe453266b74ef06188793e5e82ce780 为审计基线。
+- 重点结论：从源码确认 UI 主线程同步 DataStore 的阻塞机制、BaseViewModel 相等性契约缺陷、zip 数据耦合、业务总超时缺口及 Loading 无重试入口；用户设备上的真实故障根因**仍待运行时证据确认**。
+
 ## 本次调查材料
 
 1. [01-code-evidence.md](01-code-evidence.md)：逐项列出可定位源码、事实、推测与反证，明确哪些问题还不能认定为根因。
