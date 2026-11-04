@@ -48,6 +48,9 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 
 object ThemeUtil {
+    // This constant must be initialized before the eager themeState property.
+    const val THEME_DEFAULT = "material_blue"
+
     // Application.onCreate restores this exactly once before the first Compose frame.
     val themeState: MutableState<String> = mutableStateOf(THEME_DEFAULT)
 
@@ -273,7 +276,6 @@ object ThemeUtil {
     const val THEME_TRANSLUCENT_LIGHT = "translucent_light"
     const val THEME_TRANSLUCENT_DARK = "translucent_dark"
     const val THEME_CUSTOM = "custom"
-    const val THEME_DEFAULT = "material_blue"
     const val THEME_BLACK = "black"
     const val THEME_BLUE = "blue"
     const val THEME_PURPLE = "purple"
